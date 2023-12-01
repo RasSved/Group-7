@@ -20,6 +20,8 @@ manufacturers = {
 
 
 
+
+
 @app.route('/')
 def index():
     return render_template('login.html')
@@ -43,6 +45,7 @@ def login():
 
 @app.route("/customer")
 def customer():
+
     return render_template("CusMain.html")
 
 @app.route("/serviceprovider")
@@ -53,7 +56,6 @@ def serviceprovider():
 @app.route("/manufacturer")
 def manufacturer():
     return render_template("ManMain.html")
-
 
 
 if __name__ == '__main__':
