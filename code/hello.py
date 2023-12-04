@@ -22,5 +22,3 @@ def hello_world():
 	return render_template("input.html", guides = all_guides)
 
 # The default content type is HTML, so HTML in the string will be rendered by the browser.
-
-

@@ -68,21 +68,11 @@ def role_redirect():
 def logout():
     session.clear()
     return redirect(url_for("login"))
-
-@app.route("/customer")
-def customer():
-
-    return render_template("CusMain.html")
-
-@app.route("/serviceprovider")
-def serviceprovider():
-    return render_template("SePrMain.html")
     
-
-@app.route("/manufacturer")
-def manufacturer():
-    return render_template("ManMain.html")
 
 
 if __name__ == '__main__':
     app.run(debug=True)
+
+
+# Markus safty place, all are welcome!
