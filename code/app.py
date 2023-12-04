@@ -1,7 +1,14 @@
-from flask import Flask, render_template, request, redirect, url_for, session
+from flask import Flask, render_template, request, redirect, url_for, session, Blueprint
+from routes.customer import customer_bp
+from routes.serviceprovider import serviceprovider_bp
+from routes.manufacturer import manufacturer_bp
 
 app = Flask(__name__)
 app.secret_key = "secret"  # Change this to a secret key for secure session management
+
+app.register_blueprint(customer_bp, url_prefix='/customer')
+app.register_blueprint(serviceprovider_bp, url_prefix='/serviceprovider')
+app.register_blueprint(manufacturer_bp, url_prefix='/manufacturer')
 
 class User:
     def __init__(self, username, password, role):
