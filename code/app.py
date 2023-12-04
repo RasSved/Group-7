@@ -64,22 +64,22 @@ def role_redirect():
     if "username" in session:
         role = session["role"]
         if role == "customer":
-            return render_template("CusMain.html")
+            return redirect(url_for("customer.customer"))
         if role == "serviceprovider":
-            return render_template("SePrMain.html")
+            return redirect(url_for("serviceprovider.serviceprovider"))
         if role == "manufacturer":
-            return render_template("ManMain.html")
+            return redirect(url_for("manufacturer.manufacturer"))
     return redirect(url_for("login"))
-    
+
+
 @app.route("/logout")
 def logout():
     session.clear()
     return redirect(url_for("login"))
-    
-
 
 if __name__ == '__main__':
     app.run(debug=True)
+
 
 
 # Markus safty place, all are welcome!
