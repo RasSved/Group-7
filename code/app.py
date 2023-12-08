@@ -23,20 +23,12 @@ users = [
     User(username="customer", password="c1", role="customer"),
 ]
 
-manufacturers = {
-    'husqvarna1': 'h1',
-    'husqvarna2': 'h2'
-}
-
-
-
-
 
 @app.route('/')
 def index():
     return render_template('login.html')
 
-@app.route('/login', methods=['POST'])
+@app.route('/login', methods=['POST', 'GET'])
 def login():
     if request.method == "POST":
         username = request.form["username"]
@@ -56,7 +48,10 @@ def login():
             return redirect(url_for("role_redirect"))
 
         error = "Invalid username or password"
-    return render_template("login.html", error=error if "error" in locals() else None)
+        return render_template("login.html", error=error)
+    
+    # If it's a GET request, render the login form
+    return render_template('login.html', error=None)
 
 #redirects depending on the role of user
 @app.route("/role_redirect")
@@ -72,7 +67,7 @@ def role_redirect():
     return redirect(url_for("login"))
 
 
-@app.route("/logout")
+@app.route("/logout", methods=["GET"])
 def logout():
     session.clear()
     return redirect(url_for("login"))
@@ -80,6 +75,3 @@ def logout():
 if __name__ == '__main__':
     app.run(debug=True)
 
-
-
-# Markus safty place, all are welcome!
