@@ -1,8 +1,15 @@
-from flask import Flask, render_template, request, redirect, url_for, session
-from pymongo import MongoClient
+from flask import Flask, render_template, request, redirect, url_for, session, Blueprint
+from routes.customer import customer_bp
+from routes.serviceprovider import serviceprovider_bp
+from routes.manufacturer import manufacturer_bp
+
 
 app = Flask(__name__)
 app.secret_key = "secret"  # Change this to a secret key for secure session management
+
+app.register_blueprint(customer_bp, url_prefix='/customer')
+app.register_blueprint(serviceprovider_bp, url_prefix='/serviceprovider')
+app.register_blueprint(manufacturer_bp, url_prefix='/manufacturer')
 
 class User:
     def __init__(self, username, password, role):
@@ -17,24 +24,12 @@ users = [
     User(username="customer", password="c1", role="customer"),
 ]
 
-manufacturers = {
-    'husqvarna1': 'h1',
-    'husqvarna2': 'h2'
-}
-
-
-client = MongoClient('localhost', 27017)
-
-db = client.NewCluster
-
-guides = db.sample_guides
-
 
 @app.route('/')
 def index():
     return render_template('login.html')
 
-@app.route('/login', methods=['POST'])
+@app.route('/login', methods=['POST', 'GET'])
 def login():
     if request.method == "POST":
         username = request.form["username"]
@@ -54,7 +49,10 @@ def login():
             return redirect(url_for("role_redirect"))
 
         error = "Invalid username or password"
-    return render_template("login.html", error=error if "error" in locals() else None)
+        return render_template("login.html", error=error)
+    
+    # If it's a GET request, render the login form
+    return render_template('login.html', error=None)
 
 #redirects depending on the role of user
 @app.route("/role_redirect")
@@ -62,22 +60,19 @@ def role_redirect():
     if "username" in session:
         role = session["role"]
         if role == "customer":
-            return render_template("CusMain.html")
+            return redirect(url_for("customer.customer"))
         if role == "serviceprovider":
-            return render_template("SePrMain.html")
+            return redirect(url_for("serviceprovider.serviceprovider"))
         if role == "manufacturer":
-            return render_template("ManMain.html")
+            return redirect(url_for("manufacturer.manufacturer"))
     return redirect(url_for("login"))
-    
-@app.route("/logout")
+
+
+@app.route("/logout", methods=["GET"])
 def logout():
     session.clear()
     return redirect(url_for("login"))
-    
-
 
 if __name__ == '__main__':
     app.run(debug=True)
 
-
-# Markus safty place, all are welcome!
