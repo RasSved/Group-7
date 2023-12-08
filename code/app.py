@@ -1,4 +1,5 @@
 from flask import Flask, render_template, request, redirect, url_for, session
+from pymongo import MongoClient
 
 app = Flask(__name__)
 app.secret_key = "secret"  # Change this to a secret key for secure session management
@@ -22,7 +23,11 @@ manufacturers = {
 }
 
 
+client = MongoClient('localhost', 27017)
 
+db = client.NewCluster
+
+guides = db.sample_guides
 
 
 @app.route('/')
