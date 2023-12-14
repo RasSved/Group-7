@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SP: Area</title>
+</head>
+<body>
+    <h2>The Area Page for Serviceproviders</h2>
+
+    <form action="{{ url_for('serviceprovider.sepr_home') }}" method="POST">
+        <button type="submit" name="home_button">Main Page</button> <br>
+    </form>
+
+    <p>This is a template for all information that we be showed to a serviceprovider when they access an area &#128520;</p>
+    <p>Be like me and be cool &#128526;</p> <br>
+
+    <form action="{{ url_for('serviceprovider.spArea') }}" method="POST">
+        <button type="submit" name="mower_button">2 LawnMower</button>
+    </form>
+
+    <p> &#128293; &#128293; &#128293; </p>
+</body>
+</html>

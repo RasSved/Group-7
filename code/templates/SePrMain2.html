@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SP: Main Page</title>
+</head>
+<body>
+    <h2>The Main Page for Serviceproviders</h2>
+
+    <a href="{{ url_for('logout') }}">Logout</a><br>
+
+    <p>This is a template for all information that we be showed to a serviceprovider when they login &#128520;</p>
+    <p> &#128526; Be cool &#128526; </p> <br>
+
+    <form action="{{ url_for('serviceprovider.serviceprovider') }}" method="POST">
+        <button type="submit" name="area1_button">Area 1</button> <br>
+        <button type="submit" name="area2_button">Area 2</button> <br>
+        <button type="submit" name="area3_button">Area 3</button>
+    </form>
+
+</body>
+</html>
