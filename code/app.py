@@ -3,6 +3,8 @@ from routes.customer import customer_bp
 from routes.serviceprovider import serviceprovider_bp
 from routes.manufacturer import manufacturer_bp
 
+from itertools import count
+
 app = Flask(__name__)
 app.secret_key = "secret"  # Change this to a secret key for secure session management
 
@@ -11,16 +13,19 @@ app.register_blueprint(serviceprovider_bp, url_prefix='/serviceprovider')
 app.register_blueprint(manufacturer_bp, url_prefix='/manufacturer')
 
 class User:
-    def __init__(self, username, password, role):
+    def __init__(self, username, password, role, user_id):
         self.username = username
         self.password = password
         self.role = role
+        self.user_id = user_id
+
 
 # Dummy users for demonstration purposes
+user_id_counter = count(start=1)
 users = [
-    User(username="manufacturer", password="m1", role="manufacturer"),
-    User(username="serviceprovider", password="s1", role="serviceprovider"),
-    User(username="customer", password="c1", role="customer"),
+    User(username="manufacturer", password="m1", role="manufacturer", user_id=next(user_id_counter)),
+    User(username="serviceprovider", password="s1", role="serviceprovider", user_id=next(user_id_counter)),
+    User(username="customer", password="c1", role="customer", user_id=next(user_id_counter)),
 ]
 
 @app.route('/')
@@ -42,6 +47,7 @@ def login():
 
         #sets session data for data regarding that user, before sending onwards
         if user:
+            session['user_id'] = user.user_id
             session["username"] = user.username
             session["role"] = user.role
             return redirect(url_for("role_redirect"))
@@ -67,7 +73,7 @@ def role_redirect():
 
 @app.route("/logout", methods=["GET"])
 def logout():
-    session.clear()
+    session.clear()                     # clears everything from session
     return redirect(url_for("login"))
 
 if __name__ == '__main__':
