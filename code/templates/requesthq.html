@@ -1,0 +1,33 @@
+{% extends 'base.html' %}
+
+{% block head %}
+{% endblock %}
+
+
+{% block body %}
+<h2>Request List</h2>
+<div class="container">
+    <div class="products">
+        <div class="product-box">
+            <h2>Request 1</h2>
+            <p>Add Area</p>
+            <a href="requestinfohq.html">
+                <button type="button">Request Info</button>
+            </a>
+        </div>
+        <div class="product-box">
+            <h2>Request 2</h2>
+            <p>Change Provider</p>
+            <a href="requestinfohq.html">
+                <button type="button">Request Info</button>
+            </a>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block navbuttons %}
+<li class="nav-item active">
+    <a class="nav-link" href="/manufacturer/manufacturer">Home</a>
+</li>
+{% endblock %}
