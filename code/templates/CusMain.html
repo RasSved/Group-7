@@ -32,7 +32,7 @@
 
     {%if area['CustomerId'] == 0%}
 
-    <form name = "viewArea" method = "POST" action="{{ url_for('customer.area')}}">
+    <form name = "viewArea" method = "POST" action="{{ url_for('customer.enterArea')}}">
         <button type = "submit" name = "areaId" value = "{{area['_id']}}">
             <div class = "area">
                 <p> {{area['Address']}} </p>

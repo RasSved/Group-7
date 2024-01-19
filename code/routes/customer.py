@@ -1,5 +1,5 @@
 from flask import Flask, render_template, request, redirect, url_for, session, Blueprint
-customer_bp = Blueprint('customer', __name__)
+customer_bp = Blueprint('customer', __name__, static_folder="static", template_folder="templates")
 from pymongo import MongoClient
 from bson.objectid import ObjectId
 import sys
