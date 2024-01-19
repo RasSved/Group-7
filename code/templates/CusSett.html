@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Area: Customer</title>
+</head>
+<body>
+    <h2>{{area['Address']}}</h2>
+</body>
+<footer>
+    <form name = "navBar" method = "POST" action="{{ url_for('customer.areaNav')}}">
+        <button class = "footer-nav" name = navBar type = "submit" value = "home">
+            <p> home </p>
+        </button>
+        <button class = "footer-nav" name = navBar type = "submit" value = "map">
+            <p> map </p>
+        </button>
+        <button class = "footer-nav" name = navBar type = "submit" value = "schedule">
+            <p> schedule</p>
+        </button>
+        <button class = "footer-nav-curr" name = navBar type = "submit" value = "settings">
+            <p> settings</p>
+        </button>
+    </form>
+</footer>
+</html>

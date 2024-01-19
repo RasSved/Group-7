@@ -24,7 +24,6 @@ users = [
     User(username="customer", password="c1", role="customer"),
 ]
 
-
 @app.route('/')
 def index():
     return render_template('login.html')
@@ -66,7 +65,6 @@ def role_redirect():
         if role == "manufacturer":
             return redirect(url_for("manufacturer.manufacturer"))
     return redirect(url_for("login"))
-
 
 @app.route("/logout", methods=["GET"])
 def logout():

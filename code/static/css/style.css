@@ -17,3 +17,16 @@
     height: 90%;
 
 }
+
+#footer-navbar {
+    width: 100%;
+    border: #b83030;
+}
+
+.footer-nav {
+    width: 25%;
+}
+
+.footer-nav-curr {
+    color: darkgrey;
+}
