@@ -1,7 +1,7 @@
 from flask import Flask, render_template, request, redirect, url_for, session, Blueprint
-from routes.customer import customer_bp
-from routes.serviceprovider import serviceprovider_bp
-from routes.manufacturer import manufacturer_bp
+from customer.customer import customer_bp
+from serviceprovider.serviceprovider import serviceprovider_bp
+from manufacturer.manufacturer import manufacturer_bp
 
 from itertools import count
 
