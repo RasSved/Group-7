@@ -77,7 +77,7 @@ def map():
         areaId = session["area_id"]
         area = areas.find({"_id": ObjectId(areaId)})[0]    # find area where id is the same as area clicked
         #print(area, file=sys.stderr)
-        return render_template("CusSett.html", area=area)
+        return render_template("CusMap.html", area=area)
     else:
         return redirect(url_for("customer.customer"))
 
