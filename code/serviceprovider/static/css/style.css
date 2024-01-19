@@ -1,0 +1,32 @@
+#header {
+    border: 2px #b83030 solid;
+    color: brown;
+    display: flex;
+    flex-direction: row; 
+    padding: 2px;
+    height: 100px;
+    width: 100%;
+}
+
+#headertext {
+    border: #b83030 solid;
+    color: brown;
+    text-align: center;
+    font-size: 30px;
+    width: 20%;
+    height: 90%;
+
+}
+
+#footer-navbar {
+    width: 100%;
+    border: #b83030;
+}
+
+.footer-nav {
+    width: 25%;
+}
+
+.footer-nav-curr {
+    color: darkgrey;
+}
