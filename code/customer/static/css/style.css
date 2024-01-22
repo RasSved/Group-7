@@ -22,7 +22,7 @@
     width: 25%;
     height: 100%;
     margin: 0;
-    background-color: darkgray;
+    background-color: gray;
     font-size: 14px;
     border-radius: 0;
     border-left: 0;
@@ -30,12 +30,23 @@
 }
 
 .footer-nav {
+    background-color: lightgrey;
     width: 25%;
     height: 100%;
     font-size: 14px;
     border-radius: 0;
     border-left: 0;
     border-right: 0;
+}
+
+.footer-nav:hover {
+    background-color: rgb(150, 150, 150);
+    width: 25%;
+    height: 100%;
+    font-size: 14px;
+    border-radius: 0;
+    border-left: 0;
+    border-right: 0; 
 }
 
 #nav-bar {
@@ -47,4 +58,27 @@
     right: 0;
     display: inline;
     font-size: 0;     /* Apparently needed for no button spacing*/
+}
+
+/*W3Schools breadcrumbs example https://www.w3schools.com/howto/howto_css_breadcrumbs.asp*/
+
+ul.breadcrumbs li {
+    list-style: none;
+    display: inline;
+}
+
+/* Add a slash symbol (/) before/behind each list item */
+ul.breadcrumbs li+li:before {
+    color: black;
+    content: "/\00a0";
+  }
+
+ul.breadcrumbs li a {
+    color: #8a8a8a;
+    text-decoration: none;
+}
+
+ul.breadcrumbs li a:hover {
+    color: #424242;
+    text-decoration: underline;
 }
