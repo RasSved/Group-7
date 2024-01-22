@@ -82,3 +82,30 @@ ul.breadcrumbs li a:hover {
     color: #424242;
     text-decoration: underline;
 }
+
+.areaPreview {
+    display: grid;
+    grid-template-columns: 100%;
+    row-gap: 20px;
+    justify-content: space-between;
+    width: 80%;
+    margin-left: 10%;
+}
+
+.areaPreview form {
+    width: 100%;
+    height: 150px;
+}
+
+.areaPreview form button {
+    display: inline-flex;
+    align-items: flex-start;
+    text-align: left;
+    align-items: top;
+    border-radius: 8px;
+    margin-top: 10px;
+    width: 100%;
+    height: 100%;
+    background-color: #cccccc;
+}
+
