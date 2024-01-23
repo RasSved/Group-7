@@ -11,7 +11,49 @@
         <li> <a href="/customer">Main</a></li>
         <li> <a href="/customer/area">{{area['Address']}}</a></li>
     </ul>
-    <h2>{{area['Address']}}</h2>
+    <h2>Adress: {{area['Address']}}</h2>
+    <h2>Grasslength: {{area['grassLength']}}</h2>
+    <h2>Subscription: {{area['Sub']}}</h2>
+
+
+
+   <!-- <button type="button" data-bs-toggle="modal" data-bs-target="#editAreaWindow">
+        +
+    </button> -->
+    <form name = "editArea" method="POST" action="{{ url_for('customer.editArea') }}">  
+        <div id="editAreaWindow" class="modal fade" role="dialog">
+            <div class="modal-dialog modal-md">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h4 class="area-create-title">Edit area</h4>
+                        <!--<button type="button" class="btn close" data-bs-dismiss="modal">&times;</button>  -->
+                    </div>
+                    <div class="modal-body">
+                        <p>Make the area</p>
+                        <label for = "grass-input" >Grass length</label>
+                        <input type="text" name ="grassLength"> <br>
+
+                        <h4>Adress: {{area['Address']}}</h4>
+
+                        <label for = "address" >Address</label>
+                        <input type="hidden", value="{{area['Address']}}", name ="address"> <br>
+
+                        <label for = "sub-input" >Subscription</label> <br>
+                        <input type = "radio" name = "sub" for="sub-input" value = "basic"> <label for="basic">Basic</label> <br>
+                        <input type = "radio" name = "sub" for="sub-input" value = "gold"> <label for="gold">Gold</label> <br>
+                        <input type = "radio" name = "sub" for="sub-input" value = "supreme"> <label for="supreme">Supreme</label> <br>
+                    </div>
+                    <div class="modal-foooter">
+                        <button type="button" class="btn footer-button" data-bs-dismiss="modal">Close</button>
+
+                        <button type="submit" class="btn footer-button">Submit</button>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>    
+
 </body>
 <footer>
     <form id="nav-bar" id = "footer-navbar" method = "POST" action="{{ url_for('customer.areaNav')}}">
