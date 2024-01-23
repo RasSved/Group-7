@@ -1,0 +1,29 @@
+{% extends 'base.html' %}
+
+{% block head %}
+
+{% endblock %}
+
+
+{% block body %}
+<h2>Husqvarna Mainpage</h2>
+<a href="mowerpagehq.html">
+    <button type="button">Mower Page</button>
+</a>
+<a href="requesthq.html">
+    <button type="button">Request Page</button>
+</a>
+{% endblock %} 
+
+{% block navbuttons %}
+<li class="nav-item">
+    <a class="nav-link" href="mowerpagehq.html">Mower Page</a>
+</li>
+<li class="nav-item">
+    <a class="nav-link" href="productlisthq.html">Product List</a>
+</li>
+<li class="nav-item">
+    <a class="nav-link" href="requesthq.html">Request Page</a>
+</li>
+<a href="{{ url_for('logout') }}">Logout</a>
+{% endblock %}
