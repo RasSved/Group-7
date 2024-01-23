@@ -17,8 +17,6 @@
 
 
 
-
-<!--
     <button type="button" data-bs-toggle="modal" data-bs-target="#editAreaWindow">
         +
     </button>
@@ -37,6 +35,9 @@
 
                         <h4>Adress: {{area['Address']}}</h4>
 
+                        <label for = "address" >Address</label>
+                        <input type="hidden", value="{{area['Address']}}", name ="address"> <br>
+
                         <label for = "sub-input" >Subscription</label> <br>
                         <input type = "radio" name = "sub" for="sub-input" value = "basic"> <label for="basic">Basic</label> <br>
                         <input type = "radio" name = "sub" for="sub-input" value = "gold"> <label for="gold">Gold</label> <br>
@@ -52,7 +53,6 @@
             </div>
         </div>
     </form>    
--->
 
 </body>
 <footer>

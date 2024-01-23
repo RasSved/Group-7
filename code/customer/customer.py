@@ -33,17 +33,20 @@ def addArea():
             areas.insert_one({"Sub": sub, "grassLength": grassLength, "CustomerId": 0, "ServiceId": None, "Address": address})      
     return redirect(url_for("customer.customer"))
 
+
 @customer_bp.route("/edit_area", methods=["POST"])
 def editArea():
     #print(request.form, file=sys.stderr)
     if request.method == "POST":
-        if all(k in request.form for k in ("sub", "grassLength")): # if all needed keys are present
+        if all(k in request.form for k in ("sub", "grassLength", "address")): # if all needed keys are present
             print(request.form, file=sys.stderr)
             sub = request.form["sub"]
             grassLength = request.form["grassLength"]
-            areas.insert_one({"Sub": sub, "grassLength": grassLength, "CustomerId": 0, "ServiceId": None, "Address": areas.area('Address') })      
-    return redirect(url_for("customer.customer"))
+            address = request.form["address"]
+            areas.insert_one({"Sub": sub, "grassLength": grassLength, "CustomerId": 0, "ServiceId": None, "Address": address})      
+    return redirect(url_for("customer.customer"))    
 
+    
 @customer_bp.route("/enter", methods = ["GET", "POST"])
 def enterArea():
     print(request.form, file=sys.stderr)
