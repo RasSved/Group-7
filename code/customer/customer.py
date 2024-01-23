@@ -25,12 +25,19 @@ def customer():
 def addArea():
     #print(request.form, file=sys.stderr)
     if request.method == "POST":
-        if all(k in request.form for k in ("sub", "grassLength", "address")): # if all needed keys are present
+        if ("address" in request.form): # if all needed keys are present
             print(request.form, file=sys.stderr)
-            sub = request.form["sub"]
-            grassLength = request.form["grassLength"]
+            serviceId = None
+            grassLength = None
             address = request.form["address"]
-            areas.insert_one({"Sub": sub, "grassLength": grassLength, "CustomerId": 0, "ServiceId": None, "Address": address})      
+            homeX = None
+            homeY = None
+            customerId = 0 #placeholder for session
+            status = "Unconfirmed"
+            objId = ObjectId()
+            areas.insert_one({"ServiceId": serviceId, "GrassLength": grassLength, "CustomerId": customerId, "HomeX": homeX, "HomeY": homeY, "Address": address, "Status": status, "_id": objId}) 
+            session["area_id"] = str(objId)  
+            return redirect(url_for("customer.settings"))
     return redirect(url_for("customer.customer"))
 
 @customer_bp.route("/enter", methods = ["GET", "POST"])
@@ -103,6 +110,4 @@ def settings():
     else:
         return redirect(url_for("customer.customer"))
     
-    
-
 

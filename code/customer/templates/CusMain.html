@@ -34,6 +34,7 @@
     <form name = "viewArea" method = "POST" action="{{ url_for('customer.enterArea')}}">
         <button type = "submit" name = "areaId" value = "{{area['_id']}}">
             {{area['Address']}}
+            <div class="statusBox">{{area['Status']}}</div>
         </button>
     </form>
 
@@ -42,7 +43,7 @@
     {% endfor %}
     </div>
 
-    <button type="button" data-bs-toggle="modal" data-bs-target="#addAreaWindow">
+    <button id="addAreaButton" type="button" data-bs-toggle="modal" data-bs-target="#addAreaWindow">
         +
     </button>
     <form name = "addArea" method="POST" action="{{ url_for('customer.addArea') }}">  
@@ -54,22 +55,13 @@
                         <button type="button" class="btn close" data-bs-dismiss="modal">&times;</button> <!-- &times is an x symbol-->  
                     </div>
                     <div class="modal-body">
-                        <p>Make the area</p>
-                        <label for = "grass-input" >Grass length</label>
-                        <input type="text" name ="grassLength"> <br>
-
                         <label for = "address" >Address</label>
                         <input type="text" name ="address"> <br>
-
-                        <label for = "sub-input" >Subscription</label> <br>
-                        <input type = "radio" name = "sub" for="sub-input" value = "basic"> <label for="basic">Basic</label> <br>
-                        <input type = "radio" name = "sub" for="sub-input" value = "gold"> <label for="gold">Gold</label> <br>
-                        <input type = "radio" name = "sub" for="sub-input" value = "supreme"> <label for="supreme">Supreme</label> <br>
                     </div>
                     <div class="modal-foooter">
                         <button type="button" class="btn footer-button" data-bs-dismiss="modal">Close</button>
 
-                        <button type="submit" class="btn footer-button">Submit</button>
+                        <button class = "submitButton" type="submit" class="btn footer-button">Submit</button>
 
                     </div>
                 </div>
