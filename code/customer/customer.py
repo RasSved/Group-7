@@ -43,6 +43,7 @@ def editArea():
             sub = request.form["sub"]
             grassLength = request.form["grassLength"]
             address = request.form["address"]
+            areas.delete_one({"Address": address})
             areas.insert_one({"Sub": sub, "grassLength": grassLength, "CustomerId": 0, "ServiceId": None, "Address": address})      
     return redirect(url_for("customer.customer"))    
 
