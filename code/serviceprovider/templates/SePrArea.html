@@ -1,24 +1,92 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <link rel="stylesheet" href="{{ url_for('.static', filename='css/style.css') }}">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SP: Area</title>
+    <title>Area: Service Provider</title>
 </head>
+
 <body>
-    <h2>The Area Page for Serviceproviders</h2>
+    <ul class="breadcrumbs">
+        <li> <a href="/serviceprovider">Main</a></li>
+        <li> <a href="/serviceprovider/area">{{area['Address']}}</a></li>
+    </ul>
 
-    <form action="{{ url_for('serviceprovider.sepr_home') }}" method="POST">
-        <button type="submit" name="home_button">Main Page</button> <br>
+    <h2>Area Info</h2>  <!-- info that only customer can change -->
+    <p> Adress: {{area['Address']}} </p>
+    <p> Grasslength: {{area['grassLength']}} </pp>
+    <p> Subscription: {{area['Sub']}} </p>
+
+    <h2> Lawnmowers in {{area['Address']}} </h2>
+
+    <div class = "mowerPreview">
+        {%for lm in lawnmower%}
+
+        {%if lm['AreaId'] == area['CustomerId']%}
+
+        <form name = "viewMower" method = "POST" action="{{ url_for('serviceprovider.mower')}}">
+            <button type = "submit" name = "areaId" value = "{{area['_id']}}">
+                X position: {{lm['Xpos']}} <br> 
+                Y position: {{lm['Ypos']}}
+                <!-- <div class="statusBox">{{area['Status']}}</div> -->
+            </button>
+        </form>
+
+        {% endif %}
+
+        {% endfor %}
+    </div>
+
+    <!-- Add Lawnmower Button -->
+    <button id="addMowerButton" type="button" data-bs-toggle="modal" data-bs-target="#addMowerWindow">
+        +
+    </button>
+
+    <form name = "addMower" method="POST" action="{{ url_for('serviceprovider.addMower') }}">
+        <div id="addMowerWindow" class="modal fade" role="dialog">
+            <div class="modal-dialog modal-md">
+                <div class="modal-content">
+
+                    <div class="modal-header">
+                        <h4 class="area-create-title">Add lawnmower</h4>
+                        <button type="button" class="btn close" data-bs-dismiss="modal">&times;</button> <!-- &times is an x symbol-->  
+                    </div>
+
+                    <div class="modal-body">
+                        <label for="Xpos">X-pos</label>
+                        <input type="text" name ="Xpos"> <br>
+
+                        <label for="Ypos">Y-pos</label>
+                        <input type="text" name ="Ypos">
+                    </div>
+
+                    <div class="modal-foooter">
+                        <button type="button" class="btn footer-button" data-bs-dismiss="modal">Close</button>
+
+                        <button class="submitButton" type="submit" class="btn footer-button">Submit</button>
+                    </div>
+                </div>
+            </div>
+        </div>
     </form>
 
-    <p>This is a template for all information that we be showed to a serviceprovider when they access an area &#128520;</p>
-    <p>Be like me and be cool &#128526;</p> <br>
-
-    <form action="{{ url_for('serviceprovider.spArea') }}" method="POST">
-        <button type="submit" name="mower_button">2 LawnMower</button>
-    </form>
-
-    <p> &#128293; &#128293; &#128293; </p>
 </body>
+
+<footer>
+    <form id="nav-bar" id = "footer-navbar" method = "POST" action="{{ url_for('serviceprovider.areaNav')}}">
+        <button class = "footer-nav-curr" name = navBar type = "submit" value = "home">
+            <p> home </p>
+        </button>
+        <button class = "footer-nav" name = navBar type = "submit" value = "map">
+            <p> map </p>
+        </button>
+        <button class = "footer-nav" name = navBar type = "submit" value = "schedule">
+            <p> schedule</p>
+        </button>
+        <button class = "footer-nav" name = navBar type = "submit" value = "settings">
+            <p> settings</p>
+        </button>
+    </form>
+</footer>
 </html>
