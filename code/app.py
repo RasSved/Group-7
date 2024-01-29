@@ -5,6 +5,15 @@ from manufacturer.manufacturer import manufacturer_bp
 
 from itertools import count
 
+from pymongo import MongoClient
+from bson.objectid import ObjectId
+import sys
+
+# Setting up/connecting to database
+client = MongoClient('localhost', 27017)
+db = client.MowerDB
+accounts = db.Accounts
+
 
 app = Flask(__name__)
 app.secret_key = "secret"  # Change this to a secret key for secure session management
@@ -13,21 +22,6 @@ app.register_blueprint(customer_bp, url_prefix='/customer')
 app.register_blueprint(serviceprovider_bp, url_prefix='/serviceprovider')
 app.register_blueprint(manufacturer_bp, url_prefix='/manufacturer')
 
-class User:
-    def __init__(self, username, password, role, user_id):
-        self.username = username
-        self.password = password
-        self.role = role
-        self.user_id = user_id
-
-
-# Dummy users for demonstration purposes
-user_id_counter = count(start=1)
-users = [
-    User(username="manufacturer", password="m1", role="manufacturer", user_id=next(user_id_counter)),
-    User(username="serviceprovider", password="s1", role="serviceprovider", user_id=next(user_id_counter)),
-    User(username="customer", password="c1", role="customer", user_id=next(user_id_counter)),
-]
 
 @app.route('/')
 def index():
@@ -39,22 +33,28 @@ def login():
         username = request.form["username"]
         password = request.form["password"]
 
-        #identifies which user credentials was presented
-        user = None
-        for u in users:
-            if u.username == username and u.password == password:
-                user = u
-                break
+        #identifies if tuple of username and password exists in database
+        
+        #debugging -->
+        cursor = accounts.find()
+        for occ in cursor:
+            print("occurences: ")
+            print(occ)
+
+        #<--
+
+        user_tuple = accounts.find_one({"Username": username, "Password":password})
+        if not user_tuple:
+            return render_template("login.html", error="Invalid username or password")
 
         #sets session data for data regarding that user, before sending onwards
-        if user:
-            session['user_id'] = user.user_id
-            session["username"] = user.username
-            session["role"] = user.role
-            return redirect(url_for("role_redirect"))
+        #print("tuple: ", user_tuple)
+        session['user_id'] = user_tuple["ACCId"]       
+        session["username"] = user_tuple["Username"]
+        session["role"] = user_tuple["Role"]
+        return redirect(url_for("role_redirect"))
 
-        error = "Invalid username or password"
-        return render_template("login.html", error=error)
+        
     
     # If it's a GET request, render the login form
     return render_template('login.html', error=None)
