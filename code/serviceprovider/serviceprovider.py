@@ -92,6 +92,11 @@ def addMower():
         if ("Xpos" in request.form and "Ypos" in request.form): # if all needed keys are present
             print(request.form, file=sys.stderr)
 
+
+            area_id = session["area_id"]
+            area = areas.find({"_id": ObjectId(area_id)})[0]
+            print("AREA: ", area)
+
             providerId = 0
             areaId = area['CustomerId']
             productId = 0
