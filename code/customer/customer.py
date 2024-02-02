@@ -7,19 +7,52 @@ from pymongo import MongoClient
 from bson.objectid import ObjectId
 import sys
 
-
 # Setting up/connecting to database
 client = MongoClient('localhost', 27017)
 db = client.MowerDB
 
 # Single definition for table, change later
 areas = db.Areas
+notifs = db.Notifications
+mowers = db.Mower
 
+
+
+
+# @customer_bp.route("/", methods=["GET", "POST"])
+# def customer():
+#     cusAreas = areas.find() # {"CustomerId": 0}  # get areas belonging to user in session, placefolder for user in session
+#     print(cusAreas, file=sys.stderr)
+#     cusNotifs = []
+#     for area in cusAreas:  #### PICK UP HERE
+#         cusNotifs.append(notifs.find({"AreaId": area["_id"]})) # Find notifications where areaId is one of customers areas
+
+#     return render_template("CusMain.html", areas = cusAreas, title = "Customer Mainpage")
 
 @customer_bp.route("/", methods=["GET", "POST"])
 def customer():
-    all_areas = areas.find()   # get entire collection
-    return render_template("CusMain.html", areas = all_areas, title = "Customer Mainpage")
+    notifContent = {}
+    notifStrings = {}
+    currType = ""
+    cusAreas = areas.find({"CustomerId": 0})   # get entire collection
+
+    cusAreasArr = list(cusAreas) # aparently needs to be list if you want a for loop in backend
+    for area in cusAreasArr:     # make a list of all mowers on customers areas
+        areaNotifs = []
+        tempMowers = list(mowers.find({"AreaIds.AreaId": area["_id"]}))
+        for mower in tempMowers:
+            tempNotifs = notifs.find({"MowerId": mower["_id"]})
+            for notif in tempNotifs:
+                mess = notif["Content"]
+                if mess == "stuck":
+                    content = "Your mower is stuck at " + str(mower["Xpos"]) + ", " + str(mower["Ypos"]) + "! View the map to see where. You may solve it yourself or a service provider will be called in X hours."
+                else:
+                    content = notifContent[mess]
+                areaNotifs.append(content)
+                currType = notif["Type"]
+        notifStrings[str(area["_id"])] = {"content": areaNotifs, "type": currType}
+    print(notifStrings, file=sys.stderr)
+    return render_template("CusMain.html", areas = cusAreasArr, notifs = notifStrings, title = "Customer Mainpage")
 
 @customer_bp.route("/add_area", methods=["POST"])
 def addArea():

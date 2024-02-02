@@ -136,3 +136,7 @@ ul.breadcrumbs li a:hover {
     border: none;
     color: white;
 }
+
+.alert {
+    background-color: rgb(252, 110, 110);
+}

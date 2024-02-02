@@ -8,18 +8,27 @@
 <h2>Customer Mainpage</h2>
 
 <div class = "areaPreview">
-{%for area in areas%}
 
-{%if area['CustomerId'] == 0%}
+
+{{notifs}}
+{%for area in areas%}
 
 <form name = "viewArea" method = "POST" action="{{ url_for('customer.enterArea')}}">
     <button type = "submit" name = "areaId" value = "{{area['_id']}}">
-        {{area['Address']}}
-        <div class="statusBox">{{area['Status']}}</div>
+        <div class="infoSpace">
+            {{area['Address']}}
+            <div class="statusBox">{{area['Status']}}</div>
+        </div>
+        <div class="notifSpace">
+        {% for notif in notifs[area['_id']|string]['content']%}
+
+        <div class="{{notifs[area['_id']|string]['type']}}"> 
+            <p> {{notif}}</p>
+        </div>
+        {% endfor %}
+        </div>
     </button>
 </form>
-
-{% endif %}
 
 {% endfor %}
 </div>
