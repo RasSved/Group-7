@@ -1,21 +1,24 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <link rel="stylesheet" href="{{ url_for('.static', filename='css/style.css') }}">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SP: Lawn Mower</title>
+    <title>Area: Service Provider</title>
 </head>
+
 <body>
+    <ul class="breadcrumbs">
+        <li> <a href="/serviceprovider">Main</a></li>
+        <li> <a href="/serviceprovider/area">{{area['Address']}}</a></li>
+        <li> <a href="/serviceprovider/area/mower">Lawnmower</a></li>
+    </ul>
+    <h2>{{area['Address']}}</h2>
+
     <h2>The Lawn Mower page for Serviceproviders</h2>
-
-    <form action="{{ url_for('serviceprovider.sepr_home') }}" method="POST">
-        <button type="submit" name="home_button">Main Page</button> <br>
-    </form>
-
     <p>This is a template for all information that we be showed to a serviceprovider when they access a lawnmower &#128520;</p>
     <p>Continue to be as cool as me &#128526;</p> <br>
-
-
     <p> &#129468; &#129469; &#129302; &#128206; &#128668; &#128757; &#128752; </p>
+
 </body>
 </html>
