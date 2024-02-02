@@ -31,7 +31,7 @@ mowers = db.Mower
 
 @customer_bp.route("/", methods=["GET", "POST"])
 def customer():
-    notifContent = {}
+    notifContent = {"service": "Your machine needs knife replacement, your service provider has been notified, no action required from you."}
     notifStrings = {}
     currType = ""
     cusAreas = areas.find({"CustomerId": 0})   # get entire collection
@@ -45,12 +45,11 @@ def customer():
             for notif in tempNotifs:
                 mess = notif["Content"]
                 if mess == "stuck":
-                    content = "Your mower is stuck at " + str(mower["Xpos"]) + ", " + str(mower["Ypos"]) + "! View the map to see where. You may solve it yourself or a service provider will be called in X hours."
+                    content = {"text": "Your mower is stuck at " + str(mower["Xpos"]) + ", " + str(mower["Ypos"]) + "! View the map to see where. You may solve it yourself or a service provider will be called in X hours.", "type": notif["Type"]}
                 else:
-                    content = notifContent[mess]
+                    content = {"text": notifContent[mess], "type": notif["Type"]}
                 areaNotifs.append(content)
-                currType = notif["Type"]
-        notifStrings[str(area["_id"])] = {"content": areaNotifs, "type": currType}
+        notifStrings[str(area["_id"])] = {"content": areaNotifs}
     print(notifStrings, file=sys.stderr)
     return render_template("CusMain.html", areas = cusAreasArr, notifs = notifStrings, title = "Customer Mainpage")
 

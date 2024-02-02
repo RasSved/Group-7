@@ -49,7 +49,7 @@ def login():
 
         #sets session data for data regarding that user, before sending onwards
         #print("tuple: ", user_tuple)
-        session['user_id'] = user_tuple["ACCId"]       
+        session['user_id'] = str(user_tuple["_id"])       
         session["username"] = user_tuple["Username"]
         session["role"] = user_tuple["Role"]
         return redirect(url_for("role_redirect"))

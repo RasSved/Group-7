@@ -10,7 +10,6 @@
 <div class = "areaPreview">
 
 
-{{notifs}}
 {%for area in areas%}
 
 <form name = "viewArea" method = "POST" action="{{ url_for('customer.enterArea')}}">
@@ -22,8 +21,8 @@
         <div class="notifSpace">
         {% for notif in notifs[area['_id']|string]['content']%}
 
-        <div class="{{notifs[area['_id']|string]['type']}}"> 
-            <p> {{notif}}</p>
+        <div class="{{notif['type']}}"> 
+            <p> {{notif['text']}}</p>
         </div>
         {% endfor %}
         </div>

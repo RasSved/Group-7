@@ -100,9 +100,8 @@ ul.breadcrumbs li a:hover {
 .areaPreview form button {
     display: inline-flex;
     align-items: flex-start;
-    flex-direction: column;
+    flex-direction: row;
     text-align: left;
-    align-items: top;
     border-radius: 8px;
     font-size: 25px;
     margin-top: 10px;
@@ -112,12 +111,13 @@ ul.breadcrumbs li a:hover {
 }
 
 .statusBox {
-    width: flex;
+    width: 150px;
     height: flex;
     font-size: 15px;
     border-radius: 6px;
     border: 1px solid #FF6F6F;
     background-color: #FAC3C3;
+    text-align: center;
   }
 
 #addAreaButton {
@@ -139,4 +139,23 @@ ul.breadcrumbs li a:hover {
 
 .alert {
     background-color: rgb(252, 110, 110);
+}
+
+.warning {
+    background-color: rgb(233, 252, 125);
+}
+
+.infoSpace {
+    width: 30%;
+}
+
+.notifSpace {
+    height: 100%;
+    font-size: 15px;
+    width: 70%;
+    overflow-y: scroll;
+}
+
+.notifSpace div {
+    border-radius: 6px;
 }
