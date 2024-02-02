@@ -1,7 +1,5 @@
 from flask import Flask, render_template, request, redirect, url_for, session, Blueprint
-serviceprovider_bp = Blueprint('serviceprovider', __name__, 
-                        template_folder='templates',
-                        static_folder='static')
+serviceprovider_bp = Blueprint('serviceprovider', __name__ , template_folder='templates', static_folder='static')
 
 from pymongo import MongoClient
 from bson.objectid import ObjectId
@@ -12,9 +10,9 @@ client = MongoClient('localhost', 27017)
 db = client.MowerDB
 
 # Single definition for table, change later
-areas = db.SePrAreas
-mowers = db.SePrMowers
-
+areas = db.Areas    # SePrAreas
+mowers = db.Mowers  # SePrMowers
+# SePrAreas & SePrMowers are old collections. Delete if you still have it!
 
 
 @serviceprovider_bp.route("/", methods=["GET", "POST"])
@@ -82,7 +80,7 @@ def mower():
 
         return render_template("SePrMower.html", area=area, lawnmower=lawnmower)
     else:
-        return redirect(url_for("serviceprovider.serviceprovider"))
+        return redirect(url_for("serviceprovider.area"))
 
 
 @serviceprovider_bp.route("/area/add_mower", methods=["POST"])
@@ -108,7 +106,26 @@ def addMower():
             #session["area_id"] = 
 
             return redirect(url_for("serviceprovider.mower"))
-    return redirect(url_for("serviceprovider.serviceprovider")) 
+    return redirect(url_for("serviceprovider.area")) 
+
+
+@serviceprovider_bp.route("/area/enter_mower", methods = ["GET", "POST"])
+def enterMower():
+    print(request.form, file=sys.stderr)
+    if ("areaId" in request.form and "mowerId" in request.form):
+
+        areaId = request.form["areaId"]
+        mowerId = request.form["mowerId"]
+
+        # find area where id is the same as area clicked
+
+        #print(area, file=sys.stderr)
+
+        session["area_id"] = areaId
+
+        return redirect(url_for("serviceprovider.mower"))
+    else:
+        return redirect(url_for("serviceprovider.area"))
 
 
 @serviceprovider_bp.route("/area/nav", methods = ["GET", "POST"])  # Depending on which button was clicked from navigation form, navigate
