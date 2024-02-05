@@ -154,8 +154,33 @@ ul.breadcrumbs li a:hover {
     font-size: 15px;
     width: 70%;
     overflow-y: scroll;
+    text-align: center;
 }
 
 .notifSpace div {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 80px;
+    margin-top: 10px;
     border-radius: 6px;
+    border-style: solid;
+    border: 1px solid #424242
+}
+
+.areaNotifSpace {
+    width: 60%;
+    margin-left: 20%;
+    text-align: center;
+}
+
+.areaNotifSpace div{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 80px;
+    margin-top: 10px;
+    border-radius: 6px;
+    border-style: solid;
+    border: 1px solid #424242
 }

@@ -16,6 +16,9 @@ areas = db.Areas
 notifs = db.Notifications
 mowers = db.Mower
 
+notifContent = {"service": "Your machine needs knife replacement, your service provider has been notified, no action required from you."}
+
+
 
 
 
@@ -31,14 +34,16 @@ mowers = db.Mower
 
 @customer_bp.route("/", methods=["GET", "POST"])
 def customer():
+<<<<<<< HEAD
+=======
     #verifies that logged in user is a customer
     role = session["role"]
     if role != "customer":
         return redirect("/logout")
     
     notifContent = {"service": "Your machine needs knife replacement, your service provider has been notified, no action required from you."}
+>>>>>>> e0c94488727d05d8a1636eef96d63b3434e83c17
     notifStrings = {}
-    currType = ""
     cusAreas = areas.find({"CustomerId": 0})   # get entire collection
 
     cusAreasArr = list(cusAreas) # aparently needs to be list if you want a for loop in backend
@@ -114,7 +119,18 @@ def area():
     if "area_id" in session:
         areaId = session["area_id"]
         area = areas.find({"_id": ObjectId(areaId)})[0]    # find area where id is the same as area clicked
-        return render_template("CusArea.html", area=area, title="Customer Area")
+        areaNotifs = []
+        tempMowers = list(mowers.find({"AreaIds.AreaId": area["_id"]}))
+        for mower in tempMowers:
+            tempNotifs = notifs.find({"MowerId": mower["_id"]})
+            for notif in tempNotifs:
+                mess = notif["Content"]
+                if mess == "stuck":
+                    content = {"text": "Your mower is stuck at " + str(mower["Xpos"]) + ", " + str(mower["Ypos"]) + "! View the map to see where. You may solve it yourself or a service provider will be called in X hours.", "type": notif["Type"]}
+                else:
+                    content = {"text": notifContent[mess], "type": notif["Type"]}
+                areaNotifs.append(content)
+        return render_template("CusArea.html", area=area, title="Customer Area", notifs=areaNotifs)
     else:
         return redirect(url_for("customer.customer"))
     

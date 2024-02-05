@@ -13,7 +13,13 @@
 <h2>Grasslength: {{area['grassLength']}}</h2>
 <h2>Subscription: {{area['Sub']}}</h2>
 
-
+<div class = areaNotifSpace>
+{% for notif in notifs%}
+    <div class="{{notif['type']}}"> 
+        <p> {{notif['text']}}</p>
+    </div>
+{% endfor %}
+</div>
 
 {% endblock %}  
 
