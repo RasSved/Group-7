@@ -34,15 +34,12 @@ notifContent = {"service": "Your machine needs knife replacement, your service p
 
 @customer_bp.route("/", methods=["GET", "POST"])
 def customer():
-<<<<<<< HEAD
-=======
     #verifies that logged in user is a customer
     role = session["role"]
     if role != "customer":
         return redirect("/logout")
     
     notifContent = {"service": "Your machine needs knife replacement, your service provider has been notified, no action required from you."}
->>>>>>> e0c94488727d05d8a1636eef96d63b3434e83c17
     notifStrings = {}
     cusAreas = areas.find({"CustomerId": 0})   # get entire collection
 
