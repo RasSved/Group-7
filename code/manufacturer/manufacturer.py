@@ -27,16 +27,31 @@ class ProductForm(FlaskForm):
 
 @manufacturer_bp.route("/manufacturer")
 def manufacturer():
+    #verifies that logged in user is a manufacturer
+    role = session["role"]
+    if role != "manufacturer":
+        return redirect("/logout")
+    
     return render_template("manmain.html", title = "Home Page")
 
 @manufacturer_bp.route("/mowerpagehq.html")
 def mower():
+    #verifies that logged in user is a manufacturer
+    role = session["role"]
+    if role != "manufacturer":
+        return redirect("/logout")
+    
     return render_template("mowerpagehq.html", title = "Mower Page")
 
 
 
 @manufacturer_bp.route("/requesthq.html")
 def requesthq():
+    #verifies that logged in user is a manufacturer
+    role = session["role"]
+    if role != "manufacturer":
+        return redirect("/logout")
+    
     data_from_mongodb = guides.find()
     #requests = []
     #for request in guides.find().sort("date_completed", -1):
@@ -49,26 +64,56 @@ def requesthq():
 
 @manufacturer_bp.route("/requestinfohq.html")
 def requestinfo():
+    #verifies that logged in user is a manufacturer
+    role = session["role"]
+    if role != "manufacturer":
+        return redirect("/logout")
+    
     return render_template("requestinfohq.html", title = "Request Info")
 
 @manufacturer_bp.route("/customerinfohq.html")
 def customerinfo():
+    #verifies that logged in user is a manufacturer
+    role = session["role"]
+    if role != "manufacturer":
+        return redirect("/logout")
+    
     return render_template("customerinfohq.html", title = "Customer Info")
 
 @manufacturer_bp.route("/providerlisthq.html")
 def providerlist():
+    #verifies that logged in user is a manufacturer
+    role = session["role"]
+    if role != "manufacturer":
+        return redirect("/logout")
+    
     return render_template("providerlisthq.html", title = "Provider List")
 
 @manufacturer_bp.route("/areainfohq.html")
 def areainfo():
+    #verifies that logged in user is a manufacturer
+    role = session["role"]
+    if role != "manufacturer":
+        return redirect("/logout")
+    
     return render_template("areainfohq.html", title = "Area Info")
 
 @manufacturer_bp.route("/productlisthq.html")
 def productlist():
+    #verifies that logged in user is a manufacturer
+    role = session["role"]
+    if role != "manufacturer":
+        return redirect("/logout")
+    
     return render_template("productlisthq.html", title = "Product List")
 
 @manufacturer_bp.route("/addproducthq.html", methods=("GET", "POST"))
 def addproduct():
+    #verifies that logged in user is a manufacturer
+    role = session["role"]
+    if role != "manufacturer":
+        return redirect("/logout")
+    
     if request.method == "POST":
         form = ProductForm(request.form)
         add_name = form.name.data

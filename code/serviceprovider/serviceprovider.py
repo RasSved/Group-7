@@ -17,6 +17,11 @@ mowers = db.Mowers  # SePrMowers
 
 @serviceprovider_bp.route("/", methods=["GET", "POST"])
 def serviceprovider():
+    #verifies that logged in user is a serviceprovider
+    role = session["role"]
+    if role != "serviceprovider":
+        return redirect("/logout")
+    
     all_areas = areas.find()   # get entire collection
     all_mowers = mowers.find()   # get entire collection
     return render_template("SePrMain.html", areas = all_areas, mowers = all_mowers)
@@ -24,6 +29,11 @@ def serviceprovider():
 
 @serviceprovider_bp.route("/add_area", methods=["POST"])
 def addArea():
+    #verifies that logged in user is a serviceprovider
+    role = session["role"]
+    if role != "serviceprovider":
+        return redirect("/logout")
+    
     #print(request.form, file=sys.stderr)
     if request.method == "POST":
         if ("address" in request.form): # if all needed keys are present
@@ -57,6 +67,11 @@ def enterArea():
 
 @serviceprovider_bp.route("/area", methods = ["GET", "POST"])
 def area():
+    #verifies that logged in user is a serviceprovider
+    role = session["role"]
+    if role != "serviceprovider":
+        return redirect("/logout")
+    
     if "area_id" in session:
         areaId = session["area_id"]
         area = areas.find({"_id": ObjectId(areaId)})[0]    # find area where id is the same as area clicked
@@ -70,6 +85,11 @@ def area():
 
 @serviceprovider_bp.route("/area/mower", methods = ["GET", "POST"])
 def mower():
+    #verifies that logged in user is a serviceprovider
+    role = session["role"]
+    if role != "serviceprovider":
+        return redirect("/logout")
+    
     #print(request.form, file=sys.stderr)
     if "area_id" in session:
         areaId = session["area_id"]
@@ -146,6 +166,11 @@ def areaNav():
 
 @serviceprovider_bp.route("/area/map", methods = ["GET", "POST"])
 def map():
+    #verifies that logged in user is a serviceprovider
+    role = session["role"]
+    if role != "serviceprovider":
+        return redirect("/logout")
+    
     print(request.form, file=sys.stderr)
     if "area_id" in session:
         areaId = session["area_id"]
@@ -161,6 +186,11 @@ def map():
 
 @serviceprovider_bp.route("/area/schedule", methods = ["GET", "POST"])
 def schedule():
+    #verifies that logged in user is a serviceprovider
+    role = session["role"]
+    if role != "serviceprovider":
+        return redirect("/logout")
+    
     print(request.form, file=sys.stderr)
     if "area_id" in session:
         areaId = session["area_id"]
@@ -176,6 +206,11 @@ def schedule():
 
 @serviceprovider_bp.route("/area/settings", methods = ["GET", "POST"])
 def settings():
+    #verifies that logged in user is a serviceprovider
+    role = session["role"]
+    if role != "serviceprovider":
+        return redirect("/logout")
+    
     print(request.form, file=sys.stderr)
     if "area_id" in session:
         areaId = session["area_id"]
