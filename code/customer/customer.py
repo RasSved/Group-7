@@ -34,6 +34,15 @@ notifContent = {"service": "Your machine needs knife replacement, your service p
 
 @customer_bp.route("/", methods=["GET", "POST"])
 def customer():
+<<<<<<< HEAD
+=======
+    #verifies that logged in user is a customer
+    role = session["role"]
+    if role != "customer":
+        return redirect("/logout")
+    
+    notifContent = {"service": "Your machine needs knife replacement, your service provider has been notified, no action required from you."}
+>>>>>>> e0c94488727d05d8a1636eef96d63b3434e83c17
     notifStrings = {}
     cusAreas = areas.find({"CustomerId": 0})   # get entire collection
 
@@ -102,6 +111,11 @@ def enterArea():
 
 @customer_bp.route("/area", methods = ["GET", "POST"])
 def area():
+    #verifies that logged in user is a customer
+    role = session["role"]
+    if role != "customer":
+        return redirect("/logout")
+    
     if "area_id" in session:
         areaId = session["area_id"]
         area = areas.find({"_id": ObjectId(areaId)})[0]    # find area where id is the same as area clicked
@@ -138,6 +152,11 @@ def areaNav():
 
 @customer_bp.route("/area/map", methods = ["GET", "POST"])
 def map():
+    #verifies that logged in user is a customer
+    role = session["role"]
+    if role != "customer":
+        return redirect("/logout")
+    
     print(request.form, file=sys.stderr)
     if "area_id" in session:
         areaId = session["area_id"]
@@ -149,6 +168,11 @@ def map():
 
 @customer_bp.route("/area/schedule", methods = ["GET", "POST"])
 def schedule():
+    #verifies that logged in user is a customer
+    role = session["role"]
+    if role != "customer":
+        return redirect("/logout")
+    
     print(request.form, file=sys.stderr)
     if "area_id" in session:
         areaId = session["area_id"]
@@ -160,6 +184,11 @@ def schedule():
 
 @customer_bp.route("/area/configure", methods = ["GET", "POST"])
 def configure():
+    #verifies that logged in user is a customer
+    role = session["role"]
+    if role != "customer":
+        return redirect("/logout")
+    
     print(request.form, file=sys.stderr)
     if "area_id" in session:
         areaId = session["area_id"]
