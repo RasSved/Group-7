@@ -15,6 +15,7 @@ db = client.MowerDB
 areas = db.Areas
 notifs = db.Notifications
 mowers = db.Mower
+services = db.Services
 
 notifContent = {"service": "Your machine needs knife replacement, your service provider has been notified, no action required from you."}
 
@@ -34,15 +35,12 @@ notifContent = {"service": "Your machine needs knife replacement, your service p
 
 @customer_bp.route("/", methods=["GET", "POST"])
 def customer():
-<<<<<<< HEAD
-=======
     #verifies that logged in user is a customer
     role = session["role"]
     if role != "customer":
         return redirect("/logout")
     
     notifContent = {"service": "Your machine needs knife replacement, your service provider has been notified, no action required from you."}
->>>>>>> e0c94488727d05d8a1636eef96d63b3434e83c17
     notifStrings = {}
     cusAreas = areas.find({"CustomerId": 0})   # get entire collection
 
@@ -87,14 +85,20 @@ def addArea():
 def editArea():
     #print(request.form, file=sys.stderr)
     if request.method == "POST":
-        if all(k in request.form for k in ("sub", "grassLength", "address")): # if all needed keys are present
+        if all(k in request.form for k in ("sub", "grassLength", "notifTime")): # if all needed keys are present
             print(request.form, file=sys.stderr)
+            areaId = ObjectId(session["area_id"])
+            currArea = areas.find_one({"_id": areaId})
             sub = request.form["sub"]
+            subId = services.find_one({"ServiceName": sub})['_id']
             grassLength = request.form["grassLength"]
-            address = request.form["address"]
-            areas.delete_one({"Address": address})
-            areas.insert_one({"Sub": sub, "grassLength": grassLength, "CustomerId": 0, "ServiceId": None, "Address": address})      
-    return redirect(url_for("customer.customer"))    
+            notifTime = request.form["notifTime"]
+            if currArea["Status"] == "Unconfirmed":
+                areas.find_one_and_update({"_id": areaId}, {'$set': {"GrassLength": int(grassLength), "ServiceId": subId, "NotifTime": int(notifTime), "Status": "Pending"}})
+            else: 
+                areas.find_one_and_update({"_id": areaId}, {'$set': {"GrassLength": int(grassLength), "ServiceId": subId, "NotifTime": int(notifTime)}})
+    return redirect(url_for("customer.customer"))
+    
 
     
 @customer_bp.route("/enter", methods = ["GET", "POST"])
@@ -193,8 +197,9 @@ def configure():
     if "area_id" in session:
         areaId = session["area_id"]
         area = areas.find({"_id": ObjectId(areaId)})[0]    # find area where id is the same as area clicked
+        sub = services.find_one({"_id": area["ServiceId"]})["ServiceName"] #get name of service level for current area
         #print(area, file=sys.stderr)
-        return render_template("CusConf.html", area=area, title="Customer Configure")
+        return render_template("CusConf.html", area=area, sub=sub, title="Customer Configure")
     else:
         return redirect(url_for("customer.customer"))
     

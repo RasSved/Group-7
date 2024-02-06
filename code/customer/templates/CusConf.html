@@ -3,6 +3,8 @@
 {% block head %}
 {% endblock %}
 
+
+
 {% block body %}
 
 <ul class="breadcrumbs">
@@ -12,42 +14,69 @@
 </ul>
 <h2>{{area['Address']}}</h2>
 
-<button type="button" data-bs-toggle="modal" data-bs-target="#editAreaWindow">
-    Edit Area
-</button>
 <form name = "editArea" method="POST" action="{{ url_for('customer.editArea') }}">  
-    <div id="editAreaWindow" class="modal fade" role="dialog">
-        <div class="modal-dialog modal-md">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h4 class="area-create-title">Edit area</h4>
-                    <!--<button type="button" class="btn close" data-bs-dismiss="modal">&times;</button>  -->
-                </div>
-                <div class="modal-body">
-                    <p>Make the area</p>
-                    <label for = "grass-input" >Grass length</label>
-                    <input type="text" name ="grassLength"> <br>
 
-                    <h4>Adress: {{area['Address']}}</h4>
+    <label for = "sub-input" >Subscription</label> <br>
+    <input type = "radio" name = "sub" for="sub-input" value = "basic"> <label for="basic">Basic</label> <br>
+    <input type = "radio" name = "sub" for="sub-input" value = "gold"> <label for="gold">Gold</label> <br>
+    <input type = "radio" name = "sub" for="sub-input" value = "supreme"> <label for="supreme">Supreme</label> <br>
 
-                    <label for = "address" >Address</label>
-                    <input type="hidden", value="{{area['Address']}}", name ="address"> <br>
+    {% if area['GrassLength'] != none %}
+    <label for = "grass-input" >Grass length</label>
+    <input id = "grass-input" type="text" name ="grassLength" value="{{area['GrassLength']}}"> <br>
+    {% else %}
 
-                    <label for = "sub-input" >Subscription</label> <br>
-                    <input type = "radio" name = "sub" for="sub-input" value = "basic"> <label for="basic">Basic</label> <br>
-                    <input type = "radio" name = "sub" for="sub-input" value = "gold"> <label for="gold">Gold</label> <br>
-                    <input type = "radio" name = "sub" for="sub-input" value = "supreme"> <label for="supreme">Supreme</label> <br>
-                </div>
-                <div class="modal-foooter">
-                    <button type="button" class="btn footer-button" data-bs-dismiss="modal">Close</button>
+    <label for = "grass-input" >Grass length</label>
+    <input id = "grass-input" type="text" name ="grassLength" value="3">  <br>
+    {% endif %}
 
-                    <button type="submit" class="btn footer-button">Submit</button>
+    {% if area['NotifTime'] != none %}
 
-                </div>
-            </div>
-        </div>
-    </div>
-</form>  
+    <label for = "notif-input" >Time to notify service provider</label>
+    <input id = "notif-input" type="text" name ="notifTime" value = "{{area['NotifTime']|string}}"> <br>
+
+    {% else %}
+
+    <label for = "notif-input" >Time to notify service provider</label>
+    <input id = "notif-input" type="text" name ="notifTime" value = "24"> <br>
+
+    {% endif %}
+
+    <button type="submit" id = "confirm-submit" class="btn footer-button">Submit</button>
+
+</form> 
+
+<!-- outline of function from https://stackoverflow.com/questions/8838648/onchange-event-handler-for-radio-button-input-type-radio-doesnt-work-as-one-->
+
+
+<script>  
+    var rad = document.editArea.sub;
+    var prev = null;
+    var currSub = "{{sub}}"
+
+    //for every radio button
+    
+    for (var i = 0; i < rad.length; i++) {
+
+        //set default checked if sub matches
+
+        if (rad[i].value == currSub) {
+
+            rad[i].checked = true;
+        }
+
+        //add listener to see when change occurs (currently unused)
+        rad[i].addEventListener('change', function() {
+            (prev) ? console.log(prev.value): null;
+            if (this !== prev) {
+                prev = this;
+            }
+            console.log(this.value)
+        });
+        
+    }
+
+</script>
 
 {% endblock %}  
 
@@ -69,3 +98,6 @@
 </form>
 
 {% endblock %} 
+
+
+

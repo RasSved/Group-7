@@ -184,3 +184,8 @@ ul.breadcrumbs li a:hover {
     border-style: solid;
     border: 1px solid #424242
 }
+
+#confirm-submit {
+    background-color: rgb(47, 44, 238);
+    color: white;
+}
