@@ -1,0 +1,34 @@
+{% extends 'basehq.html' %}
+
+{% block head %}
+{% endblock %}
+
+
+{% block body %}
+<ul class="breadcrumbs">
+    <li> <a href="/manufacturer/manufacturer">Main</a></li>
+    <li> <a href="requesthq.html">Request</a></li>
+</ul>
+<h2>Request List</h2>
+{% for item in data %}
+<div class="container">
+    <div class="products">
+        <div class="product-box">
+            <h2>Request: </h2>
+            <p>Fel: {{ item.Type }}</p>
+            <p>Beskrivning: {{ item.Content }}</p>
+            <a href="{{ url_for('manufacturer.requestinfo', request_id= item.id) }}">
+                <button type="button">Request Info</button>
+            </a>
+        </div>
+    </div>
+</div>
+{% endfor %}
+{% endblock %}
+
+
+{% block navbuttons %}
+<li class="nav-item active">
+    <a class="nav-link" href="/manufacturer/manufacturer">Home</a>
+</li>
+{% endblock %}
