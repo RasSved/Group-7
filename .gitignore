@@ -1,1 +1,7 @@
-__pycache__/
+code/__pycache__/
+
+code/customer/__pycache__/
+
+code/manufacturer/__pycache__/
+
+code/serviceprovider/__pycache__/
