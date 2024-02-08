@@ -197,8 +197,10 @@ def configure():
     if "area_id" in session:
         areaId = session["area_id"]
         area = areas.find({"_id": ObjectId(areaId)})[0]    # find area where id is the same as area clicked
-        sub = services.find_one({"_id": area["ServiceId"]})["ServiceName"] #get name of service level for current area
+        sub = services.find_one({"_id": area["ServiceId"]}) #get name of service level for current area
         #print(area, file=sys.stderr)
+        if sub != None:
+            sub = sub["ServiceName"] 
         return render_template("CusConf.html", area=area, sub=sub, title="Customer Configure")
     else:
         return redirect(url_for("customer.customer"))
