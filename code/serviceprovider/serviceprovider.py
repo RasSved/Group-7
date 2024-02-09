@@ -85,18 +85,20 @@ def area():
 
 @serviceprovider_bp.route("/area/mower", methods = ["GET", "POST"])
 def mower():
-    #verifies that logged in user is a serviceprovider
+    # verifies that logged in user is a serviceprovider
     role = session["role"]
     if role != "serviceprovider":
         return redirect("/logout")
-    
+
     #print(request.form, file=sys.stderr)
-    if "area_id" in session:
+    if "area_id" in session and "mower_id" in session:
         areaId = session["area_id"]
-        area = areas.find({"_id": ObjectId(areaId)})[0]    # find area where id is the same as area clicked
+        area = areas.find({"_id": ObjectId(areaId)})[0]         # find area where id is the same as area clicked
         #print(area, file=sys.stderr)
 
-        lawnmower = mowers.find()
+        mowerId = session["mower_id"]
+        lawnmower = mowers.find({"_id": ObjectId(mowerId)})[0]
+        print(lawnmower, file=sys.stderr)
 
         return render_template("SePrMower.html", area=area, lawnmower=lawnmower)
     else:
@@ -107,23 +109,26 @@ def mower():
 def addMower():
     #print(request.form, file=sys.stderr)
     if request.method == "POST":
-        if ("Xpos" in request.form and "Ypos" in request.form): # if all needed keys are present
+        if ("Xpos" in request.form and "Ypos" in request.form):     # if all needed keys are present
             print(request.form, file=sys.stderr)
 
+            # find the active area
+            areaId = session["area_id"]
+            area = areas.find({"_id": ObjectId(areaId)})[0]
+            #print("AREA: ", area)
 
-            area_id = session["area_id"]
-            area = areas.find({"_id": ObjectId(area_id)})[0]
-            print("AREA: ", area)
-
+            # info about the new lawnmower
             providerId = 0
-            areaId = area['CustomerId']
+            mower_areaId = area['CustomerId']
             productId = 0
             Xpos = request.form["Xpos"]
             Ypos = request.form["Ypos"]
             objId = ObjectId()
 
-            mowers.insert_one({"ProviderId": providerId, "AreaId": areaId, "ProductId": productId, "Xpos": Xpos, "Ypos": Ypos, "_id": objId})
-            #session["area_id"] = 
+            # adding the new lawnmower
+            mowers.insert_one({"ProviderId": providerId, "AreaId": mower_areaId, "ProductId": productId, "Xpos": Xpos, "Ypos": Ypos, "_id": objId})
+
+            session["mower_id"] = str(objId)     # add new mower to active session
 
             return redirect(url_for("serviceprovider.mower"))
     return redirect(url_for("serviceprovider.area")) 
@@ -132,20 +137,19 @@ def addMower():
 @serviceprovider_bp.route("/area/enter_mower", methods = ["GET", "POST"])
 def enterMower():
     print(request.form, file=sys.stderr)
-    if ("areaId" in request.form and "mowerId" in request.form):
+    if ("areaId" in request.form):
 
         areaId = request.form["areaId"]
         mowerId = request.form["mowerId"]
 
-        # find area where id is the same as area clicked
-
         #print(area, file=sys.stderr)
 
         session["area_id"] = areaId
+        session["mower_id"] = mowerId
 
         return redirect(url_for("serviceprovider.mower"))
-    else:
-        return redirect(url_for("serviceprovider.area"))
+    else:   # if the request contains wrong info, send the user back to serviceproviders main-page
+        return redirect(url_for("serviceprovider.serviceprovider"))
 
 
 @serviceprovider_bp.route("/area/nav", methods = ["GET", "POST"])  # Depending on which button was clicked from navigation form, navigate

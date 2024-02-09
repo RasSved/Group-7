@@ -41,12 +41,14 @@
 
         {%if lm['AreaId'] == area['CustomerId']%}
 
-        <form name = "viewMower" method = "POST" action="{{ url_for('serviceprovider.mower')}}">
+        <form name = "viewMower" method = "POST" action="{{ url_for('serviceprovider.enterMower')}}">
             <button type = "submit" name = "areaId" value = "{{area['_id']}}">
                 X position: {{lm['Xpos']}} <br> 
                 Y position: {{lm['Ypos']}}
                 <!-- <div class="statusBox">{{area['Status']}}</div> -->
             </button>
+
+            <input type="hidden" name="mowerId" value="{{lm['_id']}}">      <!-- to send the mowerId -->
         </form>
 
         {% endif %}
