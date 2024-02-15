@@ -6,6 +6,7 @@ customer_bp = Blueprint('customer', __name__,
 from pymongo import MongoClient
 from bson.objectid import ObjectId
 import sys
+from datetime import datetime
 
 # Setting up/connecting to database
 client = MongoClient('localhost', 27017)
@@ -206,3 +207,38 @@ def configure():
         return redirect(url_for("customer.customer"))
     
 
+### Maybe in app instead of customer?
+
+@customer_bp.route("/recData", methods=["GET", "POST"])
+def recieveData():
+    data = request.json
+    print(request.json, file=sys.stderr)
+    match data["type"]:
+        case "stuck":
+            #Insert "stuck" into notifications if not already exists + update mower position
+
+            mowers.find_one_and_update({"_id": ObjectId(data["MowerId"])}, {'$set': {"Xpos": data["Xpos"], "Ypos": data["Ypos"]}})
+            notifs.update_one({"MowerId": ObjectId(data["MowerId"]), "Content": "stuck",}, {'$set': {"AreaId": ObjectId(data["AreaId"]), "Type": "alert", "seen": False, "Date": datetime.now()}}, upsert = True)
+
+            #Create service ticket to service provider
+            ###
+            ###
+            ###
+        case "unstuck":
+            #Delete notification, update position
+
+            mowers.find_one_and_update({"_id": ObjectId(data["MowerId"])}, {'$set': {"Xpos": data["Xpos"], "Ypos": data["Ypos"]}})
+            notifs.delete_one({"MowerId": ObjectId(data["MowerId"]), "Content": "stuck"})
+            pass
+
+        case "service":
+            #Insert "service" into notifications if not already exists + update mower position
+
+            mowers.find_one_and_update({"_id": ObjectId(data["MowerId"])}, {'$set': {"Xpos": data["Xpos"], "Ypos": data["Ypos"]}})
+            notifs.update_one({"MowerId": ObjectId(data["MowerId"]), "Content": "service",}, {'$set': {"AreaId": ObjectId(data["AreaId"]), "Type": "warning", "seen": False, "Date": datetime.now()}}, upsert = True)
+
+            #Create service ticket to service provider
+            ###CODE FOR SERVICE TICKET HERE
+            ###
+            ###
+    return "", 204

@@ -12,7 +12,7 @@
 
 {%for area in areas%}
 
-<form name = "viewArea" method = "POST" action="{{ url_for('customer.enterArea')}}">
+<form name = "main-products" method = "POST" action="{{ url_for('customer.enterArea')}}">
     <button type = "submit" name = "areaId" value = "{{area['_id']}}">
         <div class="infoSpace">
             {{area['Address']}}
