@@ -66,11 +66,11 @@ def customer():
 def addArea():
     #print(request.form, file=sys.stderr)
     if request.method == "POST":
-        if ("address" in request.form): # if all needed keys are present
+        if ("address" and "addressNumber" in request.form): # if all needed keys are present
             print(request.form, file=sys.stderr)
             serviceId = None
             grassLength = None
-            address = request.form["address"]
+            address = request.form["address"] + " " + request.form["addressNumber"]
             homeX = None
             homeY = None
             customerId = 0 #placeholder for session
