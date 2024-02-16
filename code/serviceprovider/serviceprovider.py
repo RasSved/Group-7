@@ -10,9 +10,9 @@ client = MongoClient('localhost', 27017)
 db = client.MowerDB
 
 # Single definition for table, change later
-areas = db.Areas    # SePrAreas
-mowers = db.Mowers  # SePrMowers
-# SePrAreas & SePrMowers are old collections. Delete if you still have it!
+areas = db.Areas
+mowers = db.Mower
+service_tickets = db.Service_Tickets
 
 
 @serviceprovider_bp.route("/", methods=["GET", "POST"])
