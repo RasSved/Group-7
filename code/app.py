@@ -36,11 +36,10 @@ def login():
         #identifies if tuple of username and password exists in database
         
         #debugging -->
-        cursor = accounts.find()
-        for occ in cursor:
-            print("occurences: ")
-            print(occ)
-
+        #cursor = accounts.find()
+        #for occ in cursor:
+        #    print("occurences: ")
+        #    print(occ)
         #<--
 
         user_tuple = accounts.find_one({"Username": username, "Password":password})
