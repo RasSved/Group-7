@@ -6,7 +6,7 @@ customer_bp = Blueprint('customer', __name__,
 from pymongo import MongoClient
 from bson.objectid import ObjectId
 import sys
-from datetime import datetime
+from datetime import datetime, timedelta
 
 # Setting up/connecting to database
 client = MongoClient('localhost', 27017)
@@ -17,6 +17,7 @@ areas = db.Areas
 notifs = db.Notifications
 mowers = db.Mower
 services = db.Services
+tickets = db.Service_Tickets
 
 notifContent = {"service": "Your machine needs knife replacement, your service provider has been notified, no action required from you."}
 
@@ -98,6 +99,7 @@ def editArea():
                 areas.find_one_and_update({"_id": areaId}, {'$set': {"GrassLength": int(grassLength), "ServiceId": subId, "NotifTime": int(notifTime), "Status": "Pending"}})
             else: 
                 areas.find_one_and_update({"_id": areaId}, {'$set': {"GrassLength": int(grassLength), "ServiceId": subId, "NotifTime": int(notifTime)}})
+
     return redirect(url_for("customer.customer"))
     
 
@@ -216,29 +218,45 @@ def recieveData():
     match data["type"]:
         case "stuck":
             #Insert "stuck" into notifications if not already exists + update mower position
+            areaId = ObjectId(data["AreaId"])
+            mowerId = ObjectId(data["MowerId"])
 
-            mowers.find_one_and_update({"_id": ObjectId(data["MowerId"])}, {'$set': {"Xpos": data["Xpos"], "Ypos": data["Ypos"]}})
-            notifs.update_one({"MowerId": ObjectId(data["MowerId"]), "Content": "stuck",}, {'$set': {"AreaId": ObjectId(data["AreaId"]), "Type": "alert", "seen": False, "Date": datetime.now()}}, upsert = True)
-
+            mowers.find_one_and_update({"_id": mowerId}, {'$set': {"Xpos": data["Xpos"], "Ypos": data["Ypos"]}})
+            notifs.update_one({"MowerId": mowerId, "Content": "stuck",}, {'$setOnInsert': {"AreaId": areaId, "Type": "alert", "Seen": False, "Date": datetime.now()}}, upsert = True)
             #Create service ticket to service provider
-            ###
-            ###
-            ###
+
+            providerId = mowers.find_one({"_id": mowerId})["ProviderId"] # Get default area provider
+            notifId = notifs.find_one({"MowerId": mowerId, "Content": "stuck", "AreaId": areaId})["_id"]
+            dueDate = datetime.now() + timedelta(days=2)
+            tickets.update_one({"NotifId": notifId}, {'$setOnInsert': {"MowerId": mowerId, "AreaId": areaId , "Content": "stuck", "ProviderId": providerId, "DateCreated": datetime.now(), "Content": "stuck", "Completed": False, "DueDate": dueDate}}, upsert = True)
+            
         case "unstuck":
             #Delete notification, update position
 
-            mowers.find_one_and_update({"_id": ObjectId(data["MowerId"])}, {'$set': {"Xpos": data["Xpos"], "Ypos": data["Ypos"]}})
-            notifs.delete_one({"MowerId": ObjectId(data["MowerId"]), "Content": "stuck"})
-            pass
+            areaId = ObjectId(data["AreaId"])
+            mowerId = ObjectId(data["MowerId"])
+
+            mowers.find_one_and_update({"_id": mowerId}, {'$set': {"Xpos": data["Xpos"], "Ypos": data["Ypos"]}})
+            notifId = notifs.find_one({"MowerId": mowerId, "Content": "stuck"})["_id"]
+            notifs.delete_one({"_id": notifId})
+
+            #Set service ticket status to complete
+
+            tickets.find_one_and_update({"NotifId": notifId}, {"$set": {"Completed": True, "NotifId": None}})
 
         case "service":
+
+            areaId = ObjectId(data["AreaId"])
+            mowerId = ObjectId(data["MowerId"])
             #Insert "service" into notifications if not already exists + update mower position
 
-            mowers.find_one_and_update({"_id": ObjectId(data["MowerId"])}, {'$set': {"Xpos": data["Xpos"], "Ypos": data["Ypos"]}})
-            notifs.update_one({"MowerId": ObjectId(data["MowerId"]), "Content": "service",}, {'$set': {"AreaId": ObjectId(data["AreaId"]), "Type": "warning", "seen": False, "Date": datetime.now()}}, upsert = True)
-
+            mowers.find_one_and_update({"_id": mowerId}, {'$set': {"Xpos": data["Xpos"], "Ypos": data["Ypos"]}})
+            notifs.update_one({"MowerId": mowerId, "Content": "stuck",}, {'$setOnInsert': {"AreaId": areaId, "Type": "warning", "Seen": False, "Date": datetime.now()}}, upsert = True)
             #Create service ticket to service provider
-            ###CODE FOR SERVICE TICKET HERE
-            ###
-            ###
+
+            providerId = mowers.find_one({"_id": mowerId})["ProviderId"] # Get default area provider
+            notifId = notifs.find_one({"MowerId": mowerId, "Content": "service", "AreaId": areaId})["_id"]
+            dueDate = datetime.now() + timedelta(days=14)
+            tickets.update_one({"NotifId": notifId}, {'$setOnInsert': {"MowerId": mowerId, "AreaId": areaId , "Content": "service", "ProviderId": providerId, "DateCreated": datetime.now(), "Content": "service", "Completed": False, "DueDate": dueDate}}, upsert = True)
+
     return "", 204
