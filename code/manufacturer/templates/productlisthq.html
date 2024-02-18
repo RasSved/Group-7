@@ -1,0 +1,40 @@
+{% extends 'basehq.html' %}
+
+{% block head %}
+{% endblock %}
+
+
+{% block body %}
+<ul class="breadcrumbs">
+    <li> <a href="/manufacturer/manufacturer">Main</a></li>
+    <li> <a href="mowerpagehq.html">Mower page</a></li>
+    <li> <a href="productlisthq.html.html">Productlist</a></li>
+</ul>
+<a href="addproducthq.html">
+    <button type="button">Add Product</button>
+</a>
+<div class="container">
+    <div class="products">
+        <div class="product-box">
+            <h2>Product 1</h2>
+            <p>Klippare 1</p>
+            <a href="#">
+                <button type="button">Product Info</button>
+            </a>
+        </div>
+        <div class="product-box">
+            <h2>Product 2</h2>
+            <p>Klippare 2</p>
+            <a href="#">
+                <button type="button">Product Info</button>
+            </a>
+        </div>
+    </div>
+</div>
+{% endblock %} 
+
+{% block navbuttons %}
+<li class="nav-item active">
+    <a class="nav-link" href="/manufacturer/manufacturer">Home</a>
+</li>
+{% endblock %}

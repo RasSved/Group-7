@@ -1,0 +1,37 @@
+{% extends 'basehq.html' %}
+
+{% block head %}
+{% endblock %}
+
+
+{% block body %}
+<ul class="breadcrumbs">
+  <li> <a href="/manufacturer/manufacturer">Main</a></li>
+  <li> <a href="requesthq.html">Request</a></li>
+  <li> <a href="requestinfohq.html">Request Info</a></li>
+</ul>
+<h2>Request Info</h2>
+<div class="request-info">
+    <form>
+      <p>Type: {{request['Type']}}</p>
+        <br>
+        <br>
+      <label>Request:</label>
+      <br>
+      <br>
+      <a href="{{ url_for('manufacturer.requesthq') }}">
+        <button type="button">Back</button>
+    </a>
+    <form name = "customerInfo" method = "POST" action="{{ url_for('manufacturer.entercustomer')}}">
+      <button type = "submit" name = "customerId" value = "{{ request['Customerid'] }}">Customer Info
+      </button>
+    </form>
+    </form>
+  </div>
+{% endblock %}
+
+{% block navbuttons %}
+<li class="nav-item active">
+    <a class="nav-link" href="/manufacturer/manufacturer">Home</a>
+</li>
+{% endblock %}
