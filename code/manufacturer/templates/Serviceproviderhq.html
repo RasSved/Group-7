@@ -5,28 +5,29 @@
 
 
 {% block body %}
+<ul class="breadcrumbs">
+    <li> <a href="/manufacturer/manufacturer">Main</a></li>
+    <li> <a href="Serviceproviderhq.html">Serviceproviders</a></li>
+</ul>
+
 <h2>Provider List</h2>
 <a href="customerinfohq.html">
     <button type="button">back</button>
 </a>
+
 <div class="container">
     <div class="products">
+        {% for providers in provider_accounts %}
         <div class="product-box">
-            <h2>Provider 1</h2>
-            <p>BING BONG</p>
+            <h2>{{ providers[1] }}</h2>
             <a href="">
-                <button type="button">Pick</button>
+                <button type="button">Info</button>
             </a>
         </div>
-        <div class="product-box">
-            <h2>Provider 2</h2>
-            <p>LANG TANG</p>
-            <a href="">
-                <button type="button">Pick</button>
-            </a>
-        </div>
+        {% endfor %}
     </div>
 </div>
+
 {% endblock %}
 
 {% block navbuttons %}

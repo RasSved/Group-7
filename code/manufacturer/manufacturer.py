@@ -95,7 +95,20 @@ def providerlist():
     if role != "manufacturer":
         return redirect("/logout")
     
-    return render_template("providerlisthq.html", title = "Provider List")
+    #finnd serviceprovider accounts and create them into dictionary
+    cursor = db.Accounts.find({"ProviderId": {"$ne": None} })
+    provider_accounts = []
+    for document in cursor:
+        another_account = []
+        another_account.append(document["ProviderId"])
+        another_account.append(document["Username"])
+        provider_accounts.append(another_account)
+    #---
+
+
+    print("providers:    ", provider_accounts)
+    
+    return render_template("Serviceproviderhq.html", provider_accounts = provider_accounts, title = "Provider List")
 
 @manufacturer_bp.route("/areainfohq.html")
 def areainfo():
