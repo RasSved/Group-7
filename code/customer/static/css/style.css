@@ -189,3 +189,30 @@ ul.breadcrumbs li a:hover {
     background-color: rgb(47, 44, 238);
     color: white;
 }
+
+.sub-display {
+    display: inline-block;
+}
+
+.sub-display img{
+    height: 20px;
+    width: 20px;
+}
+
+.sub-display:hover + .sub-info{   /* apply this style to sub info if sub-display is hovered*/
+    display: inline-block;
+    height: 150px;
+    width: 300px;
+    position: absolute;
+    z-index: 100;
+    border: 1px solid black;
+    border-radius: 10px;
+    background-color: white;
+    margin-left: 20px;
+    padding: 5px;
+}
+
+.sub-info {
+    display: none;
+}
+
