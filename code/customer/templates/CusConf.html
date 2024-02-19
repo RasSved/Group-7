@@ -28,6 +28,7 @@
     <input type = "radio" name = "sub" for="sub-input" value = "supreme"> <label for="supreme">Supreme</label>
     <div class="sub-display"><img src= "{{url_for('.static', filename = 'images/info.png')}}" alt="no img"></div> <div class = "sub-info">Free Pushes: 30 <br> Inspections per year: 6 <br> Maximum grass variation: 1 cm <br> Service priority: High </div>
     <br>
+    <br>
     {% if area['GrassLength'] != none %}
     <label for = "grass-input" >Grass length </label>
     <input id = "grass-input" type="tel" pattern="[1-9]{1}" name ="grassLength" value="{{area['GrassLength']}}" title="Please enter value between 1-9 (cm)"> cm <br>

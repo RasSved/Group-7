@@ -216,3 +216,12 @@ ul.breadcrumbs li a:hover {
     display: none;
 }
 
+
+#grass-input {
+    width: 30px;
+}
+
+#notif-input {
+    width: 30px;
+
+}
