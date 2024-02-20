@@ -190,6 +190,15 @@ ul.breadcrumbs li a:hover {
     color: white;
 }
 
+.sub-display {
+    display: inline-block;
+}
+
+.sub-display img{
+    height: 20px;
+    width: 20px;
+}
+
 .sub-display:hover + .sub-info{   /* apply this style to sub info if sub-display is hovered*/
     display: inline-block;
     height: 150px;
