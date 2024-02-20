@@ -30,7 +30,7 @@ def index():
 @app.route('/login', methods=['POST', 'GET'])
 def login():
     if request.method == "POST":
-        username = request.form["username"]
+        Email = request.form["Email"]
         password = request.form["password"]
 
         #identifies if tuple of username and password exists in database
@@ -42,14 +42,14 @@ def login():
         #    print(occ)
         #<--
 
-        user_tuple = accounts.find_one({"Username": username, "Password":password})
+        user_tuple = accounts.find_one({"Username": Email, "Password":password})
         if not user_tuple:
             return render_template("login.html", error="Invalid username or password")
 
         #sets session data for data regarding that user, before sending onwards
         #print("tuple: ", user_tuple)
-        session['user_id'] = str(user_tuple["_id"])       
-        session["username"] = user_tuple["Username"]
+        session['user_id'] = str(user_tuple["_id"])   
+        session["Email"] = Email    
         session["role"] = user_tuple["Role"]
         return redirect(url_for("role_redirect"))
 
@@ -61,7 +61,7 @@ def login():
 #redirects depending on the role of user
 @app.route("/role_redirect")
 def role_redirect():
-    if "username" in session:
+    if "Role" in session:
         role = session["role"]
         if role == "customer":
             return redirect(url_for("customer.customer"))
