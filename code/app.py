@@ -42,7 +42,7 @@ def login():
         #    print(occ)
         #<--
 
-        user_tuple = accounts.find_one({"Username": Email, "Password":password})
+        user_tuple = accounts.find_one({"Email": Email, "Password":password})
         if not user_tuple:
             return render_template("login.html", error="Invalid username or password")
 
@@ -61,7 +61,7 @@ def login():
 #redirects depending on the role of user
 @app.route("/role_redirect")
 def role_redirect():
-    if "Role" in session:
+    if "role" in session:
         role = session["role"]
         if role == "customer":
             return redirect(url_for("customer.customer"))

@@ -19,10 +19,12 @@
     <div class="products">
         {% for providers in provider_accounts %}
         <div class="product-box">
-            <h2>{{ providers[1] }}</h2>
+            <h2>{{ providers[2] }}</h2>
+            <h3> <b>Email: </b> {{ providers[1] }} </h1>
+            <h3> <b>Phone: </b> {{ providers[3] }} </h1>
             <a href="">
-                <button type="button">Info</button>
-            </a>
+                <button type="button">More Info</button>
+            </a> 
         </div>
         {% endfor %}
     </div>

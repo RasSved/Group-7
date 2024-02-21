@@ -95,15 +95,27 @@ def providerlist():
     if role != "manufacturer":
         return redirect("/logout")
     
-    #finnd serviceprovider accounts and create them into dictionary
-    cursor = db.Accounts.find({"ProviderId": {"$ne": None} })
+    #finnd serviceprovider accounts and put their information into array for frontend -->
+    AccCursor = db.Accounts.find({"ProviderId": {"$ne": None} })
+    SePrCursor = db.Service_Provider
     provider_accounts = []
-    for document in cursor:
+
+    #for each serviceprovider, add their information to array (that will be presented to frontend)
+    for document in AccCursor:
         another_account = []
         another_account.append(document["ProviderId"])
-        another_account.append(document["Username"])
+        another_account.append(document["Email"])
+
+        #find relevant infromation from serviceprovider table and add them to 
+        SePrInfo = SePrCursor.find_one({"Email": document["Email"]})
+        another_account.append(SePrInfo["Name"])
+        another_account.append(SePrInfo["Phone"])
+        #---
+
+
+
         provider_accounts.append(another_account)
-    #---
+    #<--
 
 
     print("providers:    ", provider_accounts)
