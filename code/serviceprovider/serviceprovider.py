@@ -24,7 +24,7 @@ def serviceprovider():
     
     all_areas = areas.find()   # get entire collection
     all_mowers = mowers.find()   # get entire collection
-    return render_template("SePrMain.html", areas = all_areas, mowers = all_mowers)
+    return render_template("SePrMain.html", areas = all_areas, mowers = all_mowers, title = "Service Provider Mainpage")
 
 
 @serviceprovider_bp.route("/add_area", methods=["POST"])
@@ -78,7 +78,7 @@ def area():
 
         lawnmower = mowers.find()
 
-        return render_template("SePrArea.html", area=area, lawnmower=lawnmower)
+        return render_template("SePrArea.html", area=area, lawnmower=lawnmower, title = "Service Provider Area")
     else:
         return redirect(url_for("serviceprovider.serviceprovider"))
 
@@ -100,7 +100,7 @@ def mower():
         lawnmower = mowers.find({"_id": ObjectId(mowerId)})[0]
         print(lawnmower, file=sys.stderr)
 
-        return render_template("SePrMower.html", area=area, lawnmower=lawnmower)
+        return render_template("SePrMower.html", area=area, lawnmower=lawnmower, title = "Service Provider Mower")
     else:
         return redirect(url_for("serviceprovider.area"))
 
@@ -183,7 +183,7 @@ def map():
 
         lawnmower = mowers.find()
 
-        return render_template("SePrMap.html", area=area, lawnmower=lawnmower)
+        return render_template("SePrMap.html", area=area, lawnmower=lawnmower, title = "Service Provider Map")
     else:
         return redirect(url_for("serviceprovider.serviceprovider"))
 
@@ -203,7 +203,7 @@ def schedule():
 
         lawnmower = mowers.find()
 
-        return render_template("SePrSchedule.html", area=area, lawnmower=lawnmower)
+        return render_template("SePrSchedule.html", area=area, lawnmower=lawnmower, title = "Service Provider Schedule")
     else:
         return redirect(url_for("serviceprovider.serviceprovider"))
 
@@ -223,6 +223,6 @@ def settings():
 
         lawnmower = mowers.find()
 
-        return render_template("SePrSett.html", area=area, lawnmower=lawnmower)
+        return render_template("SePrSett.html", area=area, lawnmower=lawnmower, title = "Service Provider Settings")
     else:
         return redirect(url_for("serviceprovider.serviceprovider"))

@@ -18,6 +18,8 @@ notifs = db.Notifications
 mowers = db.Mower
 services = db.Services
 tickets = db.Service_Tickets
+requests = db.Requests
+accounts = db.Accounts
 
 notifContent = {"service": "Your machine needs knife replacement, your service provider has been notified, no action required from you."}
 
@@ -97,6 +99,12 @@ def editArea():
             notifTime = request.form["notifTime"]
             if currArea["Status"] == "Unconfirmed":
                 areas.find_one_and_update({"_id": areaId}, {'$set': {"GrassLength": int(grassLength), "ServiceId": subId, "NotifTime": int(notifTime), "Status": "Pending"}})
+                ### Send request to HQ about new area needing assigned service provider
+
+                cusId = 0 ### Replace with actual user id
+                address = areas.find_one({"_id": ObjectId(session["area_id"])})["Address"]
+                content = "Customer has requested mowing for area at address " + address + ". Please select service provider for this task."
+                requests.insert_one({"CustomerId": cusId, "Type": "newArea", "Content": content, "DateCreated": datetime.now(), "Completed": False, "AreaId": ObjectId(session["area_id"]) })
             else: 
                 areas.find_one_and_update({"_id": areaId}, {'$set': {"GrassLength": int(grassLength), "ServiceId": subId, "NotifTime": int(notifTime)}})
 

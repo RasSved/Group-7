@@ -15,8 +15,8 @@ client = MongoClient('localhost', 27017)
 
 db = client.MowerDB
 
-requests = db.Request
-product = db.Product
+requests = db.Requests
+product = db.Products
 
 
 
