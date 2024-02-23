@@ -13,6 +13,7 @@ db = client.MowerDB
 areas = db.Areas
 mowers = db.Mower
 service_tickets = db.Service_Tickets
+products = db.Products
 
 
 @serviceprovider_bp.route("/", methods=["GET", "POST"])
@@ -23,7 +24,16 @@ def serviceprovider():
         return redirect("/logout")
     
     all_areas = areas.find()   # get entire collection
-    all_mowers = mowers.find()   # get entire collection
+    all_mowers = list(mowers.find({"ProviderId": ObjectId("65b79f933983494165195c36")}))  # get all mowers of specific provider, update to contain object id
+    for mower in all_mowers: # add fields, Addresses and Name to display on main page
+        print(mower["AreaIds"], file=sys.stderr)
+        mower["Addresses"] = []
+        mower["Name"] = products.find_one({"_id": mower["ProductId"]})["name"]
+
+        for areaId in mower["AreaIds"]:
+            print(areaId["AreaId"], file=sys.stderr)
+            mower["Addresses"].append(areas.find_one({"_id": areaId["AreaId"]})["Address"])
+
     return render_template("SePrMain.html", areas = all_areas, mowers = all_mowers, title = "Service Provider Mainpage")
 
 
