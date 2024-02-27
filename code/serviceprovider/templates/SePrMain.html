@@ -9,40 +9,38 @@
 
 <button id="provider-mowers" type="button" data-bs-toggle="modal" data-bs-target="#main-mower-window">
     Mowers
-</button>
-<form name = "addArea" method="POST" action="{{ url_for('customer.addArea') }}">  
-    <div id="main-mower-window" class="modal fade" role="dialog">
-        <div class="modal-dialog modal-md">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h4 class="area-create-title">Current Mowers</h4>
-                    <button type="button" class="btn close" data-bs-dismiss="modal">&times;</button> <!-- &times is an x symbol-->  
-                </div>
-                <div class="modal-body">
-                    {% for mower in mowers %}
+</button> 
+<div id="main-mower-window" class="modal fade" role="dialog">
+    <div class="modal-dialog modal-md">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="area-create-title">Current Mowers</h4>
+                <button type="button" class="btn close" data-bs-dismiss="modal">&times;</button> <!-- &times is an x symbol-->  
+            </div>
+            <div class="modal-body">
+                {% for mower in mowers %}
 
-                    <div class = "mower-object">
+                <div class = "mower-object">
 
-                        <div class ="mower-title">{{mower["Name"]}}</div> <br>
-                        
-                        <div class = "mower-areas">
-                            {% for address in mower["Addresses"]%}
-                            {{address}} <br>
-                            {% endfor %}
-                        </div>
-                        <span>
-                            x: {{mower["Xpos"]}} <br>
-                            y: {{mower["Ypos"]}} 
-
-                        </span>
+                    <div class ="mower-title">{{mower["Name"]}}</div> <br>
+                    
+                    <div class = "mower-areas">
+                        {% for address in mower["Addresses"]%}
+                        {{address}} <br>
+                        {% endfor %}
                     </div>
+                    <span>
+                        x: {{mower["Xpos"]}} <br>
+                        y: {{mower["Ypos"]}} 
 
-                    {% endfor %}
+                    </span>
                 </div>
+
+                {% endfor %}
             </div>
         </div>
     </div>
-</form>    
+</div>
 <div class = "areaPreview">
 
 {%for area in areas%}

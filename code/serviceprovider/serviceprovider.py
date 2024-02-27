@@ -86,9 +86,16 @@ def area():
         areaId = session["area_id"]
         area = areas.find({"_id": ObjectId(areaId)})[0]    # find area where id is the same as area clicked
 
-        lawnmower = mowers.find()
+        all_mowers = list(mowers.find({"ProviderId": ObjectId("65b79f933983494165195c36")}))  # get all mowers of specific provider, update to contain object id
+        for mower in all_mowers: # add fields, Addresses and Name to display on main page
+            mower["Addresses"] = []
+            mower["Name"] = products.find_one({"_id": mower["ProductId"]})["name"]
 
-        return render_template("SePrArea.html", area=area, lawnmower=lawnmower, title = "Service Provider Area")
+            for areaId in mower["AreaIds"]:
+                print(areaId["AreaId"], file=sys.stderr)
+                mower["Addresses"].append(areas.find_one({"_id": areaId["AreaId"]})["Address"])
+
+        return render_template("SePrArea.html", area=area, mowers=all_mowers, title = "Service Provider Area")
     else:
         return redirect(url_for("serviceprovider.serviceprovider"))
 

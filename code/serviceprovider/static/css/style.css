@@ -198,8 +198,20 @@ ul.breadcrumbs li a:hover {
     width: 100%;
 }
 
-.modal-body {
+#main-mower-window .modal-body {
     display: grid;
     grid-template-columns: 1fr 1fr;
     justify-content: space-between;
+}
+
+.area-mower-space {
+    width: 100%;
+    display: flex;
+    grid-template-columns: 1fr 1fr 1fr;
+    justify-content: left;
+}
+
+.area-mower-space .mower-object{
+    width: 200px;
+    margin-left: 20px;
 }
