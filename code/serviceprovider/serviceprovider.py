@@ -5,6 +5,8 @@ from pymongo import MongoClient
 from bson.objectid import ObjectId
 import sys
 
+from datetime import datetime
+
 # Setting up/connecting to database
 client = MongoClient('localhost', 27017)
 db = client.MowerDB
@@ -13,6 +15,7 @@ db = client.MowerDB
 areas = db.Areas
 mowers = db.Mower
 service_tickets = db.Service_Tickets
+requests = db.Requests
 products = db.Products
 
 
@@ -22,44 +25,19 @@ def serviceprovider():
     role = session["role"]
     if role != "serviceprovider":
         return redirect("/logout")
-    
+
     all_areas = areas.find()   # get entire collection
     all_mowers = list(mowers.find({"ProviderId": ObjectId("65b79f933983494165195c36")}))  # get all mowers of specific provider, update to contain object id
     for mower in all_mowers: # add fields, Addresses and Name to display on main page
-        print(mower["AreaIds"], file=sys.stderr)
+        #print(mower["AreaIds"], file=sys.stderr)
         mower["Addresses"] = []
-        mower["Name"] = products.find_one({"_id": mower["ProductId"]})["name"]
+        #mower["Name"] = products.find_one({"_id": mower["ProductId"]})["name"]
 
         for areaId in mower["AreaIds"]:
-            print(areaId["AreaId"], file=sys.stderr)
-            mower["Addresses"].append(areas.find_one({"_id": areaId["AreaId"]})["Address"])
+            print(areaId, file=sys.stderr)
+            mower["Addresses"].append(areas.find_one({"_id": ObjectId(areaId)})["Address"])
 
     return render_template("SePrMain.html", areas = all_areas, mowers = all_mowers, title = "Service Provider Mainpage")
-
-
-@serviceprovider_bp.route("/add_area", methods=["POST"])
-def addArea():
-    #verifies that logged in user is a serviceprovider
-    role = session["role"]
-    if role != "serviceprovider":
-        return redirect("/logout")
-    
-    #print(request.form, file=sys.stderr)
-    if request.method == "POST":
-        if ("address" in request.form): # if all needed keys are present
-            print(request.form, file=sys.stderr)
-            serviceId = None
-            grassLength = None
-            address = request.form["address"]
-            homeX = None
-            homeY = None
-            customerId = 0 # placeholder for session
-            status = "Unconfirmed"
-            objId = ObjectId()
-            areas.insert_one({"ServiceId": serviceId, "GrassLength": grassLength, "CustomerId": customerId, "HomeX": homeX, "HomeY": homeY, "Address": address, "Status": status, "_id": objId}) 
-            session["area_id"] = str(objId)  
-            return redirect(url_for("serviceprovider.settings"))
-    return redirect(url_for("serviceprovider.serviceprovider"))   
 
 
 @serviceprovider_bp.route("/enter", methods = ["GET", "POST"])
@@ -67,7 +45,6 @@ def enterArea():
     print(request.form, file=sys.stderr)
     if "areaId" in request.form:
         areaId = request.form["areaId"]
-        # find area where id is the same as area clicked
         #print(area, file=sys.stderr)
         session["area_id"] = areaId
         return redirect(url_for("serviceprovider.area"))
@@ -81,10 +58,10 @@ def area():
     role = session["role"]
     if role != "serviceprovider":
         return redirect("/logout")
-    
+
     if "area_id" in session:
         areaId = session["area_id"]
-        area = areas.find({"_id": ObjectId(areaId)})[0]    # find area where id is the same as area clicked
+        area = areas.find({"_id": ObjectId(areaId)})    # find area where id is the same as area clicked
 
         all_mowers = list(mowers.find({"ProviderId": ObjectId("65b79f933983494165195c36")}))  # get all mowers of specific provider, update to contain object id
         for mower in all_mowers: # add fields, Addresses and Name to display on main page
@@ -110,11 +87,11 @@ def mower():
     #print(request.form, file=sys.stderr)
     if "area_id" in session and "mower_id" in session:
         areaId = session["area_id"]
-        area = areas.find({"_id": ObjectId(areaId)})[0]         # find area where id is the same as area clicked
+        area = areas.find({"_id": ObjectId(areaId)})     # find area where id is the same as area clicked
         #print(area, file=sys.stderr)
 
         mowerId = session["mower_id"]
-        lawnmower = mowers.find({"_id": ObjectId(mowerId)})[0]
+        lawnmower = mowers.find({"_id": ObjectId(mowerId)})
         print(lawnmower, file=sys.stderr)
 
         return render_template("SePrMower.html", area=area, lawnmower=lawnmower, title = "Service Provider Mower")
@@ -126,28 +103,23 @@ def mower():
 def addMower():
     #print(request.form, file=sys.stderr)
     if request.method == "POST":
-        if ("Xpos" in request.form and "Ypos" in request.form):     # if all needed keys are present
-            print(request.form, file=sys.stderr)
 
-            # find the active area
-            areaId = session["area_id"]
-            area = areas.find({"_id": ObjectId(areaId)})[0]
-            #print("AREA: ", area)
+        # find the active provider
+        userId = session["user_id"]
+        current_user = areas.find_one({'_id': ObjectId(userId)})
+        providerId = int(current_user["ProviderId"])
 
-            # info about the new lawnmower
-            providerId = 0
-            mower_areaId = area['CustomerId']
-            productId = 0
-            Xpos = request.form["Xpos"]
-            Ypos = request.form["Ypos"]
-            objId = ObjectId()
+        # make request to Husqvarna
+        objId = ObjectId()
+        req_providerId = providerId
+        type = "new lawnmower"
+        content = "Service Provider wants a new lawnmower!"
+        dateCreated = datetime.utcnow()
 
-            # adding the new lawnmower
-            mowers.insert_one({"ProviderId": providerId, "AreaId": mower_areaId, "ProductId": productId, "Xpos": Xpos, "Ypos": Ypos, "_id": objId})
+        # adding the request
+        requests.insert_one({"MowerId": None, "AreaId": None, "Completed": False, "DateCreated": dateCreated, "Content": content, "Type": type, "ProviderId": req_providerId, "CustomerId": None, "_id": objId})
 
-            session["mower_id"] = str(objId)     # add new mower to active session
-
-            return redirect(url_for("serviceprovider.mower"))
+        return redirect(url_for("serviceprovider.mower"))
     return redirect(url_for("serviceprovider.area")) 
 
 
@@ -191,11 +163,11 @@ def map():
     role = session["role"]
     if role != "serviceprovider":
         return redirect("/logout")
-    
+
     print(request.form, file=sys.stderr)
     if "area_id" in session:
         areaId = session["area_id"]
-        area = areas.find({"_id": ObjectId(areaId)})[0]    # find area where id is the same as area clicked
+        area = areas.find({"_id": ObjectId(areaId)})    # find area where id is the same as area clicked
         #print(area, file=sys.stderr)
 
         lawnmower = mowers.find()
@@ -211,11 +183,11 @@ def schedule():
     role = session["role"]
     if role != "serviceprovider":
         return redirect("/logout")
-    
+
     print(request.form, file=sys.stderr)
     if "area_id" in session:
         areaId = session["area_id"]
-        area = areas.find({"_id": ObjectId(areaId)})[0]    # find area where id is the same as area clicked
+        area = areas.find({"_id": ObjectId(areaId)})    # find area where id is the same as area clicked
         #print(area, file=sys.stderr)
 
         lawnmower = mowers.find()
@@ -231,11 +203,11 @@ def settings():
     role = session["role"]
     if role != "serviceprovider":
         return redirect("/logout")
-    
+
     print(request.form, file=sys.stderr)
     if "area_id" in session:
         areaId = session["area_id"]
-        area = areas.find({"_id": ObjectId(areaId)})[0]    # find area where id is the same as area clicked
+        area = areas.find({"_id": ObjectId(areaId)})    # find area where id is the same as area clicked
         #print(area, file=sys.stderr)
 
         lawnmower = mowers.find()
