@@ -179,7 +179,6 @@ ul.breadcrumbs li a:hover {
     float: left;
     position: relative;
     font-size: 10px;
-    width: 100%
 }
 
 .mower-title {
@@ -198,8 +197,33 @@ ul.breadcrumbs li a:hover {
     width: 100%;
 }
 
-.modal-body {
+#main-mower-window .modal-body {
     display: grid;
     grid-template-columns: 1fr 1fr;
     justify-content: space-between;
+}
+
+.area-mower-space {
+    width: 100%;
+    display: flex;
+    justify-content: left;
+}
+
+.area-mower-space .mower-object{
+    width: 200px;
+    margin-left: 20px;
+}
+
+.mower-footer {
+    align-items: horizontal;
+}
+
+.mower-footer button{
+    width: 30px;
+    height: 30px;
+    font-size: 20px;
+    border-radius: 15px;
+    text-align: center;
+    float: right;
+
 }

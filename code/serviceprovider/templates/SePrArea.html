@@ -16,7 +16,7 @@
 <p> Subscription: {{area['Sub']}} </p>
 
 <h2> Lawnmowers in {{area['Address']}} </h2>
-
+<!--
 <div class = "mowerPreview">
     {%for lm in lawnmower%}
 
@@ -26,21 +26,51 @@
         <button type = "submit" name = "areaId" value = "{{area['_id']}}">
             X position: {{lm['Xpos']}} <br> 
             Y position: {{lm['Ypos']}}
-            <!-- <div class="statusBox">{{area['Status']}}</div> -->
+        
         </button>
 
-        <input type="hidden" name="mowerId" value="{{lm['_id']}}">      <!-- to send the mowerId -->
+        <input type="hidden" name="mowerId" value="{{lm['_id']}}">      
     </form>
 
     {% endif %}
 
     {% endfor %}
 </div>
+-->
+<div class = "area-mower-space">
+    {% for mower in mowers %}
+        <div class = "mower-object">
+
+        <div class ="mower-title">{{mower["Name"]}}</div> <br>
+
+        <div class = "mower-areas">
+            {% for address in mower["Addresses"]%}
+            {{address}} <br>
+            {% endfor %}
+        </div>
+        <div class = "mower-footer">
+            <span>
+                x: {{mower["Xpos"]}} <br>
+                y: {{mower["Ypos"]}} 
+
+            </span>
+            <form name = "removeMower" method = "POST" action="{{ url_for('serviceprovider.removeMower')}}">
+                <button name = "mowerId" value = "{{mower['_id']}}">
+                    -
+                </button>
+            </form>
+        </div>
+        </div>
+    {% endfor %}
+</div>
+
 
 <!-- Add Lawnmower Button -->
 <button id="addMowerButton" type="button" data-bs-toggle="modal" data-bs-target="#addMowerWindow">
     +
 </button>
+
+
 
 <form name = "addMower" method="POST" action="{{ url_for('serviceprovider.addMower') }}">
     <div id="addMowerWindow" class="modal fade" role="dialog">
