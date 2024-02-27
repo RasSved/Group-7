@@ -29,13 +29,13 @@ def serviceprovider():
     all_areas = areas.find()   # get entire collection
     all_mowers = list(mowers.find({"ProviderId": ObjectId("65b79f933983494165195c36")}))  # get all mowers of specific provider, update to contain object id
     for mower in all_mowers: # add fields, Addresses and Name to display on main page
-        #print(mower["AreaIds"], file=sys.stderr)
+        print(mower["AreaIds"], file=sys.stderr)
         mower["Addresses"] = []
-        #mower["Name"] = products.find_one({"_id": mower["ProductId"]})["name"]
-
+        mower["Name"] = products.find_one({"_id": mower["ProductId"]})["name"]
+        print(mower["AreaIds"], file=sys.stderr)
         for areaId in mower["AreaIds"]:
             print(areaId, file=sys.stderr)
-            mower["Addresses"].append(areas.find_one({"_id": ObjectId(areaId)})["Address"])
+            mower["Addresses"].append(areas.find_one({"_id": ObjectId(areaId["AreaId"])})["Address"])
 
     return render_template("SePrMain.html", areas = all_areas, mowers = all_mowers, title = "Service Provider Mainpage")
 
@@ -215,3 +215,15 @@ def settings():
         return render_template("SePrSett.html", area=area, lawnmower=lawnmower, title = "Service Provider Settings")
     else:
         return redirect(url_for("serviceprovider.serviceprovider"))
+    
+@serviceprovider_bp.route("/area/revMow", methods = ["GET", "POST"])
+def removeMower():
+    mowerId =ObjectId(request.form["mowerId"])
+    areaId = ObjectId(session["area_id"])
+    lawnmower = mowers.find_one({"_id": mowerId})
+    print(lawnmower, file=sys.stderr)
+    for area in lawnmower["AreaIds"]:
+        if area["AreaId"]==areaId:
+            lawnmower["AreaIds"].remove(area)
+    mowers.find_one_and_update({"_id": mowerId}, {'$set': {"AreaIds": lawnmower["AreaIds"]}})
+    return redirect(url_for("serviceprovider.area"))

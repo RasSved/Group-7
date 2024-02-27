@@ -179,7 +179,6 @@ ul.breadcrumbs li a:hover {
     float: left;
     position: relative;
     font-size: 10px;
-    width: 100%
 }
 
 .mower-title {
@@ -207,11 +206,24 @@ ul.breadcrumbs li a:hover {
 .area-mower-space {
     width: 100%;
     display: flex;
-    grid-template-columns: 1fr 1fr 1fr;
     justify-content: left;
 }
 
 .area-mower-space .mower-object{
     width: 200px;
     margin-left: 20px;
+}
+
+.mower-footer {
+    align-items: horizontal;
+}
+
+.mower-footer button{
+    width: 30px;
+    height: 30px;
+    font-size: 20px;
+    border-radius: 15px;
+    text-align: center;
+    float: right;
+
 }

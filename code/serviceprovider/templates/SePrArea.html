@@ -48,11 +48,18 @@
             {{address}} <br>
             {% endfor %}
         </div>
-        <span>
-            x: {{mower["Xpos"]}} <br>
-            y: {{mower["Ypos"]}} 
+        <div class = "mower-footer">
+            <span>
+                x: {{mower["Xpos"]}} <br>
+                y: {{mower["Ypos"]}} 
 
-        </span>
+            </span>
+            <form name = "removeMower" method = "POST" action="{{ url_for('serviceprovider.removeMower')}}">
+                <button name = "mowerId" value = "{{mower['_id']}}">
+                    -
+                </button>
+            </form>
+        </div>
         </div>
     {% endfor %}
 </div>
