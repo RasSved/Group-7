@@ -12,6 +12,7 @@ client = MongoClient('localhost', 27017)
 db = client.MowerDB
 
 # Single definition for table, change later
+accounts = db.Accounts
 areas = db.Areas
 mowers = db.Mower
 service_tickets = db.Service_Tickets
@@ -27,11 +28,17 @@ def serviceprovider():
         return redirect("/logout")
 
     all_areas = areas.find()   # get entire collection
-    all_mowers = list(mowers.find({"ProviderId": ObjectId("65b79f933983494165195c36")}))  # get all mowers of specific provider, update to contain object id
+
+    # get all mowers of current active provider
+    userId = session["user_id"]
+    current_user = accounts.find_one({'_id': ObjectId(userId)})
+    providerId = current_user["ProviderId"]
+    all_mowers = list(mowers.find({"ProviderId": providerId}))
+
     for mower in all_mowers: # add fields, Addresses and Name to display on main page
         #print(mower["AreaIds"], file=sys.stderr)
         mower["Addresses"] = []
-        #mower["Name"] = products.find_one({"_id": mower["ProductId"]})["name"]
+        mower["Name"] = products.find_one({"_id": mower["ProductId"]})["name"]
 
         for areaId in mower["AreaIds"]:
             print(areaId, file=sys.stderr)
@@ -99,8 +106,8 @@ def addMower():
 
         # find the active provider
         userId = session["user_id"]
-        current_user = areas.find_one({'_id': ObjectId(userId)})
-        providerId = int(current_user["ProviderId"])
+        current_user = accounts.find_one({'_id': ObjectId(userId)})
+        providerId = current_user["ProviderId"]
 
         # make request to Husqvarna
         objId = ObjectId()
