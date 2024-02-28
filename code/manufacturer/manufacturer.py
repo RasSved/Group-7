@@ -72,6 +72,19 @@ def requestinfo():
         return render_template("requestinfohq.html", request=request)
     else:
         return redirect(url_for("manufacturer.manufacturer"))
+    
+@manufacturer_bp.route("/enter/remove", methods = ["GET", "POST"])
+def remove():
+    print(request.form, file=sys.stderr)
+    if "requestId" in request.form:
+        requestId = request.form["requestId"]
+        requests.delete_one({"_id": ObjectId(requestId)})[0]
+
+
+        return redirect(url_for("manufacturer.requesthq"))
+    else:
+        return redirect(url_for("manufacturer.manufacturer"))
+
 
 @manufacturer_bp.route("/customerinfohq", methods = ["GET", "POST"])
 def customerinfo():
@@ -175,17 +188,5 @@ def enterrequest():
 
         session["request_id"] = requestId
         return redirect(url_for("manufacturer.requestinfo"))
-    else:
-        return redirect(url_for("manufacturer.manufacturer"))
-    
-
-@manufacturer_bp.route("/enters", methods = ["GET", "POST"])
-def entercustomer():
-    print(request.form, file=sys.stderr)
-    if "customerId" in request.form and "requestId" in request.form:
-        customerId = request.form["customerId"]
-
-        session["customer_id"] = customerId
-        return redirect(url_for("manufacturer.customerinfo"))
     else:
         return redirect(url_for("manufacturer.manufacturer"))
