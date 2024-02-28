@@ -13,7 +13,6 @@
 <h2>Area Info</h2>  <!-- info that only customer can change -->
 <p> Adress: {{area['Address']}} </p>
 <p> Grasslength: {{area['grassLength']}} </pp>
-<p> Subscription: {{area['Sub']}} </p>
 
 <h2> Lawnmowers in {{area['Address']}} </h2>
 <!--
@@ -38,7 +37,7 @@
 </div>
 -->
 <div class = "area-mower-space">
-    {% for mower in mowers %}
+    {% for mower in area_mowers %}
         <div class = "mower-object">
 
         <div class ="mower-title">{{mower["Name"]}}</div> <br>
@@ -56,7 +55,7 @@
             </span>
             <form name = "removeMower" method = "POST" action="{{ url_for('serviceprovider.removeMower')}}">
                 <button name = "mowerId" value = "{{mower['_id']}}">
-                    -
+                    Remove
                 </button>
             </form>
         </div>
@@ -69,8 +68,43 @@
 <button id="addMowerButton" type="button" data-bs-toggle="modal" data-bs-target="#addMowerWindow">
     +
 </button>
+<form name = "addMower" method="POST" action="{{ url_for('serviceprovider.addMower')}}">
+    <div id="addMowerWindow" class="modal fade" role="dialog">
+        <div class="modal-dialog modal-md">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="area-create-title">Add Mowers</h4>
+                    <button type="button" class="btn close" data-bs-dismiss="modal">&times;</button> <!-- &times is an x symbol-->  
+                </div>
+                <div class="modal-body">
+                    {% for mower in available_mowers %}
+
+                    <button name = "mowerId" value = "{{mower['_id']}}" type = "submit" class = "mower-object">
+
+                        <div class ="mower-title">{{mower["Name"]}}</div> <br>
+                        
+                        <div class = "mower-areas">
+                            {% for address in mower["Addresses"]%}
+                            {{address}} <br>
+                            {% endfor %}
+                        </div>
+                        <span>
+                            x: {{mower["Xpos"]}} <br>
+                            y: {{mower["Ypos"]}} 
+
+                        </span>
+                    </button>
+
+                    {% endfor %}
+    
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
 
 
+<!--
 
 <form name = "addMower" method="POST" action="{{ url_for('serviceprovider.addMower') }}">
     <div id="addMowerWindow" class="modal fade" role="dialog">
@@ -78,7 +112,7 @@
             <div class="modal-content">
                 <div class="modal-header">
                     <h4 class="area-create-title">Add lawnmower</h4>
-                    <button type="button" class="btn close" data-bs-dismiss="modal">&times;</button> <!-- &times is an x symbol-->  
+                    <button type="button" class="btn close" data-bs-dismiss="modal">&times;</button>  
                 </div>
 
                 <div class="modal-body">
@@ -93,6 +127,7 @@
         </div>
     </div>
 </form>
+-->
 
 {% endblock %}
 

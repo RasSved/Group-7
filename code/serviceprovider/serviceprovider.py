@@ -17,6 +17,7 @@ mowers = db.Mower
 service_tickets = db.Service_Tickets
 requests = db.Requests
 products = db.Products
+accounts = db.Accounts
 
 
 @serviceprovider_bp.route("/", methods=["GET", "POST"])
@@ -27,12 +28,12 @@ def serviceprovider():
         return redirect("/logout")
 
     all_areas = areas.find()   # get entire collection
-    all_mowers = list(mowers.find({"ProviderId": ObjectId("65b79f933983494165195c36")}))  # get all mowers of specific provider, update to contain object id
+    providerId = accounts.find_one({"_id": ObjectId(session["user_id"])})["ProviderId"]
+    all_mowers = list(mowers.find({"ProviderId": providerId}))  # get all mowers of specific provider, update to contain object id
     for mower in all_mowers: # add fields, Addresses and Name to display on main page
-        print(mower["AreaIds"], file=sys.stderr)
+        #print(mower["AreaIds"], file=sys.stderr)
         mower["Addresses"] = []
         mower["Name"] = products.find_one({"_id": mower["ProductId"]})["name"]
-        print(mower["AreaIds"], file=sys.stderr)
         for areaId in mower["AreaIds"]:
             print(areaId, file=sys.stderr)
             mower["Addresses"].append(areas.find_one({"_id": ObjectId(areaId["AreaId"])})["Address"])
@@ -45,7 +46,7 @@ def enterArea():
     print(request.form, file=sys.stderr)
     if "areaId" in request.form:
         areaId = request.form["areaId"]
-        #print(area, file=sys.stderr)
+        print(areaId, file=sys.stderr)
         session["area_id"] = areaId
         return redirect(url_for("serviceprovider.area"))
     else:
@@ -61,18 +62,30 @@ def area():
 
     if "area_id" in session:
         areaId = session["area_id"]
-        area = areas.find({"_id": ObjectId(areaId)})    # find area where id is the same as area clicked
-
-        all_mowers = list(mowers.find({"ProviderId": ObjectId("65b79f933983494165195c36")}))  # get all mowers of specific provider, update to contain object id
-        for mower in all_mowers: # add fields, Addresses and Name to display on main page
+        curr_area = areas.find_one({"_id": ObjectId(areaId)})    # find area where id is the same as area clicked
+        providerId = accounts.find_one({"_id": ObjectId(session["user_id"])})["ProviderId"]
+        
+        area_mowers = list(mowers.find({"ProviderId": providerId, "AreaIds": {'$elemMatch': {"AreaId": ObjectId(session["area_id"])}}}))  # get all mowers of specific provider, update to contain object id
+        available_mowers = list(mowers.find({"ProviderId": providerId, "AreaIds": {'$not': {'$elemMatch': {"AreaId": ObjectId(session["area_id"])}}}})) # get all mowers that belong to provider but are not on current area
+        for mower in area_mowers: # add fields, Addresses and Name to display on main page
             mower["Addresses"] = []
             mower["Name"] = products.find_one({"_id": mower["ProductId"]})["name"]
 
+
             for areaId in mower["AreaIds"]:
-                print(areaId["AreaId"], file=sys.stderr)
+                #print(areaId["AreaId"], file=sys.stderr)
                 mower["Addresses"].append(areas.find_one({"_id": areaId["AreaId"]})["Address"])
 
-        return render_template("SePrArea.html", area=area, mowers=all_mowers, title = "Service Provider Area")
+        for mower in available_mowers: # repeat for other mowers
+            mower["Addresses"] = []
+            mower["Name"] = products.find_one({"_id": mower["ProductId"]})["name"]
+
+
+            for areaId in mower["AreaIds"]:
+                #print(areaId["AreaId"], file=sys.stderr)
+                mower["Addresses"].append(areas.find_one({"_id": areaId["AreaId"]})["Address"])
+
+        return render_template("SePrArea.html", area=curr_area, area_mowers=area_mowers, available_mowers=available_mowers, title = "Service Provider Area")
     else:
         return redirect(url_for("serviceprovider.serviceprovider"))
 
@@ -100,7 +113,7 @@ def mower():
 
 
 @serviceprovider_bp.route("/area/add_mower", methods=["POST"])
-def addMower():
+def requestMower():
     #print(request.form, file=sys.stderr)
     if request.method == "POST":
 
@@ -167,7 +180,7 @@ def map():
     print(request.form, file=sys.stderr)
     if "area_id" in session:
         areaId = session["area_id"]
-        area = areas.find({"_id": ObjectId(areaId)})    # find area where id is the same as area clicked
+        area = areas.find_one({"_id": ObjectId(areaId)})    # find area where id is the same as area clicked
         #print(area, file=sys.stderr)
 
         lawnmower = mowers.find()
@@ -187,7 +200,7 @@ def schedule():
     print(request.form, file=sys.stderr)
     if "area_id" in session:
         areaId = session["area_id"]
-        area = areas.find({"_id": ObjectId(areaId)})    # find area where id is the same as area clicked
+        area = areas.find_one({"_id": ObjectId(areaId)})    # find area where id is the same as area clicked
         #print(area, file=sys.stderr)
 
         lawnmower = mowers.find()
@@ -207,7 +220,7 @@ def settings():
     print(request.form, file=sys.stderr)
     if "area_id" in session:
         areaId = session["area_id"]
-        area = areas.find({"_id": ObjectId(areaId)})    # find area where id is the same as area clicked
+        area = areas.find_one({"_id": ObjectId(areaId)})    # find area where id is the same as area clicked
         #print(area, file=sys.stderr)
 
         lawnmower = mowers.find()
@@ -225,5 +238,15 @@ def removeMower():
     for area in lawnmower["AreaIds"]:
         if area["AreaId"]==areaId:
             lawnmower["AreaIds"].remove(area)
+    mowers.find_one_and_update({"_id": mowerId}, {'$set': {"AreaIds": lawnmower["AreaIds"]}})
+    return redirect(url_for("serviceprovider.area"))
+
+
+@serviceprovider_bp.route("/area/addMow", methods= ["GET", "POST"])
+def addMower():
+    mowerId = ObjectId(request.form["mowerId"])
+    areaId = ObjectId(session["area_id"])
+    lawnmower = mowers.find_one({"_id": mowerId})
+    lawnmower["AreaIds"].append({"AreaId": areaId})
     mowers.find_one_and_update({"_id": mowerId}, {'$set': {"AreaIds": lawnmower["AreaIds"]}})
     return redirect(url_for("serviceprovider.area"))
