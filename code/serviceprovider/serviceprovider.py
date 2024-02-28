@@ -12,6 +12,7 @@ client = MongoClient('localhost', 27017)
 db = client.MowerDB
 
 # Single definition for table, change later
+accounts = db.Accounts
 areas = db.Areas
 mowers = db.Mower
 service_tickets = db.Service_Tickets
@@ -119,8 +120,8 @@ def requestMower():
 
         # find the active provider
         userId = session["user_id"]
-        current_user = areas.find_one({'_id': ObjectId(userId)})
-        providerId = int(current_user["ProviderId"])
+        current_user = accounts.find_one({'_id': ObjectId(userId)})
+        providerId = current_user["ProviderId"]
 
         # make request to Husqvarna
         objId = ObjectId()
