@@ -1,21 +1,21 @@
 ### Micro-services for lawn-mower zero/low administration service delivery
-## About the project:
+## About the project
 
 This projects is a prototype of a portal used for communication between customers, service providers and Husqvarna, the manufacturer of lawnmowers. The prototype is supposed to demonstrate a proof of concept for husqvarna and give ideas to potentially use in a fully developed system. It strives to reduce the amount of administration needed in the process by giving a framework for customers and service providers to send request to husqvarna that are to be handled by any method of the manufacturers choice. These are then either resolved by husqvarna or sent to a service provider as a service ticket to handle.
 
-## Built with:
+## Built with
 
 Python-flask
 
 MongoDB
 
-## Requirements:
+## Requirements
 
 To run the project, it is required that python is installed on the host machine. Specifically python 3.10 or a later version. Python can be installed from the following link https://www.python.org/downloads/.
 
 
 
-## Installation:
+## Installation
 
 To set up the project locally you first need to install a number of dependencies. One of the most important ones is the MongoDB. This can be installed locally by following the following guide https://www.mongodb.com/docs/manual/installation/. Alternatively, it can be run in the cloud using MongoDB atlas https://www.mongodb.com/atlas/database?tck=docs_mongos. This has however not been tested in this project and some information about the mongo client may need to be updated in the program.
 
@@ -44,7 +44,7 @@ To run the project, download the git repository and enter the following line int
 python3 -m flask --app app run
 ```
 
-## Documentation:
+## Documentation
 
 Moqup: https://www.figma.com/file/kHqxsPFkOk561WTRrtqmez/Project-7?type=design&node-id=0-1&mode=design&t=vyM2DaXzGo8gs9QP-0 
 
