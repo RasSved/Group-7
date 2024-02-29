@@ -236,7 +236,7 @@ def recieveData():
             providerId = mowers.find_one({"_id": mowerId})["ProviderId"] # Get default area provider
             notifId = notifs.find_one({"MowerId": mowerId, "Content": "stuck", "AreaId": areaId})["_id"]
             dueDate = datetime.now() + timedelta(days=2)
-            tickets.update_one({"NotifId": notifId}, {'$setOnInsert': {"MowerId": mowerId, "AreaId": areaId , "Content": "stuck", "ProviderId": providerId, "DateCreated": datetime.now(), "Content": "stuck", "Completed": False, "DueDate": dueDate}}, upsert = True)
+            tickets.update_one({"NotifId": notifId}, {'$setOnInsert': {"MowerId": mowerId, "AreaId": areaId, "ProviderId": providerId, "DateCreated": datetime.now(), "Content": "stuck", "Completed": False, "DueDate": dueDate}}, upsert = True)
             
         case "unstuck":
             #Delete notification, update position
@@ -253,8 +253,6 @@ def recieveData():
             tickets.find_one_and_update({"NotifId": notifId}, {"$set": {"Completed": True, "NotifId": None}})
 
         case "service":
-
-            areaId = ObjectId(data["AreaId"])
             mowerId = ObjectId(data["MowerId"])
             #Insert "service" into notifications if not already exists + update mower position
 
@@ -265,6 +263,6 @@ def recieveData():
             providerId = mowers.find_one({"_id": mowerId})["ProviderId"] # Get default area provider
             notifId = notifs.find_one({"MowerId": mowerId, "Content": "service", "AreaId": areaId})["_id"]
             dueDate = datetime.now() + timedelta(days=14)
-            tickets.update_one({"NotifId": notifId}, {'$setOnInsert': {"MowerId": mowerId, "AreaId": areaId , "Content": "service", "ProviderId": providerId, "DateCreated": datetime.now(), "Content": "service", "Completed": False, "DueDate": dueDate}}, upsert = True)
+            tickets.update_one({"NotifId": notifId}, {'$setOnInsert': {"MowerId": mowerId, "Content": "service", "ProviderId": providerId, "DateCreated": datetime.now(), "Content": "service", "Completed": False, "DueDate": dueDate}}, upsert = True)
 
     return "", 204

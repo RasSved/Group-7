@@ -246,3 +246,33 @@ ul.breadcrumbs li a:hover {
     border: none;
     color: white;
 }
+
+#confirm-submit {
+    background-color: rgb(47, 44, 238);
+    color: white;
+}
+
+#request-mower-window {
+    border-bottom: 2px solid black;
+}
+
+#request-mower {
+    width: 30px;
+    height: 30px;
+    background-color: #1d8a26;
+    border-radius: 30px;
+    border: none;
+    color: white;
+    display: flex;
+    text-align: center;
+    padding-left: 9px;
+}
+
+.request-wrapper {
+    height: 50px;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    
+}

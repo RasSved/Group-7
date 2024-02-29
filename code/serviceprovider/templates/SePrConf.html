@@ -1,0 +1,32 @@
+{% extends 'base.html' %}
+
+{% block head %}
+{% endblock %}
+
+{% block body %}
+
+<ul class="breadcrumbs">
+    <li> <a href="/serviceprovider">Main</a></li>
+    <li> <a href="/serviceprovider/area">{{area['Address']}}</a></li>
+    <li> <a href="/serviceprovider/area/configure">Configure</a></li>
+</ul>
+<h2>{{area['Address']}}</h2>
+
+{% endblock %}
+
+{% block footer %}
+<form id="nav-bar" name = "navBar" method = "POST" action="{{ url_for('serviceprovider.areaNav')}}">
+    <button class = "footer-nav" name = navBar type = "submit" value = "home">
+        <p> home </p>
+    </button>
+    <button class = "footer-nav" name = navBar type = "submit" value = "map">
+        <p> map </p>
+    </button>
+    <button class = "footer-nav" name = navBar type = "submit" value = "schedule">
+        <p> schedule</p>
+    </button>
+    <button class = "footer-nav-curr" name = navBar type = "submit" value = "configuration">
+        <p> configuration</p>
+    </button>
+</form>
+{% endblock %}

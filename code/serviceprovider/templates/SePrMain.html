@@ -35,12 +35,43 @@
 
                     </span>
                 </div>
-
                 {% endfor %}
+            </div>
+            <div class="request-wrapper">
+                <button id="request-mower" type="button" data-bs-toggle="modal" data-bs-target="#request-mower-window">+</button>
             </div>
         </div>
     </div>
 </div>
+
+<div id="request-mower-window" class="modal fade" role="dialog">
+    <div class="modal-dialog modal-md">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="area-create-title">Request mower</h4>
+                <button type="button" class="btn close" data-bs-dismiss="modal">&times;</button> <!-- &times is an x symbol-->  
+            </div>
+            <div class="modal-body">
+                <form id = "reqMower" name = "reqMower" method = "POST" action="{{ url_for('serviceprovider.requestMower')}}">
+                    <label for=" product-selection">Select a model: </label>
+                    <select id = "product-selection" name = "productId">
+                        {% for product in products %}
+                            <option value = "{{product['_id']}}"> {{product["name"]}}</option>
+                        {% endfor %}
+                    </select>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn footer-button" data-bs-dismiss="modal">Close</button>
+
+                <button form = "reqMower" class = "submitButton" type="submit" class="btn footer-button">Submit</button>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+
 <div class = "areaPreview">
 
 {%for area in areas%}

@@ -31,15 +31,16 @@ def serviceprovider():
     all_areas = areas.find()   # get entire collection
     providerId = accounts.find_one({"_id": ObjectId(session["user_id"])})["ProviderId"]
     all_mowers = list(mowers.find({"ProviderId": providerId}))  # get all mowers of specific provider, update to contain object id
+    all_products = list(products.find())
     for mower in all_mowers: # add fields, Addresses and Name to display on main page
         #print(mower["AreaIds"], file=sys.stderr)
         mower["Addresses"] = []
         mower["Name"] = products.find_one({"_id": mower["ProductId"]})["name"]
         for areaId in mower["AreaIds"]:
-            print(areaId, file=sys.stderr)
+            #print(areaId, file=sys.stderr)
             mower["Addresses"].append(areas.find_one({"_id": ObjectId(areaId["AreaId"])})["Address"])
 
-    return render_template("SePrMain.html", areas = all_areas, mowers = all_mowers, title = "Service Provider Mainpage")
+    return render_template("SePrMain.html", areas = all_areas, mowers = all_mowers, title = "Service Provider Mainpage", products = all_products)
 
 
 @serviceprovider_bp.route("/enter", methods = ["GET", "POST"])
@@ -117,6 +118,9 @@ def mower():
 def requestMower():
     #print(request.form, file=sys.stderr)
     if request.method == "POST":
+        print(request.form, file=sys.stderr)
+        print("here", file=sys.stderr)
+        productId = ObjectId(request.form["productId"])
 
         # find the active provider
         userId = session["user_id"]
@@ -124,17 +128,16 @@ def requestMower():
         providerId = current_user["ProviderId"]
 
         # make request to Husqvarna
-        objId = ObjectId()
         req_providerId = providerId
-        type = "new lawnmower"
-        content = "Service Provider wants a new lawnmower!"
-        dateCreated = datetime.utcnow()
+        type = "newMower"
+        content = "Service Provider has requested a new lawnmower!"
+        dateCreated = datetime.now()
 
         # adding the request
-        requests.insert_one({"MowerId": None, "AreaId": None, "Completed": False, "DateCreated": dateCreated, "Content": content, "Type": type, "ProviderId": req_providerId, "CustomerId": None, "_id": objId})
+        requests.insert_one({"Completed": False, "DateCreated": dateCreated, "Content": content, "Type": type, "ProviderId": req_providerId, "ProductId": productId})
 
-        return redirect(url_for("serviceprovider.mower"))
-    return redirect(url_for("serviceprovider.area")) 
+        return redirect(url_for("serviceprovider.serviceprovider"))
+    return redirect(url_for("serviceprovider.serviceprovider")) 
 
 
 @serviceprovider_bp.route("/area/enter_mower", methods = ["GET", "POST"])
@@ -163,8 +166,8 @@ def areaNav():
         return redirect(url_for("serviceprovider.map"))
     elif page == "schedule":
         return redirect(url_for("serviceprovider.schedule"))
-    elif page == "settings":
-        return redirect(url_for("serviceprovider.settings"))
+    elif page == "configuration":
+        return redirect(url_for("serviceprovider.configuration"))
     elif page == "home":
         return redirect(url_for("serviceprovider.area"))
     else:
@@ -211,8 +214,8 @@ def schedule():
         return redirect(url_for("serviceprovider.serviceprovider"))
 
 
-@serviceprovider_bp.route("/area/settings", methods = ["GET", "POST"])
-def settings():
+@serviceprovider_bp.route("/area/configuration", methods = ["GET", "POST"])
+def configuration():
     #verifies that logged in user is a serviceprovider
     role = session["role"]
     if role != "serviceprovider":
@@ -226,7 +229,10 @@ def settings():
 
         lawnmower = mowers.find()
 
-        return render_template("SePrSett.html", area=area, lawnmower=lawnmower, title = "Service Provider Settings")
+        ### 
+
+
+        return render_template("SePrConf.html", area=area, lawnmower=lawnmower, title = "Customer Configurations")
     else:
         return redirect(url_for("serviceprovider.serviceprovider"))
     
@@ -235,7 +241,7 @@ def removeMower():
     mowerId =ObjectId(request.form["mowerId"])
     areaId = ObjectId(session["area_id"])
     lawnmower = mowers.find_one({"_id": mowerId})
-    print(lawnmower, file=sys.stderr)
+    #print(lawnmower, file=sys.stderr)
     for area in lawnmower["AreaIds"]:
         if area["AreaId"]==areaId:
             lawnmower["AreaIds"].remove(area)
