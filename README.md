@@ -40,8 +40,9 @@ flask_wtf
 pip install flask_wtf
 ```
 To run the project, download the git repository and enter the following line into a command line open in the "code" directory
-
+```
 python3 -m flask --app app run
+```
 
 ## Documentation:
 
