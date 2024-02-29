@@ -10,32 +10,39 @@ import sys
 client = MongoClient('localhost', 27017)
 db = client.MowerDB
 
-#creating "Service_Provider" table and accounts table
+#creating "Service_Provider" table, accounts table and customer table
 Service_Provider = db.Service_Provider
-accounts = db.Accounts
+Accounts = db.Accounts
+Customer = db.Customer
 
-#setting up counter as Id-creator
-ACCId_counter = count()
-CustomerId_counter = count()
-ProviderId_counter = count()
 
 #putting serviceproviders into accounts -->
-Service_Provider_dict = [{"Name":"Ulf Olovsson", "Email": "Ulol@serviceprovider@com", "Phone": "075 555 555"},
-                         {"Name":"Bingus Dingus", "Email": "BingDing@serviceprovider@com", "Phone": "075 555 515"}]
+Service_Provider_dict = [{"Name":"Ulf Olovsson", "Email": "Ulol@serviceprovider.com", "Phone": "075 555 555"},
+                         {"Name":"Bingus Dingus", "Email": "BingDing@serviceprovider.com", "Phone": "075 555 515"}]
+
 
 for n in Service_Provider_dict:
     Service_Provider.insert_one(n)
 
     searchedForID = Service_Provider.find_one(n, {"_id": 1})
 
-    accounts.insert_one({"CustomerId":None, "ProviderId":searchedForID, "Email":n["Email"], "Password":(n["Email"]).split('@')[0], "Role":"serviceprovider"})
-
+    Accounts.insert_one({"CustomerId":None, "ProviderId":searchedForID, "Email":n["Email"], "Password":(n["Email"]).split('@')[0], "Role":"serviceprovider"})
 
 #<--
-
     
-#putting in accounts
-accounts.insert_one({"CustomerId":None, "ProviderId":None, "Email":"manufacturer@manufacturer.com", "Password":"m1", "Role":"manufacturer"})
-#accounts.insert_one({"CustomerId":None, "ProviderId":next(ProviderId_counter), "Email":, "Password":"s1", "Role":"serviceprovider"})
-accounts.insert_one({"CustomerId":next(CustomerId_counter), "ProviderId":None, "Email":"customer@customer.com", "Password":"c1", "Role":"customer"})
+#putting customers into accounts -->
+customer_dict = [{"Name":"customer1", "Email": "customer1@customer.com", "Phone": "075 559 555", "PaymentMethod": "Pappa"},
+                    {"Name":"customer2", "Email": "customer2@customer.com", "Phone": "075 155 515", "PaymentMethod": "American Express"}]
+
+for n in customer_dict:
+    Customer.insert_one(n)
+
+    searchedForID = Customer.find_one(n, {"_id": 1})
+
+    Accounts.insert_one({"CustomerId":searchedForID, "ProviderId":None, "Email":n["Email"], "Password":(n["Email"]).split('@')[0], "Role":"customer"})
+
+#<--
+    
+#putting in manufactuter accounts
+Accounts.insert_one({"CustomerId":None, "ProviderId":None, "Email":"manufacturer@manufacturer.com", "Password":"m1", "Role":"manufacturer"})
 
