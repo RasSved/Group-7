@@ -45,9 +45,15 @@ python3 -m flask --app app run
 ```
 
 ## Documentation
+# Moqup
+The moqup is an easly stage moqup that somewhat illustrates the look of the website. This has been changed a lot during development and does not represent the final result.
+https://www.figma.com/file/kHqxsPFkOk561WTRrtqmez/Project-7?type=design&node-id=0-1&mode=design&t=vyM2DaXzGo8gs9QP-0 
 
-Moqup: https://www.figma.com/file/kHqxsPFkOk561WTRrtqmez/Project-7?type=design&node-id=0-1&mode=design&t=vyM2DaXzGo8gs9QP-0 
+# State chart
+The state chart is a diagram that describes the different states that the portal can have depending on user input. These states represent windows and pages on the website and solely describe what the user will see when using the platform.
+https://excalidraw.com/#json=HneRJxFdTy7hXLBE7d1bt,gerfiUZiEXEDCRee2FAZyA
 
-State Chart: https://excalidraw.com/#json=HneRJxFdTy7hXLBE7d1bt,gerfiUZiEXEDCRee2FAZyA
 
-Database Schema: https://dbdiagram.io/d/Data-Schema-65673b903be1495787f97f4d
+# Database Schema
+The database schema describes the schema used for MongoDB with the name of the table being the collection name and each entry in the table represents a key with the type of it's value. Since MongoDB is a document database, every document does not need to contain all the values and thus some documents are missing values shown in the schema. For more information about what requests, service-tickets and notifications contain what fields, see the documentation.
+https://dbdiagram.io/d/Data-Schema-65673b903be1495787f97f4d
