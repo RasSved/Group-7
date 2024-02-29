@@ -9,9 +9,9 @@ Python-flask
 
 MongoDB
 
-Requirements:
+## Requirements:
 
-To run the project, it is required that python is installed on the host machine. Specifically python 3.10 or a later version. Python can be installed from the following link https://www.python.org/downloads/
+To run the project, it is required that python is installed on the host machine. Specifically python 3.10 or a later version. Python can be installed from the following link https://www.python.org/downloads/.
 
 
 
