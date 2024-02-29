@@ -14,16 +14,25 @@
     <div class="container">
         <div class="products">
             <div class="product-box">
-            <form name = "requestInfo" method = "POST" action="{{ url_for('manufacturer.enterrequest')}}">
-            <button type = "submit" name = "requestId" value = "{{ item._id }}">
                 <h2>Request: </h2>
-                <p>Fel: {{ item.Type }}</p>
-                <p>Beskrivning: {{ item.Content }}</p>
-            </div>
-        </div>
-    </div>
-    </button>
+                <p>Type: {{ item.Type }}</p>
+                <p>Content: {{ item.Content }}</p>
+                {% if item.Completed == True %}
+                <p >Completed!</p>
+                {% else %}
+                <p >Not Completed!</p>
+                {% endif %}
+        <form name = "requestInfo" method = "POST" action="{{ url_for('manufacturer.enterrequest')}}">
+        <button type = "submit" name = "requestId" value = "{{ item._id }}"> Request Info</button>
 </form>
+<form name = "DeleteRequest" method = "POST" action="{{ url_for('manufacturer.remove')}}">
+    <button type = "submit" name = "requestId" value = "{{ item._id }}">Remove Request
+    </button>
+  </form>
+</div>
+</div>
+</div>
+
 {% endfor %}
 {% endblock %}
 

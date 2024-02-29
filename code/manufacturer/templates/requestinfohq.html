@@ -14,17 +14,22 @@
 <div class="request-info">
     <form>
       <p>Type: {{request['Type']}}</p>
-        <br>
-        <br>
-      <label>Request:</label>
-      <br>
-      <br>
+      <p>Content: {{request['Content']}}</p>
+      <p>Created at: {{request['DateCreated']}}</p>
       <a href="{{ url_for('manufacturer.requesthq') }}">
         <button type="button">Back</button>
     </a>
-    <form name = "customerInfo" method = "POST" action="{{ url_for('manufacturer.entercustomer')}}">
-      <button type = "submit" name = "customerId" value = "{{ request['Customerid'] }}">Customer Info
+    {% if request['Completed'] == True %}
+    <form name = "DeleteRequest" method = "POST" action="{{ url_for('manufacturer.remove')}}">
+      <button>Remove Request
       </button>
+    </form>
+    {% else %}
+    <form name = "customerInfo" method = "POST" action="{{ url_for('manufacturer.manufacturer')}}">
+      <button type = "submit" name = "customerId" value = "{{ request['_id'] }}">Create Service Ticket
+      </button>
+    </form>
+    {% endif %}
     </form>
     </form>
   </div>
