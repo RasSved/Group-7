@@ -71,7 +71,7 @@ ul.breadcrumbs li {
 ul.breadcrumbs li+li:before {
     color: black;
     content: "/\00a0";
-  }
+}
 
 ul.breadcrumbs li a {
     color: #8a8a8a;
@@ -82,8 +82,6 @@ ul.breadcrumbs li a:hover {
     color: #424242;
     text-decoration: underline;
 }
-
-/* vv added by Markus vv */
 
 .mowerPreview {
     display: grid;
@@ -105,8 +103,6 @@ ul.breadcrumbs li a:hover {
     top: 20px;
     color: white;
 }
-
-/* ^^ added by Markus ^^ */
 
 .areaPreview {
     display: grid;
@@ -175,7 +171,6 @@ ul.breadcrumbs li a:hover {
     margin-top: 20px;
     text-align: left;
 }
-
 
 .mower-object span{
     padding-left: 5px;
@@ -274,5 +269,4 @@ ul.breadcrumbs li a:hover {
     display: flex;
     justify-content: center;
     align-items: center;
-    
 }

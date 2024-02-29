@@ -10,32 +10,20 @@
     <li> <a href="/serviceprovider/area">{{area['Address']}}</a></li>
 </ul>
 
-<h2>Area Info</h2>  <!-- info that only customer can change -->
-<p> Adress: {{area['Address']}} </p>
-<p> Grasslength: {{area['grassLength']}} </pp>
+<h2>Area Info</h2>  <!-- info about service_tickets -->
 
-<h2> Lawnmowers in {{area['Address']}} </h2>
-<!--
-<div class = "mowerPreview">
-    {%for lm in lawnmower%}
-
-    {%if lm['AreaId'] == area['CustomerId']%}
-
-    <form name = "viewMower" method = "POST" action="{{ url_for('serviceprovider.enterMower')}}">
-        <button type = "submit" name = "areaId" value = "{{area['_id']}}">
-            X position: {{lm['Xpos']}} <br> 
-            Y position: {{lm['Ypos']}}
-        
-        </button>
-
-        <input type="hidden" name="mowerId" value="{{lm['_id']}}">      
-    </form>
-
-    {% endif %}
-
+<div>
+    {% for ticket in area_tickets %}
+        <p> v v v </p>
+        <p> Content: {{ticket['Content']}} </p>
+        <p> DateCreated: {{ticket['DateCreated']}} DueDate: {{ticket['DueDate']}} </p>
+        <!-- MowerId: 65ddecaa6d36919f144256cd -->
+        <p> ^^^ </p>
     {% endfor %}
 </div>
--->
+
+<h2> Lawnmowers in {{area['Address']}} </h2>
+
 <div class = "area-mower-space">
     {% for mower in area_mowers %}
         <div class = "mower-object">
