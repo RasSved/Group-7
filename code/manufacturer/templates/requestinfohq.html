@@ -20,19 +20,20 @@
         <button type="button">Back</button>
     </a>
     {% if request['Completed'] == True %}
-    <form name = "DeleteRequest" method = "POST" action="{{ url_for('manufacturer.remove')}}">
-      <button>Remove Request
-      </button>
-    </form>
+    <button>
+    <a href="{{url_for('manufacturer.remove', id = request['_id'] ) }}" class = "button1">Delete</a>
+    </button>
     {% else %}
-    <form name = "customerInfo" method = "POST" action="{{ url_for('manufacturer.manufacturer')}}">
-      <button type = "submit" name = "customerId" value = "{{ request['_id'] }}">Create Service Ticket
-      </button>
-    </form>
+    <button>
+    <a href="{{url_for('manufacturer.service') }}" class = "button1">Create Service Ticket</a>
+    </button>
     {% endif %}
     </form>
     </form>
   </div>
+  <style>
+    
+    </style>
 {% endblock %}
 
 {% block navbuttons %}
