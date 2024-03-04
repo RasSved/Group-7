@@ -73,17 +73,34 @@ def requestinfo():
     else:
         return redirect(url_for("manufacturer.manufacturer"))
     
-@manufacturer_bp.route("/enter/remove", methods = ["GET", "POST"])
-def remove():
-    print(request.form, file=sys.stderr)
-    if "requestId" in request.form:
-        requestId = request.form["requestId"]
-        requests.delete_one({"_id": ObjectId(requestId)})[0]
+@manufacturer_bp.route("/remove/<id>", methods = ["GET", "POST"])
+def remove(id):
+    requests.find_one_and_delete({"_id": ObjectId(id)})
 
 
-        return redirect(url_for("manufacturer.requesthq"))
-    else:
-        return redirect(url_for("manufacturer.manufacturer"))
+    return redirect(url_for("manufacturer.requesthq"))
+
+@manufacturer_bp.route("/service/", methods = ["GET", "POST"])
+def service():
+    data = request.json
+    match data["type"]:
+        case "mowerReq":
+            redirect(url_for("manufacturer.manufactorer"))
+            #När typen av request är mowerReq
+            #kolla provider
+            #kolla mover
+            #skicka ticket med provider och mower uppdaterade  
+        case "Change Provider":
+            redirect(url_for("manufacturer.requesthq"))
+
+
+        case "newArea":
+            redirect(url_for("manufacturer.requesthq"))
+            #När newArea
+            #kolla kund 
+            #Kolla area 
+            #lägg till ticket med kund och area
+    return "", 204
 
 
 @manufacturer_bp.route("/customerinfohq", methods = ["GET", "POST"])

@@ -73,19 +73,31 @@
 
 
 <div class = "areaPreview">
+    {% for area in areas %}
+        {% if area['ProviderId'] == tickets[0]['ProviderId'] %} <!-- if area['ProviderId'] == current provider -->
 
-{%for area in areas%}
+            <form name = "viewArea" method = "POST" action="{{ url_for('serviceprovider.enterArea')}}">
+                <button type = "submit" name = "areaId" value = "{{area['_id']}}">
+                    {{area['Address']}}
+                    <div class="statusBox">{{area['Status']}}</div>
+                </button>
+            </form>
 
+        {% else %}
+            {% for ticket in tickets %}
+                {% if area['_id'] == ticket['AreaId'] %}
 
-<form name = "viewArea" method = "POST" action="{{ url_for('serviceprovider.enterArea')}}">
-    <button type = "submit" name = "areaId" value = "{{area['_id']}}">
-        {{area['Address']}}
-        <div class="statusBox">{{area['Status']}}</div>
-    </button>
-</form>
+                    <form name = "viewArea" method = "POST" action="{{ url_for('serviceprovider.enterArea')}}">
+                        <button type = "submit" name = "areaId" value = "{{area['_id']}}">
+                            {{area['Address']}}
+                            <div class="statusBox">{{area['Status']}}</div>
+                        </button>
+                    </form>
 
-
-{% endfor %}
+                {% endif %}
+            {% endfor %}
+        {% endif %}
+    {% endfor %}
 </div>
 
 <a href="{{ url_for('logout') }}">Logout</a>

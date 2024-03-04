@@ -25,10 +25,6 @@
         <form name = "requestInfo" method = "POST" action="{{ url_for('manufacturer.enterrequest')}}">
         <button type = "submit" name = "requestId" value = "{{ item._id }}"> Request Info</button>
 </form>
-<form name = "DeleteRequest" method = "POST" action="{{ url_for('manufacturer.remove')}}">
-    <button type = "submit" name = "requestId" value = "{{ item._id }}">Remove Request
-    </button>
-  </form>
 </div>
 </div>
 </div>
