@@ -12,15 +12,14 @@
 
 <h2>Area Info</h2>  <!-- info about service_tickets -->
 
-<div>
-    {% for ticket in area_tickets %}
-        <p> v v v </p>
-        <p> Content: {{ticket['Content']}} </p>
-        <p> DateCreated: {{ticket['DateCreated']}} DueDate: {{ticket['DueDate']}} </p>
-        <!-- MowerId: 65ddecaa6d36919f144256cd -->
-        <p> ^^^ </p>
-    {% endfor %}
-</div>
+{% for ticket in area_tickets %}
+    <div class = areaTicketSpace style="background-color: {{ ticket['colour'] }} ;"> <!-- this works, but HTML/CSS think it wont -->
+        Content: {{ticket['Content']}} <br>
+        DateCreated: {{ticket['DateCreated']}} <br>
+        DueDate: {{ticket['DueDate']}} <br>
+        <!-- MowerId: {{ticket['MowerId']}} <br> -->
+    </div>
+{% endfor %}
 
 <h2> Lawnmowers in {{area['Address']}} </h2>
 
@@ -84,39 +83,13 @@
                     </button>
 
                     {% endfor %}
-    
                 </div>
             </div>
         </div>
     </div>
 </form>
 
-
-<!--
-
-<form name = "addMower" method="POST" action="{{ url_for('serviceprovider.addMower') }}">
-    <div id="addMowerWindow" class="modal fade" role="dialog">
-        <div class="modal-dialog modal-md">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h4 class="area-create-title">Add lawnmower</h4>
-                    <button type="button" class="btn close" data-bs-dismiss="modal">&times;</button>  
-                </div>
-
-                <div class="modal-body">
-                </div>
-
-                <div class="modal-foooter">
-                    <button type="button" class="btn footer-button" data-bs-dismiss="modal">Close</button>
-
-                    <button class="submitButton" type="submit" class="btn footer-button">Submit</button>
-                </div>
-            </div>
-        </div>
-    </div>
-</form>
--->
-
+<br><br><br><br><br><br><br> <!-- Added so that the navigation bar doesn't cover up important stuff -->
 {% endblock %}
 
 {% block footer %}
@@ -134,5 +107,4 @@
             <p> configuration</p>
         </button>
     </form>
-
 {% endblock %}

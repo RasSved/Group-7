@@ -118,8 +118,8 @@ def customerinfo():
     else:
         return redirect(url_for("manufacturer.manufacturer"))
 
-@manufacturer_bp.route("/providerlisthq.html")
-def providerlist():
+@manufacturer_bp.route("/ServiceproviderList.html", methods = ["GET", "POST"])
+def ServiceproviderList():
     #verifies that logged in user is a manufacturer
     role = session["role"]
     if role != "manufacturer":
@@ -132,14 +132,14 @@ def providerlist():
 
     #for each serviceprovider, add their information to array (that will be presented to frontend)
     for document in AccCursor:
-        another_account = []
-        another_account.append(document["ProviderId"])
-        another_account.append(document["Email"])
+        another_account = {}
+        another_account["ProviderId"]= document["ProviderId"]
+        another_account["Email"] = document["Email"]
 
         #find relevant infromation from serviceprovider table and add them to 
         SePrInfo = SePrCursor.find_one({"Email": document["Email"]})
-        another_account.append(SePrInfo["Name"])
-        another_account.append(SePrInfo["Phone"])
+        another_account["Name"] = SePrInfo["Name"]
+        another_account["Phone"] = SePrInfo["Phone"]
         #---
 
 
@@ -150,7 +150,21 @@ def providerlist():
 
     print("providers:    ", provider_accounts)
     
-    return render_template("Serviceproviderhq.html", provider_accounts = provider_accounts, title = "Provider List")
+    return render_template("ServiceproviderList.html", provider_accounts = provider_accounts, title = "Provider List")
+
+@manufacturer_bp.route("/infoServiceProvider.html", methods = ["GET", "POST"])
+def infoServiceProvider():
+    #verifies that logged in user is a manufacturer
+    role = session["role"]
+    if role != "manufacturer":
+        return redirect("/logout")
+    
+    areaCursor = db.Areas.find({"ProviderId": request.form["serviceproviderID"] })
+    assignedAreas = []
+    for area in areaCursor:
+        assignedAreas.append(area)
+
+    return render_template("infoServiceProviderhq.html", title = "Serviceprovider Information", assignedAreas = assignedAreas)
 
 @manufacturer_bp.route("/areainfohq.html")
 def areainfo():

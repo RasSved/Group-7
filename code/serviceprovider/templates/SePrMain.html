@@ -80,6 +80,16 @@
                 <button type = "submit" name = "areaId" value = "{{area['_id']}}">
                     {{area['Address']}}
                     <div class="statusBox">{{area['Status']}}</div>
+
+                    {% for ticket in tickets %}
+                        {% if area['_id'] == ticket['AreaId'] %}
+
+                            <div class="ticketSpace" style="background-color: {{ ticket['colour'] }} ;"> <!-- this works, but HTML/CSS think it wont -->
+                                {{ticket['Content']}}
+                            </div>
+                        {% endif %}
+                    {% endfor %}
+
                 </button>
             </form>
 
