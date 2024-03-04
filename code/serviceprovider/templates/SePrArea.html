@@ -13,12 +13,38 @@
 <h2>Area Info</h2>  <!-- info about service_tickets -->
 
 {% for ticket in area_tickets %}
-    <div class = areaTicketSpace style="background-color: {{ ticket['colour'] }} ;"> <!-- this works, but HTML/CSS think it wont -->
+    <button class = areaTicketSpace type="button" data-bs-toggle="modal" data-bs-target="#serviceTicketWindow{{ ticket['_id'] }}" style="background-color: {{ ticket['colour'] }} "> <!-- WORKS, but HTML doesn'think so -->
         Content: {{ticket['Content']}} <br>
         DateCreated: {{ticket['DateCreated']}} <br>
         DueDate: {{ticket['DueDate']}} <br>
         <!-- MowerId: {{ticket['MowerId']}} <br> -->
-    </div>
+    </button>
+
+    <form name = "serviceTicket" method="POST" action="{{ url_for('serviceprovider.completeServiceTicket')}}">
+        <div id="serviceTicketWindow{{ ticket['_id'] }}" class="modal fade" role="dialog">
+            <div class="modal-dialog modal-md">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h4 class="area-create-title"> {{ticket['Content']}} </h4>
+                        <button type="button" class="btn close" data-bs-dismiss="modal">&times;</button> <!-- &times is an x symbol-->  
+                    </div>
+
+                    <div class="modal-body">
+                        Content: {{ticket['Content']}} <br>
+                        DateCreated: {{ticket['DateCreated']}} <br>
+                        DueDate: {{ticket['DueDate']}} <br>
+                        MowerId: {{ticket['MowerId']}} <br>
+                    </div>
+
+                    <div class="modal-footer">
+                        <button class = "submitButton" type="submit" class="btn footer-button"> Completed </button>
+
+                        <input type="hidden" id="ticket_id" name="ticket_id" value="{{ ticket['_id'] }}">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
 {% endfor %}
 
 <h2> Lawnmowers in {{area['Address']}} </h2>
@@ -41,9 +67,7 @@
 
             </span>
             <form name = "removeMower" method = "POST" action="{{ url_for('serviceprovider.removeMower')}}">
-                <button name = "mowerId" value = "{{mower['_id']}}">
-                    Remove
-                </button>
+                <button name = "mowerId" value = "{{mower['_id']}}"> Remove </button>
             </form>
         </div>
         </div>

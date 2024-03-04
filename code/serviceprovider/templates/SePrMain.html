@@ -51,6 +51,7 @@
                 <h4 class="area-create-title">Request mower</h4>
                 <button type="button" class="btn close" data-bs-dismiss="modal">&times;</button> <!-- &times is an x symbol-->  
             </div>
+
             <div class="modal-body">
                 <form id = "reqMower" name = "reqMower" method = "POST" action="{{ url_for('serviceprovider.requestMower')}}">
                     <label for=" product-selection">Select a model: </label>
@@ -61,11 +62,11 @@
                     </select>
                 </form>
             </div>
+
             <div class="modal-footer">
                 <button type="button" class="btn footer-button" data-bs-dismiss="modal">Close</button>
 
                 <button form = "reqMower" class = "submitButton" type="submit" class="btn footer-button">Submit</button>
-
             </div>
         </div>
     </div>
@@ -84,8 +85,8 @@
                     {% for ticket in tickets %}
                         {% if area['_id'] == ticket['AreaId'] %}
 
-                            <div class="ticketSpace" style="background-color: {{ ticket['colour'] }} ;"> <!-- this works, but HTML/CSS think it wont -->
-                                {{ticket['Content']}}
+                            <div class="ticketSpace" style="background-color: {{ ticket['colour'] }}"> <!-- works, but HTML thinks it's wrong -->
+                                {{ ticket['Content'] }}
                             </div>
                         {% endif %}
                     {% endfor %}

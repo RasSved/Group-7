@@ -49,7 +49,7 @@ def serviceprovider():
 
     for ticket in all_tickets:
         diff = (ticket['DueDate'] - current_time).days
-        print(diff)
+        #print(diff)
         if diff < 2:
             ticket["colour"] = 'red'
         elif diff < 8:
@@ -122,6 +122,20 @@ def area():
 
         return render_template("SePrArea.html", title = "Service Provider Area", area=curr_area, area_mowers=area_mowers, available_mowers=available_mowers, area_tickets = area_tickets)
     else:
+        return redirect(url_for("serviceprovider.serviceprovider"))
+
+
+@serviceprovider_bp.route("/area/complete_ticket", methods = ["GET", "POST"])
+def completeServiceTicket():
+    #print(request.form, file=sys.stderr)
+    if ("ticket_id" in request.form):
+
+        ticket_id = request.form["ticket_id"]
+        result = service_tickets.update_one({'_id': ObjectId(ticket_id)}, {'$set': {'Completed': True}})
+        #print(result, file=sys.stderr)
+
+        return redirect(url_for("serviceprovider.area"))
+    else:   # if the request contains wrong info, send the user back to serviceproviders main-page
         return redirect(url_for("serviceprovider.serviceprovider"))
 
 

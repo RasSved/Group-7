@@ -294,6 +294,7 @@ ul.breadcrumbs li a:hover {
     display: inline-block;
     margin-left: 10px;
 }
+
 /* --- SERVICE TICKETS-STUFF */
 
 .ticketSpace {
@@ -325,4 +326,10 @@ ul.breadcrumbs li a:hover {
     border-radius: 6px;
     border-style: solid;
     border: 1px solid #424242
+}
+
+#serviceTicketWindow .modal-body {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    justify-content: space-between;
 }
