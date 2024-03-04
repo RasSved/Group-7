@@ -1,0 +1,37 @@
+{% extends 'basehq.html' %}
+
+{% block head %}
+{% endblock %}
+
+
+{% block body %}
+<ul class="breadcrumbs">
+    <li> <a href="/manufacturer/manufacturer">Main</a></li>
+    <li> <a href="ServiceproviderList.html">Serviceproviders</a></li>
+</ul>
+
+<h2>Provider List</h2>
+
+<div class="container">
+    <div class="products">
+        {% for provider in provider_accounts %}
+        <form name = "main-products" method = "POST" action="{{ url_for('manufacturer.infoServiceProvider') }}">
+            <button type = "submit" name = "serviceproviderID" value = "{{ provider['ProviderId'] }}"> 
+                <div class="product-box">
+                    <h2>{{ provider["Name"] }}</h2>
+                    <h3> <b>Email: </b> {{ provider["Email"] }} </h1>
+                    <h3> <b>Phone: </b> {{ provider["Phone"] }} </h1>
+                </div>
+            </button>
+        </form>
+        {% endfor %}
+    </div>
+</div>
+
+{% endblock %}
+
+{% block navbuttons %}
+<li class="nav-item active">
+    <a class="nav-link" href="/manufacturer/manufacturer">Home</a>
+</li>
+{% endblock %}
