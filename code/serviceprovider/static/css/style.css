@@ -270,3 +270,20 @@ ul.breadcrumbs li a:hover {
     justify-content: center;
     align-items: center;
 }
+
+.conf-info {
+    padding-left: 5px;
+}
+
+.conf-info div {
+    margin-top: 5px;
+}
+
+.conf-desc {
+    display: inline-block;
+}
+
+.conf-vals {
+    display: inline-block;
+    margin-left: 10px;
+}

@@ -12,6 +12,26 @@
 </ul>
 <h2>{{area['Address']}}</h2>
 
+<div class = "conf-info">
+    <div class="conf-desc">
+
+        Subscription:  <br>
+
+        Grass Length:  <br>
+
+        Time to notify service provider:  <br>
+
+    </div>
+
+    <div class="conf-vals">
+        {{service["ServiceName"]}} <br>
+
+        {{area["GrassLength"]}} <br>
+
+        {{area["NotifTime"]}} <br>
+    </div>
+</div>
+
 {% endblock %}
 
 {% block footer %}

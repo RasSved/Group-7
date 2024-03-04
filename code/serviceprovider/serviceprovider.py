@@ -19,6 +19,7 @@ service_tickets = db.Service_Tickets
 requests = db.Requests
 products = db.Products
 accounts = db.Accounts
+services = db.Services
 
 
 @serviceprovider_bp.route("/", methods=["GET", "POST"])
@@ -255,9 +256,11 @@ def configuration():
         areaId = session["area_id"]
         area = areas.find_one({"_id": ObjectId(areaId)})    # find area where id is the same as area clicked
         #print(area, file=sys.stderr)
+        serviceId = area["ServiceId"]
 
-        lawnmower = mowers.find()
+        service = services.find_one({"_id": serviceId})
+        print(service, file=sys.stderr)
 
-        return render_template("SePrConf.html", area=area, lawnmower=lawnmower, title = "Customer Configurations")
+        return render_template("SePrConf.html", area=area, service=service, title = "Customer Configurations")
     else:
         return redirect(url_for("serviceprovider.serviceprovider"))

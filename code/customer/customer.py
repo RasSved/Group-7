@@ -257,11 +257,11 @@ def recieveData():
             #Insert "service" into notifications if not already exists + update mower position
 
             mowers.find_one_and_update({"_id": mowerId}, {'$set': {"Xpos": data["Xpos"], "Ypos": data["Ypos"]}})
-            notifs.update_one({"MowerId": mowerId, "Content": "stuck",}, {'$setOnInsert': {"AreaId": areaId, "Type": "warning", "Seen": False, "Date": datetime.now()}}, upsert = True)
+            notifs.update_one({"MowerId": mowerId, "Content": "service",}, {'$setOnInsert': {"Type": "warning", "Seen": False, "Date": datetime.now()}}, upsert = True)
             #Create service ticket to service provider
 
             providerId = mowers.find_one({"_id": mowerId})["ProviderId"] # Get default area provider
-            notifId = notifs.find_one({"MowerId": mowerId, "Content": "service", "AreaId": areaId})["_id"]
+            notifId = notifs.find_one({"MowerId": mowerId, "Content": "service"})["_id"]
             dueDate = datetime.now() + timedelta(days=14)
             tickets.update_one({"NotifId": notifId}, {'$setOnInsert': {"MowerId": mowerId, "Content": "service", "ProviderId": providerId, "DateCreated": datetime.now(), "Content": "service", "Completed": False, "DueDate": dueDate}}, upsert = True)
 
