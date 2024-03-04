@@ -1,0 +1,33 @@
+{% extends 'basehq.html' %}
+
+{% block head %}
+{% endblock %}
+
+
+{% block body %}
+<ul class="breadcrumbs">
+    <li> <a href="/manufacturer/manufacturer">Main</a></li>
+    <li> <a href="ServiceproviderList.html">Serviceproviders</a></li>
+    <li> <a href="infoServiceproviderhq.html">More Info</a></li>
+</ul>
+
+<h2>Provider List</h2>
+
+<div class="container">
+    <div class="products">
+        {% for area in assignedAreas %}
+        <div class="product-box">
+            <h2> <b>Adress: </b>{{ area["Address"] }}</h2>
+            <h3> <b>Status: </b> {{ area["Status"] }} </h3>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+
+{% endblock %}
+
+{% block navbuttons %}
+<li class="nav-item active">
+    <a class="nav-link" href="/manufacturer/manufacturer">Home</a>
+</li>
+{% endblock %}
