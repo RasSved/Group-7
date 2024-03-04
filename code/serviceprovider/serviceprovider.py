@@ -43,6 +43,19 @@ def serviceprovider():
             #print(areaId, file=sys.stderr)
             mower["Addresses"].append(areas.find_one({"_id": ObjectId(areaId["AreaId"])})["Address"])
 
+    # Get current time
+    current_time = datetime.now()
+
+    for ticket in all_tickets:
+        diff = (ticket['DueDate'] - current_time).days
+        print(diff)
+        if diff < 2:
+            ticket["colour"] = 'red'
+        elif diff < 8:
+            ticket["colour"] = 'orange'
+        else:
+            ticket["colour"] = 'yellow'
+
     return render_template("SePrMain.html", title = "Service Provider Mainpage", areas = all_areas, mowers = all_mowers, products = all_products, tickets = all_tickets)
 
 
@@ -92,6 +105,19 @@ def area():
             for areaId in mower["AreaIds"]:
                 #print(areaId["AreaId"], file=sys.stderr)
                 mower["Addresses"].append(areas.find_one( {"_id": ObjectId(areaId["AreaId"])} )["Address"])
+
+        # Get current time
+        current_time = datetime.now()
+
+        for ticket in area_tickets:
+            diff = (ticket['DueDate'] - current_time).days
+            #print(diff)
+            if diff < 2:
+                ticket["colour"] = 'red'
+            elif diff < 8:
+                ticket["colour"] = 'orange'
+            else:
+                ticket["colour"] = 'yellow'
 
         return render_template("SePrArea.html", title = "Service Provider Area", area=curr_area, area_mowers=area_mowers, available_mowers=available_mowers, area_tickets = area_tickets)
     else:
