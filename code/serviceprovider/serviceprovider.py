@@ -62,10 +62,10 @@ def serviceprovider():
 
 @serviceprovider_bp.route("/enter", methods = ["GET", "POST"])
 def enterArea():
-    print(request.form, file=sys.stderr)
+    #print(request.form, file=sys.stderr)
     if "areaId" in request.form:
         areaId = request.form["areaId"]
-        print(areaId, file=sys.stderr)
+        #print(areaId, file=sys.stderr)
         session["area_id"] = areaId
         return redirect(url_for("serviceprovider.area"))
     else:
@@ -127,12 +127,28 @@ def area():
 
 @serviceprovider_bp.route("/area/complete_ticket", methods = ["GET", "POST"])
 def completeServiceTicket():
-    #print(request.form, file=sys.stderr)
+    print(request.form, file=sys.stderr)
     if ("ticket_id" in request.form):
 
         ticket_id = request.form["ticket_id"]
         result = service_tickets.update_one({'_id': ObjectId(ticket_id)}, {'$set': {'Completed': True}})
         #print(result, file=sys.stderr)
+        current_ticket = service_tickets.find_one({'_id': ObjectId(ticket_id)})
+
+    # Create a request to say that the service ticket is completed
+        # service ticket's provider, area and mower
+        providerId = current_ticket["ProviderId"]
+        areaId = current_ticket["AreaId"]
+        mowerId = current_ticket["MowerId"]
+
+        # make request to Husqvarna
+        type = "Completed Ticket"
+        content = "Service Provider has completed a service ticket!"
+        dateCreated = datetime.now()
+
+        # adding the request
+        requests.insert_one({"Completed": False, "DateCreated": dateCreated, "Content": content, "Type": type, "ProviderId": providerId, "AreaId": areaId, "MowerId": mowerId})
+    #---
 
         return redirect(url_for("serviceprovider.area"))
     else:   # if the request contains wrong info, send the user back to serviceproviders main-page
@@ -146,8 +162,6 @@ def enterMower():
 
         areaId = request.form["areaId"]
         mowerId = request.form["mowerId"]
-
-        #print(area, file=sys.stderr)
 
         session["area_id"] = areaId
         session["mower_id"] = mowerId
@@ -172,7 +186,7 @@ def mower():
 
         mowerId = session["mower_id"]
         lawnmower = mowers.find({"_id": ObjectId(mowerId)})
-        print(lawnmower, file=sys.stderr)
+        #print(lawnmower, file=sys.stderr)
 
         return render_template("SePrMower.html", area=area, lawnmower=lawnmower, title = "Service Provider Mower")
     else:
@@ -184,7 +198,6 @@ def requestMower():
     #print(request.form, file=sys.stderr)
     if request.method == "POST":
         print(request.form, file=sys.stderr)
-        print("here", file=sys.stderr)
         productId = ObjectId(request.form["productId"])
 
         # find the active provider
