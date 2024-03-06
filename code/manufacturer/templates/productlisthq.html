@@ -13,24 +13,21 @@
 <a href="addproducthq.html">
     <button type="button">Add Product</button>
 </a>
-<div class="container">
-    <div class="products">
-        <div class="product-box">
-            <h2>Product 1</h2>
-            <p>Klippare 1</p>
-            <a href="#">
-                <button type="button">Product Info</button>
-            </a>
-        </div>
-        <div class="product-box">
-            <h2>Product 2</h2>
-            <p>Klippare 2</p>
-            <a href="#">
-                <button type="button">Product Info</button>
-            </a>
+{% for item in product %}
+    <div class="container">
+        <div class="products">
+            <div class="product-box">
+                <h2>Product: </h2>
+                <p>Name: {{ item.Name }}</p>
+                <p>Spec: {{ item.Spec }}</p>
+                <button>
+                <a href="{{url_for('manufacturer.pick', id = item._id)}}" class = "button1">Pick</a>
+                </button>    
+            </div>
         </div>
     </div>
-</div>
+
+{% endfor %}
 {% endblock %} 
 
 {% block navbuttons %}
