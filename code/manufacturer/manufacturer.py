@@ -2,7 +2,7 @@ from flask import Flask, render_template, request, redirect, url_for, session, B
 manufacturer_bp = Blueprint('manufacturer', __name__, 
                         template_folder='templates',
                         static_folder='static')
-from datetime import datetime
+from datetime import datetime, timedelta
 from werkzeug.utils import redirect
 from flask_wtf import FlaskForm
 from wtforms import StringField, TextAreaField, SubmitField
@@ -17,6 +17,7 @@ db = client.MowerDB
 
 requests = db.Requests
 product = db.Products
+tickets = db.Service_Tickets
 
 
 
@@ -80,26 +81,41 @@ def remove(id):
 
     return redirect(url_for("manufacturer.requesthq"))
 
-@manufacturer_bp.route("/service/", methods = ["GET", "POST"])
-def service():
-    data = request.json
-    match data["type"]:
-        case "mowerReq":
-            redirect(url_for("manufacturer.manufactorer"))
-            #När typen av request är mowerReq
-            #kolla provider
-            #kolla mover
-            #skicka ticket med provider och mower uppdaterade  
-        case "Change Provider":
-            redirect(url_for("manufacturer.requesthq"))
+@manufacturer_bp.route("/service/<id>", methods = ["GET", "POST"])
+def service(id):
+    data = requests.find_one({"_id": ObjectId(id)})
+    print(data["Type"])
+    match data["Type"]:
+        case 'mowerReq':
+            productId = ObjectId(data["ProductId"])
+            providerId = ObjectId(data["ProviderId"])
+
+            dueDate = datetime.now() + timedelta(days=2)
+            tickets.insert_one({"ProviderId": providerId, "ProductId": productId, "DateCreated": datetime.now(), "Content": "mowerReq", "Completed": False, "DueDate": dueDate})
+            
+            requests.find_one_and_update({"_id": ObjectId(id)}, {'$set': {"Completed": True}})
+            return redirect(url_for("manufacturer.requesthq"))
+        
+        case "asignProv":
+            areaId = ObjectId(data["AreaId"])
+            providerId = ObjectId(data["ProviderId"])
+
+            dueDate = datetime.now() + timedelta(days=2)
+            tickets.insert_one({"ProviderId": providerId, "AreaId": areaId, "DateCreated": datetime.now(), "Content": "asignProv", "Completed": False, "DueDate": dueDate})
+            
+            requests.find_one_and_update({"_id": ObjectId(id)}, {'$set': {"Completed": True}})
+            return redirect(url_for("manufacturer.requesthq"))
 
 
-        case "newArea":
-            redirect(url_for("manufacturer.requesthq"))
-            #När newArea
-            #kolla kund 
-            #Kolla area 
-            #lägg till ticket med kund och area
+        case "newArea":        
+            areaId = ObjectId(data["AreaId"])
+            customerId = ObjectId(data["CustomerId"])
+
+            dueDate = datetime.now() + timedelta(days=2)
+            tickets.insert_one({"AreaId": areaId, "CustomerId": customerId, "DateCreated": datetime.now(), "Content": "newArea", "Completed": False, "DueDate": dueDate})
+            
+            requests.find_one_and_update({"_id": ObjectId(id)}, {'$set': {"Completed": True}})
+            return redirect(url_for("manufacturer.requesthq"))
     return "", 204
 
 
