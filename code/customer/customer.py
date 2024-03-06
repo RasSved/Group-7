@@ -29,7 +29,7 @@ notifContent = {"service": "Your machine needs knife replacement, your service p
 
 # @customer_bp.route("/", methods=["GET", "POST"])
 # def customer():
-#     cusAreas = areas.find() # {"CustomerId": 0}  # get areas belonging to user in session, placefolder for user in session
+#     cusAreas = areas.find() # {"CustomerId": 0}  # get areas belonging to user in session, placeholder for user in session
 #     print(cusAreas, file=sys.stderr)
 #     cusNotifs = []
 #     for area in cusAreas:  #### PICK UP HERE
@@ -46,7 +46,8 @@ def customer():
     
     notifContent = {"service": "Your machine needs knife replacement, your service provider has been notified, no action required from you."}
     notifStrings = {}
-    cusAreas = areas.find({"CustomerId": 0})   # get entire collection
+    customerId = accounts.find_one({"_id": ObjectId(session["user_id"])})["CustomerId"]
+    cusAreas = areas.find({"CustomerId": customerId})   # get entire collection
 
     cusAreasArr = list(cusAreas) # aparently needs to be list if you want a for loop in backend
     for area in cusAreasArr:     # make a list of all mowers on customers areas
@@ -76,7 +77,7 @@ def addArea():
             address = request.form["address"] + " " + request.form["addressNumber"]
             homeX = None
             homeY = None
-            customerId = 0 #placeholder for session
+            customerId = accounts.find_one({"_id": ObjectId(session["user_id"])})["CustomerId"]
             status = "Unconfirmed"
             objId = ObjectId()
             areas.insert_one({"ServiceId": serviceId, "GrassLength": grassLength, "CustomerId": customerId, "HomeX": homeX, "HomeY": homeY, "Address": address, "Status": status, "_id": objId}) 
@@ -100,8 +101,10 @@ def editArea():
             if currArea["Status"] == "Unconfirmed":
                 areas.find_one_and_update({"_id": areaId}, {'$set': {"GrassLength": int(grassLength), "ServiceId": subId, "NotifTime": int(notifTime), "Status": "Pending"}})
                 ### Send request to HQ about new area needing assigned service provider
+                
 
-                cusId = 0 ### Replace with actual user id
+                
+                cusId = accounts.find_one({"_id": ObjectId(session["user_id"])})["CustomerId"] 
                 address = areas.find_one({"_id": ObjectId(session["area_id"])})["Address"]
                 content = "Customer has requested mowing for area at address " + address + ". Please select service provider for this task."
                 requests.insert_one({"CustomerId": cusId, "Type": "newArea", "Content": content, "DateCreated": datetime.now(), "Completed": False, "AreaId": ObjectId(session["area_id"]) })
