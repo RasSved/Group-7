@@ -18,6 +18,7 @@ db = client.MowerDB
 requests = db.Requests
 product = db.Products
 tickets = db.Service_Tickets
+mowers = db.Mower
 
 
 
@@ -87,26 +88,8 @@ def service(id):
     print(data["Type"])
     match data["Type"]:
         case 'mowerReq':
-            productId = ObjectId(data["ProductId"])
-            providerId = ObjectId(data["ProviderId"])
-
-            dueDate = datetime.now() + timedelta(days=2)
-            tickets.insert_one({"ProviderId": providerId, "ProductId": productId, "DateCreated": datetime.now(), "Content": "mowerReq", "Completed": False, "DueDate": dueDate})
-            
             requests.find_one_and_update({"_id": ObjectId(id)}, {'$set': {"Completed": True}})
-            return redirect(url_for("manufacturer.requesthq"))
-        
-        case "asignProv":
-            areaId = ObjectId(data["AreaId"])
-            providerId = ObjectId(data["ProviderId"])
-
-            dueDate = datetime.now() + timedelta(days=2)
-            tickets.insert_one({"ProviderId": providerId, "AreaId": areaId, "DateCreated": datetime.now(), "Content": "asignProv", "Completed": False, "DueDate": dueDate})
-            
-            requests.find_one_and_update({"_id": ObjectId(id)}, {'$set': {"Completed": True}})
-            return redirect(url_for("manufacturer.requesthq"))
-
-
+            return redirect(url_for("manufacturer.productlist"))
         case "newArea":        
             areaId = ObjectId(data["AreaId"])
             customerId = ObjectId(data["CustomerId"])
@@ -117,6 +100,20 @@ def service(id):
             requests.find_one_and_update({"_id": ObjectId(id)}, {'$set': {"Completed": True}})
             return redirect(url_for("manufacturer.requesthq"))
     return "", 204
+
+@manufacturer_bp.route("/pick/<id>", methods = ["GET", "POST"])
+def pick(id):
+    #verifies that logged in user is a manufacturer
+    role = session["role"]
+    if role != "manufacturer":
+        return redirect("/logout")
+    
+    dataprod = product.find_one({"_id": ObjectId(id)})
+    productId = ObjectId(dataprod["_id"])
+
+    mowers.insert_one({"ProductId": productId})
+    
+    return redirect(url_for("manufacturer.requesthq"))
 
 
 @manufacturer_bp.route("/customerinfohq", methods = ["GET", "POST"])
@@ -200,7 +197,8 @@ def productlist():
     if role != "manufacturer":
         return redirect("/logout")
     
-    return render_template("productlisthq.html", title = "Product List")
+    product_data = product.find()
+    return render_template("productlisthq.html", title = "Product List", product=product_data)
 
 @manufacturer_bp.route("/addproducthq.html", methods=("GET", "POST"))
 def addproduct():
@@ -239,3 +237,4 @@ def enterrequest():
         return redirect(url_for("manufacturer.requestinfo"))
     else:
         return redirect(url_for("manufacturer.manufacturer"))
+    
