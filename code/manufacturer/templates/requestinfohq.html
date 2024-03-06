@@ -25,7 +25,7 @@
     </button>
     {% else %}
     <button>
-    <a href="{{url_for('manufacturer.service') }}" class = "button1">Create Service Ticket</a>
+    <a href="{{url_for('manufacturer.service', id = request['_id'] ) }}" class = "button1">Create Service Ticket</a>
     </button>
     {% endif %}
     </form>
