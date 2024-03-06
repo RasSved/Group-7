@@ -75,7 +75,7 @@
 
 <div class = "areaPreview">
     {% for area in areas %}
-        {% if area['ProviderId'] == mowers[0]['ProviderId'] %} <!-- if area['ProviderId'] == current provider -->
+        {% if area['ProviderId'] == providerId %} <!-- if area['ProviderId'] == current provider -->
 
             <form name = "viewArea" method = "POST" action="{{ url_for('serviceprovider.enterArea')}}">
                 <button type = "submit" name = "areaId" value = "{{area['_id']}}">

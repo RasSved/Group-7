@@ -57,7 +57,7 @@ def serviceprovider():
         else:
             ticket["colour"] = 'yellow'
 
-    return render_template("SePrMain.html", title = "Service Provider Mainpage", areas = all_areas, mowers = all_mowers, products = all_products, tickets = all_tickets)
+    return render_template("SePrMain.html", title = "Service Provider Mainpage", areas = all_areas, mowers = all_mowers, products = all_products, tickets = all_tickets, providerId = providerId)
 
 
 @serviceprovider_bp.route("/enter", methods = ["GET", "POST"])
@@ -133,22 +133,12 @@ def completeServiceTicket():
         ticket_id = request.form["ticket_id"]
         result = service_tickets.update_one({'_id': ObjectId(ticket_id)}, {'$set': {'Completed': True}})
         #print(result, file=sys.stderr)
+
         current_ticket = service_tickets.find_one({'_id': ObjectId(ticket_id)})
 
-    # Create a request to say that the service ticket is completed
-        # service ticket's provider, area and mower
-        providerId = current_ticket["ProviderId"]
-        areaId = current_ticket["AreaId"]
-        mowerId = current_ticket["MowerId"]
-
-        # make request to Husqvarna
-        type = "Completed Ticket"
-        content = "Service Provider has completed a service ticket!"
-        dateCreated = datetime.now()
-
-        # adding the request
-        requests.insert_one({"Completed": False, "DateCreated": dateCreated, "Content": content, "Type": type, "ProviderId": providerId, "AreaId": areaId, "MowerId": mowerId})
-    #---
+        if current_ticket['Content'] == "setup area":
+            # change the status of the area to *something*
+            return
 
         return redirect(url_for("serviceprovider.area"))
     else:   # if the request contains wrong info, send the user back to serviceproviders main-page
@@ -206,13 +196,12 @@ def requestMower():
         providerId = current_user["ProviderId"]
 
         # make request to Husqvarna
-        req_providerId = providerId
-        type = "newMower"
-        content = "Service Provider has requested a new lawnmower!"
+        type = "mowerReq"
+        content = "Service Provider request a new lawnmower!"
         dateCreated = datetime.now()
 
         # adding the request
-        requests.insert_one({"Completed": False, "DateCreated": dateCreated, "Content": content, "Type": type, "ProviderId": req_providerId, "ProductId": productId})
+        requests.insert_one({"Completed": False, "DateCreated": dateCreated, "Content": content, "Type": type, "ProviderId": providerId, "ProductId": productId})
 
         return redirect(url_for("serviceprovider.serviceprovider"))
     return redirect(url_for("serviceprovider.serviceprovider")) 
