@@ -26,7 +26,7 @@ for n in Service_Provider_dict:
 
     searchedForID = Service_Provider.find_one(n, {"_id": 1})
 
-    Accounts.insert_one({"CustomerId":None, "ProviderId":searchedForID, "Email":n["Email"], "Password":(n["Email"]).split('@')[0], "Role":"serviceprovider"})
+    Accounts.insert_one({"CustomerId":None, "ProviderId":searchedForID["_id"], "Email":n["Email"], "Password":(n["Email"]).split('@')[0], "Role":"serviceprovider"})
 
 #<--
     
@@ -39,10 +39,16 @@ for n in customer_dict:
 
     searchedForID = Customer.find_one(n, {"_id": 1})
 
-    Accounts.insert_one({"CustomerId":searchedForID, "ProviderId":None, "Email":n["Email"], "Password":(n["Email"]).split('@')[0], "Role":"customer"})
+    Accounts.insert_one({"CustomerId":searchedForID["_id"], "ProviderId":None, "Email":n["Email"], "Password":(n["Email"]).split('@')[0], "Role":"customer"})
 
 #<--
     
 #putting in manufactuter accounts
 Accounts.insert_one({"CustomerId":None, "ProviderId":None, "Email":"manufacturer@manufacturer.com", "Password":"m1", "Role":"manufacturer"})
 
+
+#creating and inserting services
+Services = db.Services
+Services.insert_one({"ServiceName": "basic", "FreePushes": 10, "InspectionsPerYear": 2, "MaxVariation": 2, "InterventionPriority": "low"})
+Services.insert_one({"ServiceName": "gold", "FreePushes": 20, "InspectionsPerYear": 4, "MaxVariation": 1, "InterventionPriority": "medium"})
+Services.insert_one({"ServiceName": "supreme", "FreePushes": 30, "InspectionsPerYear": 6, "MaxVariation": 1, "InterventionPriority": "high"})
