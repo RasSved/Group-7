@@ -35,9 +35,9 @@
           {% for product in products%}
           <option value = "{{product['_id']}}">{{product["Name"]}}</option>
           {% endfor%}
-        </select>
-        <button name = "requestId" value = "{{request['_id']}}" type = "submit" class="button1"> Send mower
-        </button>
+    <form action = "{{ url_for('manufacturer.remove') }}" method = "POST">
+      <button type = "submit" name = "requestId" class = "button1" value ="{{request['_id']}}"> Delete
+      </button>
       </form>
       {% endif %}
     {% else %}
