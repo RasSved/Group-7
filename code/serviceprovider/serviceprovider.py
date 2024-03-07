@@ -39,7 +39,7 @@ def serviceprovider():
 
     all_areas = []
     for ticket in all_tickets:
-        if ticket['MowerId']:
+        if 'MowerId' in ticket:
             lawnmower = mowers.find_one( {'_id': ObjectId(ticket['MowerId'])} )
             for area_id in lawnmower['AreaIds']:
                 area = areas.find_one( {'_id': area_id["AreaId"]} )
