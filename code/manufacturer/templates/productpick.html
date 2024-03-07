@@ -1,0 +1,29 @@
+{% extends 'basehq.html' %}
+
+{% block head %}
+{% endblock %}
+
+
+{% block body %}
+{% for item in product %}
+    <div class="container">
+        <div class="products">
+            <div class="product-box">
+                <h2>Product: </h2>
+                <p>Name: {{ item.Name }}</p>
+                <p>Spec: {{ item.Spec }}</p>
+                <button>
+                <a href="{{url_for('manufacturer.pick', id = item._id)}}" class = "button1">Pick</a>
+                </button>    
+            </div>
+        </div>
+    </div>
+
+{% endfor %}
+{% endblock %} 
+
+{% block navbuttons %}
+<li class="nav-item active">
+    <a class="nav-link" href="/manufacturer/manufacturer">Home</a>
+</li>
+{% endblock %}
