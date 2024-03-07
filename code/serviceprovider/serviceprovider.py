@@ -15,6 +15,7 @@ db = client.MowerDB
 accounts = db.Accounts
 areas = db.Areas
 mowers = db.Mower
+notifs = db.Notifications
 service_tickets = db.Service_Tickets
 requests = db.Requests
 products = db.Products
@@ -31,10 +32,24 @@ def serviceprovider():
 
     providerId      = accounts.find_one( {"_id": ObjectId(session["user_id"])} )["ProviderId"]
 
-    all_areas       = areas.find()      # get entire collection
+    #all_areas       = areas.find()      # get entire collection
     all_mowers      = list(mowers.find( {"ProviderId": providerId} ))  # get all mowers of specific provider, update to contain object id
     all_products    = list(products.find())
     all_tickets     = list(service_tickets.find( {"ProviderId": providerId, "Completed": False} ))
+
+    all_areas = []
+    for ticket in all_tickets:
+        if ticket['MowerId']:
+            lawnmower = mowers.find_one( {'_id': ObjectId(ticket['MowerId'])} )
+            for area_id in lawnmower['AreaIds']:
+                area = areas.find_one( {'_id': area_id["AreaId"]} )
+                if area not in all_areas:
+                    all_areas.append( area )
+        else:
+            area = areas.find_one( {'_id': area_id["AreaId"]} )
+            if area not in all_areas:
+                all_areas.append( area )
+    #print(all_areas, file=sys.stderr)
 
     for mower in all_mowers:            # Add fields, addresses and name to display on main page
         #print(mower["AreaIds"], file=sys.stderr)
@@ -44,8 +59,7 @@ def serviceprovider():
             #print(areaId, file=sys.stderr)
             mower["Addresses"].append(areas.find_one({"_id": ObjectId(areaId["AreaId"])})["Address"])
 
-    # Get current time
-    current_time = datetime.now()
+    current_time = datetime.now()   # Get current time
 
     for ticket in all_tickets:
         diff = (ticket['DueDate'] - current_time).days
@@ -136,9 +150,20 @@ def completeServiceTicket():
 
         current_ticket = service_tickets.find_one({'_id': ObjectId(ticket_id)})
 
-        if current_ticket['Content'] == "setup area":
+        if current_ticket['NotifId']:
+            notifId = current_ticket['NotifId']
+
+            for ticket in list(service_tickets.find()):
+                if ticket['NotifId'] == notifId:
+                    service_tickets.update_one({'_id': ObjectId(ticket['_id'])}, {'$set': {'NotifId': None}})
+
+            notifs.delete_one( {'_id': ObjectId(notifId)} )
+
+        if "setup area" in current_ticket['Content']:
             # change the status of the area to *something*
-            return
+            areaId = current_ticket['AreaId']
+            result_area = areas.update_one( {'_id': ObjectId(areaId)}, {'$set': {'Status': "Up & Running"}} )
+            print(result, file=sys.stderr)
 
         return redirect(url_for("serviceprovider.area"))
     else:   # if the request contains wrong info, send the user back to serviceproviders main-page
