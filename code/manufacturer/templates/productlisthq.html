@@ -19,10 +19,10 @@
             <div class="product-box">
                 <h2>Product: </h2>
                 <p>Name: {{ item.Name }}</p>
-                <p>Spec: {{ item.Spec }}</p>
+                <p>Spec: {{ item.Spec }}</p> 
                 <button>
-                <a href="{{url_for('manufacturer.pick', id = item._id)}}" class = "button1">Pick</a>
-                </button>    
+                <a href="{{url_for('manufacturer.removeprod', id = item._id)}}" class = "button1">Delete</a>
+                </button> 
             </div>
         </div>
     </div>
