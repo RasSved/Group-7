@@ -30,14 +30,14 @@
         </button>
       </form>
       {% elif request['Type'] == "mowerReq" %}
-      <form name = "productForm" action = "{{url_for('manufacturer.service') }}" method = "POST">
+      <form method = "POST" action = "{{url_for('manufacturer.service') }}">
         <select name = "productId">
           {% for product in products%}
           <option value = "{{product['_id']}}">{{product["Name"]}}</option>
           {% endfor%}
-    <form action = "{{ url_for('manufacturer.remove') }}" method = "POST">
-      <button type = "submit" name = "requestId" class = "button1" value ="{{request['_id']}}"> Delete
-      </button>
+        </select>
+        <button name = "requestId" type = "submit" value = "{{request['_id']}}" class="button1"> Send mower
+        </button>
       </form>
       {% endif %}
     {% else %}

@@ -58,7 +58,15 @@ def customer():
             for notif in tempNotifs:
                 mess = notif["Content"]
                 if mess == "stuck":
-                    content = {"text": "Your mower is stuck at " + str(mower["Xpos"]) + ", " + str(mower["Ypos"]) + "! View the map to see where. You may solve it yourself or a service provider will be called in X hours.", "type": notif["Type"]}
+                    stuckTime = notif["Date"]
+                    #print(area, file=sys.stderr)
+                    timeDiff = datetime.now() - stuckTime 
+                    timeDiff = timeDiff.days * 24 + timeDiff.seconds//3600
+                    timeLeft = area["NotifTime"] - timeDiff
+                    if timeLeft > 0:
+                        content = {"text": "Your mower is stuck at " + str(mower["Xpos"]) + ", " + str(mower["Ypos"]) + "! View the map to see where. You may solve it yourself or a service provider will be called in " + str(timeLeft) + " hours.", "type": notif["Type"]}
+                    else:
+                        content = {"text": "Your mower is stuck at " + str(mower["Xpos"]) + ", " + str(mower["Ypos"]) + "! View the map to see where. Your service provider has been notified, no action required from you.", "type": "warning"}
                 else:
                     content = {"text": notifContent[mess], "type": notif["Type"]}
                 areaNotifs.append(content)
@@ -144,7 +152,16 @@ def area():
             for notif in tempNotifs:
                 mess = notif["Content"]
                 if mess == "stuck":
-                    content = {"text": "Your mower is stuck at " + str(mower["Xpos"]) + ", " + str(mower["Ypos"]) + "! View the map to see where. You may solve it yourself or a service provider will be called in X hours.", "type": notif["Type"]}
+                    stuckTime = notif["Date"]
+                    #print(area, file=sys.stderr)
+                    timeDiff = datetime.now() - stuckTime 
+                    timeDiff = timeDiff.days * 24 + timeDiff.seconds//3600
+                    timeLeft = area["NotifTime"] - timeDiff
+                    if timeLeft > 0:
+                        content = {"text": "Your mower is stuck at " + str(mower["Xpos"]) + ", " + str(mower["Ypos"]) + "! View the map to see where. You may solve it yourself or a service provider will be called in " + str(timeLeft) + " hours.", "type": notif["Type"]}
+                    else:
+                        content = {"text": "Your mower is stuck at " + str(mower["Xpos"]) + ", " + str(mower["Ypos"]) + "! View the map to see where. Your service provider has been notified, no action required from you.", "type": "warning"}
+                    
                 else:
                     content = {"text": notifContent[mess], "type": notif["Type"]}
                 areaNotifs.append(content)
