@@ -231,20 +231,17 @@ def addproduct():
     role = session["role"]
     if role != "manufacturer":
         return redirect("/logout")
-    #Form for add product
+    
     if request.method == "POST":
         form = ProductForm(request.form)
         add_name = form.name.data
         add_spec = form.spec.data
         add_description = form.description.data
-        submit = form.submit.data
-    #Insert the added content into product DB
+
         product.insert_one({
            "Name": add_name,
             "Spec": add_spec,
             "Description": add_description,
-            "Submit": submit,
-            "Date_completed": datetime.utcnow()
         })
         return redirect(url_for("manufacturer.productlist"))
     else:
