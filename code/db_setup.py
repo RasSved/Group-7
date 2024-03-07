@@ -1,4 +1,4 @@
-#run this to setup accounts part of database with dummy-users
+#run this to setup database with dummy data
 
 from itertools import count
 
@@ -44,7 +44,7 @@ for n in customer_dict:
 #<--
     
 #putting in manufactuter accounts
-Accounts.insert_one({"CustomerId":None, "ProviderId":None, "Email":"manufacturer@manufacturer.com", "Password":"m1", "Role":"manufacturer"})
+Accounts.insert_one({"CustomerId":None, "ProviderId":None, "Email":"manufacturer@manufacturer.com", "Password":"manufacturer", "Role":"manufacturer"})
 
 
 #creating and inserting services
