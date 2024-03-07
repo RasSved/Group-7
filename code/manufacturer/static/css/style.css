@@ -92,3 +92,9 @@ ul.breadcrumbs li a:hover {
    text-decoration: none; 
    background-color: none;
 }
+
+.serviceprovider-box {
+    width: 1200px;
+    padding: 10px;
+    margin-bottom: 15px;
+}

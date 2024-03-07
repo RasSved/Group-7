@@ -12,21 +12,21 @@
 
 <h2>Provider List</h2>
 
+{% for provider in provider_accounts %}
 <div class="container">
     <div class="products">
-        {% for provider in provider_accounts %}
         <form name = "main-products" method = "POST" action="{{ url_for('manufacturer.infoServiceProvider') }}">
             <button type = "submit" name = "serviceproviderID" value = "{{ provider['ProviderId'] }}"> 
-                <div class="product-box">
+                <div class="serviceprovider-box">
                     <h2>{{ provider["Name"] }}</h2>
                     <h3> <b>Email: </b> {{ provider["Email"] }} </h1>
                     <h3> <b>Phone: </b> {{ provider["Phone"] }} </h1>
                 </div>
             </button>
         </form>
-        {% endfor %}
     </div>
 </div>
+{% endfor %}
 
 {% endblock %}
 
