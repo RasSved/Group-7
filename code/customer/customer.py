@@ -78,11 +78,11 @@ def customer():
 def addArea():
     #print(request.form, file=sys.stderr)
     if request.method == "POST":
-        if ("address" and "addressNumber" in request.form): # if all needed keys are present
+        if ("address" in request.form): # if all needed keys are present
             print(request.form, file=sys.stderr)
             serviceId = None
             grassLength = None
-            address = request.form["address"] + " " + request.form["addressNumber"]
+            address = request.form["address"]
             homeX = None
             homeY = None
             customerId = accounts.find_one({"_id": ObjectId(session["user_id"])})["CustomerId"]
