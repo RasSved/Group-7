@@ -89,7 +89,7 @@ def service(id):
     match data["Type"]:
         case 'mowerReq':
             requests.find_one_and_update({"_id": ObjectId(id)}, {'$set': {"Completed": True}})
-            return redirect(url_for("manufacturer.productlist"))
+            return redirect(url_for("manufacturer.productpick"))
         case "newArea":        
             areaId = ObjectId(data["AreaId"])
             customerId = ObjectId(data["CustomerId"])
@@ -200,6 +200,17 @@ def productlist():
     product_data = product.find()
     return render_template("productlisthq.html", title = "Product List", product=product_data)
 
+
+@manufacturer_bp.route("/productpick.html")
+def productpick():
+    #verifies that logged in user is a manufacturer
+    role = session["role"]
+    if role != "manufacturer":
+        return redirect("/logout")
+    
+    product_data = product.find()
+    return render_template("productpick.html", title = "Product List", product=product_data)
+
 @manufacturer_bp.route("/addproducthq.html", methods=("GET", "POST"))
 def addproduct():
     #verifies that logged in user is a manufacturer
@@ -215,13 +226,13 @@ def addproduct():
         submit = form.submit.data
 
         product.insert_one({
-           "name": add_name,
-            "spec": add_spec,
-            "description": add_description,
-            "submit": submit,
-            "date_completed": datetime.utcnow()
+           "Name": add_name,
+            "Spec": add_spec,
+            "Description": add_description,
+            "Submit": submit,
+            "Date_completed": datetime.utcnow()
         })
-        return redirect("/productlisthq.html")
+        return redirect(url_for("manufacturer.productlist"))
     else:
         form = ProductForm()
     return render_template("addproducthq.html", title = "Add Product", form = form)
@@ -238,3 +249,10 @@ def enterrequest():
     else:
         return redirect(url_for("manufacturer.manufacturer"))
     
+
+@manufacturer_bp.route("/removeprod/<id>", methods = ["GET", "POST"])
+def removeprod(id):
+    product.find_one_and_delete({"_id": ObjectId(id)})
+
+
+    return redirect(url_for("manufacturer.productlist"))
