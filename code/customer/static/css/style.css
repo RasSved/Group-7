@@ -153,7 +153,7 @@ ul.breadcrumbs li a:hover {
     height: 100%;
     font-size: 15px;
     width: 70%;
-    overflow-y: scroll;
+    overflow-y: auto;
     text-align: center;
 }
 
