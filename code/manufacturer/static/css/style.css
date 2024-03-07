@@ -94,7 +94,9 @@ ul.breadcrumbs li a:hover {
 }
 
 .serviceprovider-box {
+    border: 1px solid #ccc;
     width: 1200px;
     padding: 10px;
     margin-bottom: 15px;
+    background-color: #f2f2f2;
 }
