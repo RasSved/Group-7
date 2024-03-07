@@ -71,6 +71,8 @@ def serviceprovider():
             ticket["desc"] = "A new area is needed to be setup!"
         elif ticket['Content'] == "service":
             ticket["desc"] = "You need to replace the knife on a mower!"
+        elif ticket['Content'] == "stuck":
+            ticket["desc"] = "A mower is stuck! Push it!"
         else:
             ticket["desc"] = "This is a placeholder for a description of the ticket!"
 
@@ -151,6 +153,8 @@ def area():
                 ticket["desc"] = "A new area is needed to be setup!"
             elif ticket['Content'] == "service":
                 ticket["desc"] = "You need to replace the knife on a mower!"
+            elif ticket['Content'] == "stuck":
+                ticket["desc"] = "A mower is stuck! Push it!"
             else:
                 ticket["desc"] = "This is a placeholder for a description of the ticket!"
 
