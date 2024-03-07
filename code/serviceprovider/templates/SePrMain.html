@@ -57,7 +57,7 @@
                     <label for=" product-selection">Select a model: </label>
                     <select id = "product-selection" name = "productId">
                         {% for product in products %}
-                            <option value = "{{product['_id']}}"> {{product["name"]}}</option>
+                            <option value = "{{product['_id']}}"> {{product["Name"]}}</option>
                         {% endfor %}
                     </select>
                 </form>

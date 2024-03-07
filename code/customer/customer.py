@@ -244,7 +244,6 @@ def recieveData():
         case "unstuck":
             #Delete notification, update position
 
-            areaId = ObjectId(data["AreaId"])
             mowerId = ObjectId(data["MowerId"])
 
             mowers.find_one_and_update({"_id": mowerId}, {'$set': {"Xpos": data["Xpos"], "Ypos": data["Ypos"]}})

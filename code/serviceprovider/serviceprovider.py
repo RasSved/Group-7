@@ -37,7 +37,7 @@ def serviceprovider():
     all_products    = list(products.find())
     all_tickets     = list(service_tickets.find( {"ProviderId": providerId, "Completed": False} ))
 
-    all_areas = []
+    all_areas = list(areas.find({"ProviderId": providerId }))
     for ticket in all_tickets:
         if 'MowerId' in ticket:
             lawnmower = mowers.find_one( {'_id': ObjectId(ticket['MowerId'])} )
@@ -46,7 +46,7 @@ def serviceprovider():
                 if area not in all_areas:
                     all_areas.append( area )
         else:
-            area = areas.find_one( {'_id': area_id["AreaId"]} )
+            area = areas.find_one( {'_id': ticket["AreaId"]} )
             if area not in all_areas:
                 all_areas.append( area )
     #print(all_areas, file=sys.stderr)
@@ -54,7 +54,7 @@ def serviceprovider():
     for mower in all_mowers:            # Add fields, addresses and name to display on main page
         #print(mower["AreaIds"], file=sys.stderr)
         mower["Addresses"] = []
-        mower["Name"] = products.find_one({"_id": mower["ProductId"]})["name"]
+        mower["Name"] = products.find_one({"_id": mower["ProductId"]})["Name"]
         for areaId in mower["AreaIds"]:
             #print(areaId, file=sys.stderr)
             mower["Addresses"].append(areas.find_one({"_id": ObjectId(areaId["AreaId"])})["Address"])
@@ -105,7 +105,7 @@ def area():
 
         for mower in area_mowers: # add fields, Addresses and Name to display on main page
             mower["Addresses"] = []
-            mower["Name"] = products.find_one({"_id": mower["ProductId"]})["name"]
+            mower["Name"] = products.find_one({"_id": mower["ProductId"]})["Name"]
 
 
             for areaId in mower["AreaIds"]:
@@ -114,7 +114,7 @@ def area():
 
         for mower in available_mowers: # repeat for other mowers
             mower["Addresses"] = []
-            mower["Name"] = products.find_one({"_id": mower["ProductId"]})["name"]
+            mower["Name"] = products.find_one({"_id": mower["ProductId"]})["Name"]
 
 
             for areaId in mower["AreaIds"]:
@@ -150,16 +150,17 @@ def completeServiceTicket():
 
         current_ticket = service_tickets.find_one({'_id': ObjectId(ticket_id)})
 
-        if current_ticket['NotifId']:
+        if "NotifId" in current_ticket:
             notifId = current_ticket['NotifId']
 
             for ticket in list(service_tickets.find()):
-                if ticket['NotifId'] == notifId:
-                    service_tickets.update_one({'_id': ObjectId(ticket['_id'])}, {'$set': {'NotifId': None}})
+                if "NotifId" in ticket:
+                    if ticket['NotifId'] == notifId:
+                        service_tickets.update_one({'_id': ObjectId(ticket['_id'])}, {'$set': {'NotifId': None}})
 
             notifs.delete_one( {'_id': ObjectId(notifId)} )
 
-        if "setup area" in current_ticket['Content']:
+        if "newArea" in current_ticket['Content']:
             # change the status of the area to *something*
             areaId = current_ticket['AreaId']
             result_area = areas.update_one( {'_id': ObjectId(areaId)}, {'$set': {'Status': "Up & Running"}} )
