@@ -85,7 +85,7 @@
                     <div class="statusBox">{{area['Status']}}</div>
 
                     {% for ticket in tickets %}
-                        {% if area['_id'] == ticket['AreaId'] %}
+                        {% if area['_id'] in ticket['AreaIds'] %}
 
                             <div class="ticketSpace" style="background-color: {{ ticket['colour'] }}"> <!-- works, but HTML thinks it's wrong -->
                                 {{ ticket['desc'] }}
@@ -98,7 +98,7 @@
 
         {% else %}
             {% for ticket in tickets %}
-                {% if area['_id'] == ticket['AreaId'] %}
+                {% if area['_id'] in ticket['AreaIds'] %}
 
                     <form name = "viewArea" method = "POST" action="{{ url_for('serviceprovider.enterArea')}}">
                         <button type = "submit" name = "areaId" value = "{{area['_id']}}">

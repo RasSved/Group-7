@@ -39,13 +39,17 @@ def serviceprovider():
 
     all_areas = list(areas.find({"ProviderId": providerId }))
     for ticket in all_tickets:
+        ticket["AreaIds"] = []
         if 'MowerId' in ticket:
+            print("bingus", file=sys.stderr)
             lawnmower = mowers.find_one( {'_id': ObjectId(ticket['MowerId'])} )
             for area_id in lawnmower['AreaIds']:
+                ticket["AreaIds"].append(area_id["AreaId"])
                 area = areas.find_one( {'_id': area_id["AreaId"]} )
                 if area not in all_areas:
                     all_areas.append( area )
         else:
+            ticket["AreaIds"] = [ticket["AreaId"]]
             area = areas.find_one( {'_id': ticket["AreaId"]} )
             if area not in all_areas:
                 all_areas.append( area )
@@ -88,7 +92,7 @@ def enterArea():
     if "areaId" in request.form:
         areaId = request.form["areaId"]
         #print(areaId, file=sys.stderr)
-        session["area_id"] = areaId
+        session["area_id"] = str(areaId)
         return redirect(url_for("serviceprovider.area"))
     else:
         return redirect(url_for("serviceprovider.serviceprovider"))
@@ -106,15 +110,24 @@ def area():
         curr_area = areas.find_one({"_id": ObjectId(areaId)})    # find area where id is the same as area clicked
         providerId = accounts.find_one({"_id": ObjectId(session["user_id"])})["ProviderId"]
 
-        area_mowers = list(mowers.find({"ProviderId": providerId, "AreaIds": {'$elemMatch': {"AreaId": ObjectId(session["area_id"])}}}))  # get all mowers of specific provider, update to contain object id
+        area_mowers = list(mowers.find({"ProviderId": providerId, "AreaIds": {'$elemMatch': {"AreaId": ObjectId(session["area_id"])}}}))  # get all mowers of specific provider, update to contain object 
         available_mowers = list(mowers.find({"ProviderId": providerId, "AreaIds": {'$not': {'$elemMatch': {"AreaId": ObjectId(session["area_id"])}}}})) # get all mowers that belong to provider but are not on current area
 
         area_tickets = list( service_tickets.find( {"ProviderId": providerId, "Completed": False, "AreaId": ObjectId(areaId)} ) )
 
         for mower in area_mowers: # add fields, Addresses and Name to display on main page
+            for area in mower["AreaIds"]:
+                print(areaId, file=sys.stderr)
+                print(area["AreaId"])
+                print(areaId == area["AreaId"])
+                if str(area["AreaId"]) == str(areaId):
+                    print("AreaId", file=sys.stderr)
+                    mower_tickets = list(service_tickets.find({"MowerId": mower["_id"]}))
+                    for ticket in mower_tickets:
+                        if ticket not in area_tickets:
+                            area_tickets.append(ticket)
             mower["Addresses"] = []
             mower["Name"] = products.find_one({"_id": mower["ProductId"]})["Name"]
-
 
             for areaId in mower["AreaIds"]:
                 #print(areaId["AreaId"], file=sys.stderr)
