@@ -81,15 +81,17 @@ def requestinfo():
     else:
         return redirect(url_for("manufacturer.manufacturer"))
     
-@manufacturer_bp.route("/remove/<id>", methods = ["GET", "POST"])
-def remove(id):
+@manufacturer_bp.route("/requestinfo/remove", methods = ["GET", "POST"])
+def remove():
+    id = request.form["requestId"]
     requests.find_one_and_delete({"_id": ObjectId(id)})
 
 
     return redirect(url_for("manufacturer.requesthq"))
 
-@manufacturer_bp.route("/service/<id>", methods = ["GET", "POST"])
-def service(id):
+@manufacturer_bp.route("/requestinfo/service", methods = ["POST"])
+def service():
+    id = request.form["requestId"]
     data = requests.find_one({"_id": ObjectId(id)})
     print(data["Type"])
     match data["Type"]:
@@ -100,6 +102,7 @@ def service(id):
             mowers.insert_one({"ProviderId": providerId, "ProductId": productId, "AreaIds": [], "Xpos": 0, "Ypos": 0})
             
             requests.find_one_and_update({"_id": ObjectId(id)}, {'$set': {"Completed": True}})
+            return redirect(url_for("manufacturer.requesthq"))
         case "newArea":        
             areaId = ObjectId(data["AreaId"])
             customerId = ObjectId(data["CustomerId"])
@@ -109,7 +112,8 @@ def service(id):
             tickets.insert_one({"AreaId": areaId, "CustomerId": customerId, "DateCreated": datetime.now(), "Content": "newArea", "Completed": False, "DueDate": dueDate, "ProviderId": providerId})
             areas.find_one_and_update({"_id": areaId}, {"$set": {"ProviderId": providerId}})
             requests.find_one_and_update({"_id": ObjectId(id)}, {'$set': {"Completed": True}})
-    return redirect(url_for("manufacturer.requesthq"))
+            return redirect(url_for("manufacturer.requesthq"))
+   
 
 @manufacturer_bp.route("/pick/<id>", methods = ["GET", "POST"])
 def pick(id):

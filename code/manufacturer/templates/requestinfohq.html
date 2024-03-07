@@ -8,11 +8,10 @@
 <ul class="breadcrumbs">
   <li> <a href="/manufacturer/manufacturer">Main</a></li>
   <li> <a href="requesthq.html">Request</a></li>
-  <li> <a href="requestinfohq.html">Request Info</a></li>
+  <li> <a href="requestinfohq">Request Info</a></li>
 </ul>
 <h2>Request Info</h2>
 <div class="request-info">
-    <form>
       <p>Type: {{request['Type']}}</p>
       <p>Content: {{request['Content']}}</p>
       <p>Created at: {{request['DateCreated']}}</p>
@@ -21,33 +20,31 @@
     </a>
     {% if request['Completed'] == False %}
       {% if request['Type'] == "newArea" %}
-      <form action = "{{url_for('manufacturer.service', id = request['_id'] ) }}" method = "POST">
+      <form method = "POST" action="{{ url_for('manufacturer.service')}}">
         <select name = "providerId">
           {% for provider in providers%}
           <option value = "{{provider['_id']}}">{{provider["Name"]}}</option>
           {% endfor%}
         </select>
-        <button type = "submit" class="button1"> Create Service Ticket
+        <button name = "requestId" type = "submit" value = "{{request['_id']}}" class="button1"> Create Service Ticket
         </button>
       </form>
       {% elif request['Type'] == "mowerReq" %}
-      <form action = "{{url_for('manufacturer.service', id = request['_id'] ) }}" method = "POST">
+      <form name = "productForm" action = "{{url_for('manufacturer.service') }}" method = "POST">
         <select name = "productId">
           {% for product in products%}
           <option value = "{{product['_id']}}">{{product["name"]}}</option>
           {% endfor%}
         </select>
-        <button type = "submit" class="button1"> Create Service Ticket
+        <button name = "requestId" value = "{{request['_id']}}" type = "submit" class="button1"> Create Service Ticket
         </button>
       </form>
       {% endif %}
     {% else %}
       <button>
-      <a href="{{url_for('manufacturer.remove', id = request['_id'] ) }}" class = "button1">Delete</a>
+      <a href="{{url_for('manufacturer.remove') }}" class = "button1">Delete</a>
       </button>
     {% endif %}
-    </form>
-    </form>
   </div>
   <style>
     
