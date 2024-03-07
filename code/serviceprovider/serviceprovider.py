@@ -32,8 +32,7 @@ def serviceprovider():
 
     providerId      = accounts.find_one( {"_id": ObjectId(session["user_id"])} )["ProviderId"]
 
-    #all_areas       = areas.find()      # get entire collection
-    all_mowers      = list(mowers.find( {"ProviderId": providerId} ))  # get all mowers of specific provider, update to contain object id
+    all_mowers      = list(mowers.find( {"ProviderId": providerId} ))  # Get all mowers of specific provider, update to contain object id
     all_products    = list(products.find())
     all_tickets     = list(service_tickets.find( {"ProviderId": providerId, "Completed": False} ))
 
@@ -102,7 +101,7 @@ def enterArea():
 
 @serviceprovider_bp.route("/area", methods = ["GET", "POST"])
 def area():
-    #verifies that logged in user is a serviceprovider
+    # Verifies that logged in user is a serviceprovider
     role = session["role"]
     if role != "serviceprovider":
         return redirect("/logout")
@@ -222,7 +221,7 @@ def enterMower():
 
 @serviceprovider_bp.route("/area/mower", methods = ["GET", "POST"])
 def mower():
-    # verifies that logged in user is a serviceprovider
+    # Verifies that logged in user is a serviceprovider
     role = session["role"]
     if role != "serviceprovider":
         return redirect("/logout")
@@ -307,7 +306,7 @@ def areaNav():
 
 @serviceprovider_bp.route("/area/map", methods = ["GET", "POST"])
 def map():
-    #verifies that logged in user is a serviceprovider
+    # Verifies that logged in user is a serviceprovider
     role = session["role"]
     if role != "serviceprovider":
         return redirect("/logout")
@@ -327,7 +326,7 @@ def map():
 
 @serviceprovider_bp.route("/area/schedule", methods = ["GET", "POST"])
 def schedule():
-    #verifies that logged in user is a serviceprovider
+    # Verifies that logged in user is a serviceprovider
     role = session["role"]
     if role != "serviceprovider":
         return redirect("/logout")
@@ -347,7 +346,7 @@ def schedule():
 
 @serviceprovider_bp.route("/area/configuration", methods = ["GET", "POST"])
 def configuration():
-    #verifies that logged in user is a serviceprovider
+    # Verifies that logged in user is a serviceprovider
     role = session["role"]
     if role != "serviceprovider":
         return redirect("/logout")
