@@ -122,7 +122,7 @@ def area():
                 print(areaId == area["AreaId"])
                 if str(area["AreaId"]) == str(areaId):
                     print("AreaId", file=sys.stderr)
-                    mower_tickets = list(service_tickets.find({"MowerId": mower["_id"]}))
+                    mower_tickets = list(service_tickets.find({"MowerId": mower["_id"], "Completed": False}))
                     for ticket in mower_tickets:
                         if ticket not in area_tickets:
                             area_tickets.append(ticket)
