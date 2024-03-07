@@ -41,10 +41,9 @@
       </form>
       {% endif %}
     {% else %}
-    <form action = "{{ url_for('manufacturer.remove') }}" method = "POST">
-      <button type = "submit" name = "requestId" class = "button1" value ="{{request['_id']}}"> Delete
-      </button>
-      </form>
+    <button>
+    <a href="{{url_for('manufacturer.remove', id = request['_id'] ) }}" class = "button1">Delete</a>
+    </button>
     {% endif %}
   </div>
 {% endblock %}
