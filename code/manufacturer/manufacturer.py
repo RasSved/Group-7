@@ -19,6 +19,8 @@ requests = db.Requests
 product = db.Products
 tickets = db.Service_Tickets
 mowers = db.Mower
+provider = db.Service_Provider
+areas = db.Areas
 
 
 
@@ -63,6 +65,10 @@ def requesthq():
 @manufacturer_bp.route("/requestinfohq", methods = ["GET", "POST"])
 def requestinfo():
     #verifies that logged in user is a manufacturer
+
+    providers = list(provider.find())
+    products = list(product.find())
+
     role = session["role"]
     if role != "manufacturer":
         return redirect("/logout")
@@ -71,7 +77,7 @@ def requestinfo():
         requestId = session["request_id"]
         request = requests.find({"_id": ObjectId(requestId)})[0]  
 
-        return render_template("requestinfohq.html", request=request)
+        return render_template("requestinfohq.html", request=request, providers = providers, products = products)
     else:
         return redirect(url_for("manufacturer.manufacturer"))
     
@@ -88,18 +94,22 @@ def service(id):
     print(data["Type"])
     match data["Type"]:
         case 'mowerReq':
+            providerId = ObjectId(data["ProviderId"])
+            productId = ObjectId(request.form["productId"])
+
+            mowers.insert_one({"ProviderId": providerId, "ProductId": productId, "AreaIds": [], "Xpos": 0, "Ypos": 0})
+            
             requests.find_one_and_update({"_id": ObjectId(id)}, {'$set': {"Completed": True}})
-            return redirect(url_for("manufacturer.productpick"))
         case "newArea":        
             areaId = ObjectId(data["AreaId"])
             customerId = ObjectId(data["CustomerId"])
+            providerId = ObjectId(request.form["providerId"])
 
             dueDate = datetime.now() + timedelta(days=2)
-            tickets.insert_one({"AreaId": areaId, "CustomerId": customerId, "DateCreated": datetime.now(), "Content": "newArea", "Completed": False, "DueDate": dueDate})
-            
+            tickets.insert_one({"AreaId": areaId, "CustomerId": customerId, "DateCreated": datetime.now(), "Content": "newArea", "Completed": False, "DueDate": dueDate, "ProviderId": providerId})
+            areas.find_one_and_update({"_id": areaId}, {"$set": {"ProviderId": providerId}})
             requests.find_one_and_update({"_id": ObjectId(id)}, {'$set': {"Completed": True}})
-            return redirect(url_for("manufacturer.requesthq"))
-    return "", 204
+    return redirect(url_for("manufacturer.requesthq"))
 
 @manufacturer_bp.route("/pick/<id>", methods = ["GET", "POST"])
 def pick(id):
@@ -196,7 +206,7 @@ def productlist():
     role = session["role"]
     if role != "manufacturer":
         return redirect("/logout")
-    
+    #Takes content from product DB and sends it to the html
     product_data = product.find()
     return render_template("productlisthq.html", title = "Product List", product=product_data)
 
@@ -207,7 +217,7 @@ def productpick():
     role = session["role"]
     if role != "manufacturer":
         return redirect("/logout")
-    
+    #Takes content from product db and sends it to html
     product_data = product.find()
     return render_template("productpick.html", title = "Product List", product=product_data)
 
@@ -217,14 +227,14 @@ def addproduct():
     role = session["role"]
     if role != "manufacturer":
         return redirect("/logout")
-    
+    #Form for add product
     if request.method == "POST":
         form = ProductForm(request.form)
         add_name = form.name.data
         add_spec = form.spec.data
         add_description = form.description.data
         submit = form.submit.data
-
+    #Insert the added content into product DB
         product.insert_one({
            "Name": add_name,
             "Spec": add_spec,
@@ -241,6 +251,7 @@ def addproduct():
 @manufacturer_bp.route("/enter", methods = ["GET", "POST"])
 def enterrequest():
     print(request.form, file=sys.stderr)
+    
     if "requestId" in request.form:
         requestId = request.form["requestId"]
 
@@ -252,6 +263,7 @@ def enterrequest():
 
 @manufacturer_bp.route("/removeprod/<id>", methods = ["GET", "POST"])
 def removeprod(id):
+    #Removes product with id from html (clicked product)
     product.find_one_and_delete({"_id": ObjectId(id)})
 
 

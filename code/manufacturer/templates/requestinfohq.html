@@ -19,14 +19,32 @@
       <a href="{{ url_for('manufacturer.requesthq') }}">
         <button type="button">Back</button>
     </a>
-    {% if request['Completed'] == True %}
-    <button>
-    <a href="{{url_for('manufacturer.remove', id = request['_id'] ) }}" class = "button1">Delete</a>
-    </button>
+    {% if request['Completed'] == False %}
+      {% if request['Type'] == "newArea" %}
+      <form action = "{{url_for('manufacturer.service', id = request['_id'] ) }}" method = "POST">
+        <select name = "providerId">
+          {% for provider in providers%}
+          <option value = "{{provider['_id']}}">{{provider["Name"]}}</option>
+          {% endfor%}
+        </select>
+        <button type = "submit" class="button1"> Create Service Ticket
+        </button>
+      </form>
+      {% elif request['Type'] == "mowerReq" %}
+      <form action = "{{url_for('manufacturer.service', id = request['_id'] ) }}" method = "POST">
+        <select name = "productId">
+          {% for product in products%}
+          <option value = "{{product['_id']}}">{{product["name"]}}</option>
+          {% endfor%}
+        </select>
+        <button type = "submit" class="button1"> Create Service Ticket
+        </button>
+      </form>
+      {% endif %}
     {% else %}
-    <button>
-    <a href="{{url_for('manufacturer.service', id = request['_id'] ) }}" class = "button1">Create Service Ticket</a>
-    </button>
+      <button>
+      <a href="{{url_for('manufacturer.remove', id = request['_id'] ) }}" class = "button1">Delete</a>
+      </button>
     {% endif %}
     </form>
     </form>
