@@ -78,6 +78,7 @@ def customer():
 def addArea():
     #print(request.form, file=sys.stderr)
     if request.method == "POST":
+        print(request.form, file=sys.stderr)
         if ("address" in request.form): # if all needed keys are present
             print(request.form, file=sys.stderr)
             serviceId = None
