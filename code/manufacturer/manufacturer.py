@@ -152,11 +152,12 @@ def ServiceproviderList():
         return redirect("/logout")
     
     #find serviceprovider accounts and put their information into array for frontend -->
-    AccCursor = list(db.Accounts.find({"ProviderId": {"$ne": None} }))
+    AccCursor = db.Accounts.find({"ProviderId": {"$ne": None} }) #list(db.Accounts.find({"ProviderId": {"$ne": None} }))
+    #print("type(AccCursor): ", type(AccCursor))
     SePrCursor = db.Service_Provider
     provider_accounts = []
 
-    print(AccCursor, file=sys.stderr)
+    #print(AccCursor, file=sys.stderr)
 
     #for each serviceprovider, add their information to array (that will be presented to frontend)
     for document in AccCursor:
@@ -166,6 +167,7 @@ def ServiceproviderList():
 
         #find relevant infromation from serviceprovider table and add them to 
         SePrInfo = SePrCursor.find_one({"_id": document["ProviderId"]})
+        #print("type(SePrInfo): ", SePrInfo)
         another_account["Name"] = SePrInfo["Name"]
         another_account["Phone"] = SePrInfo["Phone"]
         #---
@@ -176,7 +178,7 @@ def ServiceproviderList():
     #<--
 
 
-    print("providers:    ", provider_accounts)
+    #print("providers:    ", provider_accounts)
     
     return render_template("ServiceproviderList.html", provider_accounts = provider_accounts, title = "Provider List")
 
@@ -187,12 +189,12 @@ def infoServiceProvider():
     if role != "manufacturer":
         return redirect("/logout")
     
-    areaCursor = db.Areas.find({"ProviderId": request.form["serviceproviderID"] })
+    areaCursor = db.Areas.find({"ProviderId": ObjectId(request.form["serviceproviderID"]) })
     assignedAreas = []
     for area in areaCursor:
         assignedAreas.append(area)
 
-    return render_template("infoServiceProviderhq.html", title = "Serviceprovider Information", assignedAreas = assignedAreas)
+    return render_template("infoServiceProviderhq.html", title = "Assigned Areas", assignedAreas = assignedAreas)
 
 @manufacturer_bp.route("/areainfohq.html")
 def areainfo():
