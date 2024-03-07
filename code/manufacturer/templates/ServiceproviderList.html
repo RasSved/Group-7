@@ -15,15 +15,15 @@
 {% for provider in provider_accounts %}
 <div class="container">
     <div class="products">
-        <form name = "main-products" method = "POST" action="{{ url_for('manufacturer.infoServiceProvider') }}">
-            <button type = "submit" name = "serviceproviderID" value = "{{ provider['ProviderId'] }}"> 
-                <div class="serviceprovider-box">
-                    <h2>{{ provider["Name"] }}</h2>
-                    <h3> <b>Email: </b> {{ provider["Email"] }} </h1>
-                    <h3> <b>Phone: </b> {{ provider["Phone"] }} </h1>
-                </div>
-            </button>
-        </form>
+        <div class="serviceprovider-box">
+            <h2>{{ provider["Name"] }}</h2>
+            <h3> <b>Email: </b> {{ provider["Email"] }} </h1>
+            <h3> <b>Phone: </b> {{ provider["Phone"] }} </h1>     
+            <form name = "main-products" method = "POST" action="{{ url_for('manufacturer.infoServiceProvider') }}">
+                <button type = "submit" name = "serviceproviderID" value = "{{ provider['ProviderId'] }}"> Assigned Areas
+                </button>
+            </form>
+        </div>  
     </div>
 </div>
 {% endfor %}

@@ -81,9 +81,8 @@ def requestinfo():
     else:
         return redirect(url_for("manufacturer.manufacturer"))
     
-@manufacturer_bp.route("/requestinfo/remove", methods = ["GET", "POST"])
-def remove():
-    id = request.form["requestId"]
+@manufacturer_bp.route("/remove/<id>", methods = ["GET", "POST"])
+def remove(id):
     requests.find_one_and_delete({"_id": ObjectId(id)})
 
 

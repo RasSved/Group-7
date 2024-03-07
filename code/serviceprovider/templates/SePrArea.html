@@ -33,7 +33,9 @@
                         Content: {{ticket['Content']}} <br>
                         DateCreated: {{ticket['DateCreated']}} <br>
                         DueDate: {{ticket['DueDate']}} <br>
-                        MowerId: {{ticket['MowerId']}} <br>
+                        {% if 'MowerId' in ticket %}
+                            MowerId: {{ticket['MowerId']}} <br>
+                        {% endif %}
                     </div>
 
                     <div class="modal-footer">
