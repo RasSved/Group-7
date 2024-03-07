@@ -62,6 +62,14 @@ def serviceprovider():
     current_time = datetime.now()   # Get current time
 
     for ticket in all_tickets:
+
+        if ticket['Content'] == "newArea":
+            ticket["desc"] = "A new area is needed to be setup!"
+        elif ticket['Content'] == "service":
+            ticket["desc"] = "You need to replace the knife on a mower!"
+        else:
+            ticket["desc"] = "This is a placeholder for a description of the ticket!"
+
         diff = (ticket['DueDate'] - current_time).days
         #print(diff)
         if diff < 2:
@@ -125,6 +133,14 @@ def area():
         current_time = datetime.now()
 
         for ticket in area_tickets:
+
+            if ticket['Content'] == "newArea":
+                ticket["desc"] = "A new area is needed to be setup!"
+            elif ticket['Content'] == "service":
+                ticket["desc"] = "You need to replace the knife on a mower!"
+            else:
+                ticket["desc"] = "This is a placeholder for a description of the ticket!"
+
             diff = (ticket['DueDate'] - current_time).days
             #print(diff)
             if diff < 2:

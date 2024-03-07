@@ -139,15 +139,21 @@ ul.breadcrumbs li a:hover {
     float: left;
     position: relative;
     font-size: 20px;
-    height: 20%;
+    height: 30%;
     width: 100%;
     border-bottom: solid 1px black;
     padding-left: 5px;
 }
 
+.mower-title span {
+    font-size: 7px;
+    color: grey;
+    padding-left: 0px;
+}
+
 .mower-areas {
     position: relative;
-    height: 60%;
+    height: 50%;
     overflow-y: auto;
     scrollbar-width: thin;
     width: 100%;

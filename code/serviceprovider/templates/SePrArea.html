@@ -14,7 +14,7 @@
 
 {% for ticket in area_tickets %}
     <button class = areaTicketSpace type="button" data-bs-toggle="modal" data-bs-target="#serviceTicketWindow{{ ticket['_id'] }}" style="background-color: {{ ticket['colour'] }} "> <!-- WORKS, but HTML doesn'think so -->
-        Content: {{ticket['Content']}} <br>
+        Description: {{ticket['desc']}} <br>
         DateCreated: {{ticket['DateCreated']}} <br>
         DueDate: {{ticket['DueDate']}} <br>
         <!-- MowerId: {{ticket['MowerId']}} <br> -->
@@ -55,11 +55,13 @@
     {% for mower in area_mowers %}
         <div class = "mower-object">
 
-        <div class ="mower-title">{{mower["Name"]}}</div> <br>
+        <div class ="mower-title">{{mower["Name"]}}
+            <span>Id: {{mower["_id"]}}</span>
+        </div> <br>
 
         <div class = "mower-areas">
             {% for address in mower["Addresses"]%}
-            {{address}} <br>
+                {{address}} <br>
             {% endfor %}
         </div>
         <div class = "mower-footer">
