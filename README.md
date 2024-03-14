@@ -46,6 +46,11 @@ Download the git repository.
 
 # Start database and setup database
 
+Windows:
+```
+
+```
+
 Linux:
 ```
 sudo mongod
