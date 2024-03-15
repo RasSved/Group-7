@@ -27,6 +27,7 @@ app.register_blueprint(manufacturer_bp, url_prefix='/manufacturer')
 def index():
     return render_template('login.html')
 
+#handles login and redirects if successfull
 @app.route('/login', methods=['POST', 'GET'])
 def login():
     if request.method == "POST":
@@ -34,27 +35,17 @@ def login():
         password = request.form["password"]
 
         #identifies if tuple of username and password exists in database
-        
-        #debugging -->
-        #cursor = accounts.find()
-        #for occ in cursor:
-        #    print("occurences: ")
-        #    print(occ)
-        #<--
-
         user_tuple = accounts.find_one({"Email": Email, "Password":password})
         if not user_tuple:
             return render_template("login.html", error="Invalid username or password")
 
         #sets session data for data regarding that user, before sending onwards
-        #print("tuple: ", user_tuple)
         session['user_id'] = str(user_tuple["_id"])   
         session["Email"] = Email    
         session["role"] = user_tuple["Role"]
         return redirect(url_for("role_redirect"))
 
         
-    
     # If it's a GET request, render the login form
     return render_template('login.html', error=None)
 
@@ -76,6 +67,7 @@ def logout():
     session.clear()                     # clears everything from session
     return redirect(url_for("login"))
 
+#necessary to run app.py
 if __name__ == '__main__':
     app.run(debug=True)
 

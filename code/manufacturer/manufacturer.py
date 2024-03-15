@@ -153,11 +153,8 @@ def ServiceproviderList():
     
     #find serviceprovider accounts and put their information into array for frontend -->
     AccCursor = db.Accounts.find({"ProviderId": {"$ne": None} }) #list(db.Accounts.find({"ProviderId": {"$ne": None} }))
-    #print("type(AccCursor): ", type(AccCursor))
     SePrCursor = db.Service_Provider
     provider_accounts = []
-
-    #print(AccCursor, file=sys.stderr)
 
     #for each serviceprovider, add their information to array (that will be presented to frontend)
     for document in AccCursor:
@@ -167,7 +164,6 @@ def ServiceproviderList():
 
         #find relevant infromation from serviceprovider table and add them to 
         SePrInfo = SePrCursor.find_one({"_id": document["ProviderId"]})
-        #print("type(SePrInfo): ", SePrInfo)
         another_account["Name"] = SePrInfo["Name"]
         another_account["Phone"] = SePrInfo["Phone"]
         #---
@@ -176,9 +172,6 @@ def ServiceproviderList():
 
         provider_accounts.append(another_account)
     #<--
-
-
-    #print("providers:    ", provider_accounts)
     
     return render_template("ServiceproviderList.html", provider_accounts = provider_accounts, title = "Provider List")
 
