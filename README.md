@@ -49,9 +49,7 @@ Download the git repository.
 # Start database and setup database
 
 Windows:
-```
-
-```
+https://www.mongodb.com/docs/manual/installation/
 
 Linux:
 ```
