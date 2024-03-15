@@ -26,6 +26,7 @@ for n in Service_Provider_dict:
 
     searchedForID = Service_Provider.find_one(n, {"_id": 1})
 
+    #Password becomes string before @ in Email
     Accounts.insert_one({"CustomerId":None, "ProviderId":searchedForID["_id"], "Email":n["Email"], "Password":(n["Email"]).split('@')[0], "Role":"serviceprovider"})
 
 #<--
@@ -39,6 +40,7 @@ for n in customer_dict:
 
     searchedForID = Customer.find_one(n, {"_id": 1})
 
+    #Password becomes string before @ in Email
     Accounts.insert_one({"CustomerId":searchedForID["_id"], "ProviderId":None, "Email":n["Email"], "Password":(n["Email"]).split('@')[0], "Role":"customer"})
 
 #<--

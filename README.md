@@ -3,6 +3,8 @@
 
 This projects is a prototype of a portal used for communication between customers, service providers and Husqvarna, the manufacturer of lawnmowers. The prototype is supposed to demonstrate a proof of concept for husqvarna and give ideas to potentially use in a fully developed system. It strives to reduce the amount of administration needed in the process by giving a framework for customers and service providers to send request to husqvarna that are to be handled by any method of the manufacturers choice. These are then either resolved by husqvarna or sent to a service provider as a service ticket to handle.
 
+The content of the project can be further improved in several ways. One is to complete project according to statechart and databaseschema 
+
 ## Built with
 
 Python-flask
@@ -39,10 +41,50 @@ flask_wtf
 ```
 pip install flask_wtf
 ```
-To run the project, download the git repository and enter the following line into a command line open in the "code" directory
+
+Download the git repository.
+
+## Example: Start server and create new area in customer-page
+
+# Start database and setup database
+
+Windows:
+https://www.mongodb.com/docs/manual/installation/
+
+Linux:
+```
+sudo mongod
+```
+
+Run provided db_setup.py to setup database with example data (change port at "client" declaration from "27017" if you want to use something else)
+
+# Run project
+
+Enter one of following lines into a command line that is in the "code" directory
+
+Windows:
 ```
 python3 -m flask --app app run
 ```
+
+Linux:
+```
+python3 app.py
+```
+
+# Login and create area
+
+An address should have appeared in command line in the form "http://127.0.0.1:5000", access it with webbrowser.
+
+Login with a customer account (db_setup.py provides, among others, "customer1@customer.com" with password "customer1") 
+
+Click on "+" symbol to add new area
+
+Write in relevant address for area
+
+Get redirected to area settings page and fill in information to finish customer setup of area. 
+
+Success can be seen at area in Customer Mainpage when status for area is "Pending". One must now wait for manufacturer and serviceprovider to complete their parts. 
 
 ## Documentation
 # Moqup
