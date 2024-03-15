@@ -1,3 +1,6 @@
+/* Footer header navigation start */
+
+
 #header {
     border: 2px #b83030 solid;
     color: brown;
@@ -60,7 +63,12 @@
     font-size: 0;     /* Apparently needed for no button spacing*/
 }
 
+/* Footer header navigation end */
+
 /*W3Schools breadcrumbs example https://www.w3schools.com/howto/howto_css_breadcrumbs.asp*/
+
+/* Breadcrumbs start */
+
 
 ul.breadcrumbs li {
     list-style: none;
@@ -82,6 +90,12 @@ ul.breadcrumbs li a:hover {
     color: #424242;
     text-decoration: underline;
 }
+
+
+/* Breadcrumbs end */
+
+
+/* Area preview start */
 
 .areaPreview {
     display: grid;
@@ -168,6 +182,10 @@ ul.breadcrumbs li a:hover {
     border: 1px solid #424242
 }
 
+/* Area preview end */
+
+/* Area start */
+
 .areaNotifSpace {
     width: 60%;
     margin-left: 20%;
@@ -184,6 +202,10 @@ ul.breadcrumbs li a:hover {
     border-style: solid;
     border: 1px solid #424242
 }
+
+/* Area end */
+
+/*Config start */
 
 #confirm-submit {
     background-color: rgb(47, 44, 238);
@@ -225,3 +247,5 @@ ul.breadcrumbs li a:hover {
     width: 30px;
 
 }
+
+/*Config end */

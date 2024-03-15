@@ -49,6 +49,9 @@ def customer():
     customerId = accounts.find_one({"_id": ObjectId(session["user_id"])})["CustomerId"]
     cusAreas = areas.find({"CustomerId": customerId})   # get entire collection
 
+
+    ### Check for notifications on all mowers in all areas
+
     cusAreasArr = list(cusAreas) # aparently needs to be list if you want a for loop in backend
     for area in cusAreasArr:     # make a list of all mowers on customers areas
         areaNotifs = []
@@ -60,9 +63,14 @@ def customer():
                 if mess == "stuck":
                     stuckTime = notif["Date"]
                     #print(area, file=sys.stderr)
+
+                    ### Generate time left until service
+
                     timeDiff = datetime.now() - stuckTime 
                     timeDiff = timeDiff.days * 24 + timeDiff.seconds//3600
                     timeLeft = area["NotifTime"] - timeDiff
+
+
                     if timeLeft > 0:
                         content = {"text": "Your mower is stuck at " + str(mower["Xpos"]) + ", " + str(mower["Ypos"]) + "! View the map to see where. You may solve it yourself or a service provider will be called in " + str(timeLeft) + " hours.", "type": notif["Type"]}
                     else:
@@ -80,6 +88,9 @@ def addArea():
     if request.method == "POST":
         print(request.form, file=sys.stderr)
         if ("address" in request.form): # if all needed keys are present
+
+            ### Generate values for insert
+
             print(request.form, file=sys.stderr)
             serviceId = None
             grassLength = None
@@ -100,6 +111,10 @@ def editArea():
     #print(request.form, file=sys.stderr)
     if request.method == "POST":
         if all(k in request.form for k in ("sub", "grassLength", "notifTime")): # if all needed keys are present
+
+
+            ### Generate values for insert
+
             print(request.form, file=sys.stderr)
             areaId = ObjectId(session["area_id"])
             currArea = areas.find_one({"_id": areaId})
@@ -107,11 +122,13 @@ def editArea():
             subId = services.find_one({"ServiceName": sub})['_id']
             grassLength = request.form["grassLength"]
             notifTime = request.form["notifTime"]
+
+            ### Update area, if it has not been confirmed by customer before, send off request to manufacturer
+
             if currArea["Status"] == "Unconfirmed":
                 areas.find_one_and_update({"_id": areaId}, {'$set': {"GrassLength": int(grassLength), "ServiceId": subId, "NotifTime": int(notifTime), "Status": "Pending"}})
-                ### Send request to HQ about new area needing assigned service provider
                 
-
+                ### Send request to manufacturer about new area needing assigned service provider
                 
                 cusId = accounts.find_one({"_id": ObjectId(session["user_id"])})["CustomerId"] 
                 address = areas.find_one({"_id": ObjectId(session["area_id"])})["Address"]
@@ -129,7 +146,8 @@ def enterArea():
     print(request.form, file=sys.stderr)
     if "areaId" in request.form:
         areaId = request.form["areaId"]
-        # find area where id is the same as area clicked
+
+        ### Find area where id is the same as area clicked
         #print(area, file=sys.stderr)
         session["area_id"] = areaId
         return redirect(url_for("customer.area"))
@@ -144,10 +162,14 @@ def area():
         return redirect("/logout")
     
     if "area_id" in session:
+
         areaId = session["area_id"]
         area = areas.find({"_id": ObjectId(areaId)})[0]    # find area where id is the same as area clicked
         areaNotifs = []
         tempMowers = list(mowers.find({"AreaIds.AreaId": area["_id"]}))
+
+        ### Check for notifications on all mowers in this area
+
         for mower in tempMowers:
             tempNotifs = notifs.find({"MowerId": mower["_id"]})
             for notif in tempNotifs:
@@ -155,9 +177,13 @@ def area():
                 if mess == "stuck":
                     stuckTime = notif["Date"]
                     #print(area, file=sys.stderr)
+
+                    ### Generate time left until service
+                    
                     timeDiff = datetime.now() - stuckTime 
                     timeDiff = timeDiff.days * 24 + timeDiff.seconds//3600
                     timeLeft = area["NotifTime"] - timeDiff
+
                     if timeLeft > 0:
                         content = {"text": "Your mower is stuck at " + str(mower["Xpos"]) + ", " + str(mower["Ypos"]) + "! View the map to see where. You may solve it yourself or a service provider will be called in " + str(timeLeft) + " hours.", "type": notif["Type"]}
                     else:
@@ -238,7 +264,33 @@ def configure():
         return redirect(url_for("customer.customer"))
     
 
-### Maybe in app instead of customer?
+### Extenal API from simulated "mower"
+#   Example JSON format
+#   Mower is stuck:
+#    {
+#       "MowerId": "65eb20ea27fbfb29b54e6e5b",
+#       "AreaId": "65eb205b27fbfb29b54e6e56",
+#       "type": "stuck",
+#       "Xpos": "3.0",
+#       "Ypos": "4.1"
+#    }
+#    
+#   Mower is no longer stuck:
+#    {
+#       "MowerId": "65eb20ea27fbfb29b54e6e5b",
+#       "type": "unstuck",
+#       "Xpos": "3.2",
+#       "Ypos": "4.1"
+#    }
+#        
+#    Mower needs knife replacement:
+#    {
+#       "MowerId": "65eb20ea27fbfb29b54e6e5b",
+#       "type": "service",
+#       "Xpos": "4.1",
+#       "Ypos": "9.2"
+#    }
+#    
 
 @customer_bp.route("/recData", methods=["GET", "POST"])
 def recieveData():

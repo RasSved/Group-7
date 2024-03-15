@@ -118,9 +118,9 @@ def area():
 
         for mower in area_mowers: # add fields, Addresses and Name to display on main page
             for area in mower["AreaIds"]:
-                print(areaId, file=sys.stderr)
-                print(area["AreaId"])
-                print(areaId == area["AreaId"])
+
+                #print(areaId, file=sys.stderr)
+                
                 if str(area["AreaId"]) == str(areaId):
                     print("AreaId", file=sys.stderr)
                     mower_tickets = list(service_tickets.find({"MowerId": mower["_id"], "Completed": False}))
