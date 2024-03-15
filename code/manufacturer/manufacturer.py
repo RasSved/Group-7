@@ -23,7 +23,7 @@ provider = db.Service_Provider
 areas = db.Areas
 
 
-
+#Form for adding products
 class ProductForm(FlaskForm):
     name = StringField("Name", validators=[DataRequired()])
     spec = TextAreaField("Spec", validators=[DataRequired()])
@@ -57,7 +57,7 @@ def requesthq():
     role = session["role"]
     if role != "manufacturer":
         return redirect("/logout")
-    
+    #Takes data from databse and sends to html
     request_data = requests.find()
     return render_template("requesthq.html", title = "Request Page", data = request_data,)
 
@@ -72,7 +72,8 @@ def requestinfo():
     role = session["role"]
     if role != "manufacturer":
         return redirect("/logout")
-    
+
+    #Takes data from databse and sends to html in this case specific request
     if "request_id" in session:
         requestId = session["request_id"]
         request = requests.find({"_id": ObjectId(requestId)})[0]  
@@ -83,6 +84,7 @@ def requestinfo():
     
 @manufacturer_bp.route("/remove/<id>", methods = ["GET", "POST"])
 def remove(id):
+  #Finds data from database and removes it 
     requests.find_one_and_delete({"_id": ObjectId(id)})
 
 
@@ -93,6 +95,7 @@ def service():
     id = request.form["requestId"]
     data = requests.find_one({"_id": ObjectId(id)})
     print(data["Type"])
+  #Match case to see what type of request we are dealing with
     match data["Type"]:
         case 'mowerReq':
             providerId = ObjectId(data["ProviderId"])
@@ -225,7 +228,7 @@ def addproduct():
     role = session["role"]
     if role != "manufacturer":
         return redirect("/logout")
-    
+    #takes the data entered in the form and adds to product db
     if request.method == "POST":
         form = ProductForm(request.form)
         add_name = form.name.data
@@ -246,7 +249,7 @@ def addproduct():
 @manufacturer_bp.route("/enter", methods = ["GET", "POST"])
 def enterrequest():
     print(request.form, file=sys.stderr)
-    
+    #controll that request id exists, send to requestinfo page if it does
     if "requestId" in request.form:
         requestId = request.form["requestId"]
 
