@@ -58,6 +58,15 @@ sudo mongod
 
 Run provided db_setup.py to setup database with example data (change port at "client" declaration from "27017" if you want to use something else)
 
+Windows:
+```
+python3 -m flask --app db_setup run
+```
+
+Linux:
+```
+python3 db_setup.py
+
 # Run project
 
 Enter one of following lines into a command line that is in the "code" directory
