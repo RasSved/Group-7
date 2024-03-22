@@ -66,6 +66,7 @@ python3 -m flask --app db_setup run
 Linux:
 ```
 python3 db_setup.py
+```
 
 # Run project
 
