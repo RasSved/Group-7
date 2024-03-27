@@ -14,39 +14,69 @@
 
 {% for ticket in area_tickets %}
     <button class = areaTicketSpace type="button" data-bs-toggle="modal" data-bs-target="#serviceTicketWindow{{ ticket['_id'] }}" style="background-color: {{ ticket['colour'] }} "> <!-- WORKS, but HTML doesn'think so -->
+        {% if ticket['Assigned'] %}
+            You have assigned yourself, to handle this ticket! <br>
+        {% endif %}
+        {% if ticket['Assigned'] == False %}
+            Work needs to be done, do you desire to take responsibility for this task? <br>
+        {% endif %}
+        Assigned: {{ticket['Assigned']}} <br>
         Description: {{ticket['desc']}} <br>
         DateCreated: {{ticket['DateCreated']}} <br>
         DueDate: {{ticket['DueDate']}} <br>
         <!-- MowerId: {{ticket['MowerId']}} <br> -->
     </button>
 
-    <form name = "serviceTicket" method="POST" action="{{ url_for('serviceprovider.completeServiceTicket')}}">
-        <div id="serviceTicketWindow{{ ticket['_id'] }}" class="modal fade" role="dialog">
-            <div class="modal-dialog modal-md">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h4 class="area-create-title"> {{ticket['Content']}} </h4>
-                        <button type="button" class="btn close" data-bs-dismiss="modal">&times;</button> <!-- &times is an x symbol-->  
-                    </div>
+    {% if ticket['Assigned'] %}
+        <form name = "serviceTicket" method="POST" action="{{ url_for('serviceprovider.completeServiceTicket')}}">
+    {% endif %}
+    {% if ticket['Assigned'] == False %}
+        <form name = "serviceTicket" method="POST" action="{{ url_for('serviceprovider.takeServiceTicket')}}">
+    {% endif %}
+            <div id="serviceTicketWindow{{ ticket['_id'] }}" class="modal fade" role="dialog">
+                <div class="modal-dialog modal-md">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h4 class="area-create-title"> {{ticket['Content']}} </h4>
+                            <button type="button" class="btn close" data-bs-dismiss="modal">&times;</button> <!-- &times is an x symbol-->  
+                        </div>
 
-                    <div class="modal-body">
-                        Description: {{ticket['desc']}} <br>
-                        DateCreated: {{ticket['DateCreated']}} <br>
-                        DueDate: {{ticket['DueDate']}} <br>
-                        {% if 'MowerId' in ticket %}
-                            MowerId: {{ticket['MowerId']}} <br>
-                        {% endif %}
-                    </div>
+                        <div class="modal-body">
+                            {% if ticket['Assigned'] %}
+                                You have assigned yourself, to handle this ticket! <br>
+                            {% endif %}
+                            {% if ticket['Assigned'] == False %}
+                                Work needs to be done, do you desire to take responsibility for this task? <br>
+                            {% endif %}
+                            Assigned: {{ticket['Assigned']}} <br>
+                            Description: {{ticket['desc']}} <br>
+                            DateCreated: {{ticket['DateCreated']}} <br>
+                            DueDate: {{ticket['DueDate']}} <br>
+                            {% if 'MowerId' in ticket %}
+                                MowerId: {{ticket['MowerId']}} <br>
+                            {% endif %}
+                        </div>
 
-                    <div class="modal-footer">
-                        <button class = "submitButton" type="submit" class="btn footer-button"> Completed </button>
+                        <div class="modal-footer">
+                                <button class = "submitButton" type="submit" class="btn footer-button"> 
+                                    {% if ticket['Assigned'] %}
+                                        Completed 
+                                    {% endif %}
+                                    {% if ticket['Assigned'] == False %}
+                                        Take ticket 
+                                    {% endif %}
+                                </button>
 
-                        <input type="hidden" id="ticket_id" name="ticket_id" value="{{ ticket['_id'] }}">
+                            <input type="hidden" id="ticket_id" name="ticket_id" value="{{ ticket['_id'] }}">
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
-    </form>
+        </form>
+   
+
+    
+
 {% endfor %}
 
 <h2> Lawnmowers in {{area['Address']}} </h2>

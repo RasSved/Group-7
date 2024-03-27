@@ -327,11 +327,15 @@ ul.breadcrumbs li a:hover {
     display: flex;
     justify-content: center;
     align-items: center;
-    height: 80px;
+    height: 100%;
     margin-top: 10px;
     border-radius: 6px;
     border-style: solid;
-    border: 1px solid #424242
+    border: 1px solid #424242;
+
+    padding-top: 10px;
+    padding-bottom: 10px;
+
 }
 
 #serviceTicketWindow .modal-body {

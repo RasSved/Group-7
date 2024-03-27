@@ -202,6 +202,18 @@ def completeServiceTicket():
     else:   # if the request contains wrong info, send the user back to serviceproviders main-page
         return redirect(url_for("serviceprovider.serviceprovider"))
 
+@serviceprovider_bp.route("/area/take_ticket", methods = ["POST"])
+def takeServiceTicket():
+    print(request.form, file=sys.stderr)
+    if ("ticket_id" in request.form):
+
+        ticket_id = request.form["ticket_id"]
+        service_tickets.update_one({'_id': ObjectId(ticket_id)}, {'$set': {'Assigned': True}})
+        
+        return redirect(url_for("serviceprovider.area"))
+    else:   # if the request contains wrong info, send the user back to serviceproviders main-page
+        return redirect(url_for("serviceprovider.serviceprovider"))
+
 
 @serviceprovider_bp.route("/area/enter_mower", methods = ["GET", "POST"])
 def enterMower():
