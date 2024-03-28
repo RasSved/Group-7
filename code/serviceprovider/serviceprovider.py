@@ -4,6 +4,7 @@ serviceprovider_bp = Blueprint('serviceprovider', __name__ , template_folder='te
 from pymongo import MongoClient
 from bson.objectid import ObjectId
 import sys
+import serviceprovider.task_assignments as task_assignments
 
 from datetime import datetime
 
@@ -166,6 +167,11 @@ def area():
             else:
                 ticket["colour"] = 'yellow'
 
+            ticket["Assigned"] = task_assignments.assignment_to_ticket_exist(ticket['_id'])
+
+            ticket["AssignedToMe"] = task_assignments.is_provider_assigned(ticket['ProviderId'], ticket['_id'])
+
+
         return render_template("SePrArea.html", title = "Service Provider Area", area=curr_area, area_mowers=area_mowers, available_mowers=available_mowers, area_tickets = area_tickets)
     else:
         return redirect(url_for("serviceprovider.serviceprovider"))
@@ -207,8 +213,12 @@ def takeServiceTicket():
     print(request.form, file=sys.stderr)
     if ("ticket_id" in request.form):
 
-        ticket_id = request.form["ticket_id"]
-        service_tickets.update_one({'_id': ObjectId(ticket_id)}, {'$set': {'Assigned': True}})
+        ticket_id = ObjectId(request.form["ticket_id"])
+        service_ticket_object = service_tickets.find_one({'_id': ObjectId(ticket_id)})
+        
+        assignment = task_assignments.assign_task(providerId=service_ticket_object["ProviderId"], serviceTicketId=ticket_id)
+        print(assignment)
+        service_tickets.update_one({'_id': ObjectId(ticket_id)}, {'$set': {'Assignment': assignment["_id"]}})
         
         return redirect(url_for("serviceprovider.area"))
     else:   # if the request contains wrong info, send the user back to serviceproviders main-page

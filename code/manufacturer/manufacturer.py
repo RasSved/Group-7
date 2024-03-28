@@ -26,6 +26,7 @@ areas = db.Areas
 #Form for adding products
 class ProductForm(FlaskForm):
     name = StringField("Name", validators=[DataRequired()])
+    # external_system_slug = StringField("External System Slug", validators=[DataRequired()])
     spec = TextAreaField("Spec", validators=[DataRequired()])
     description = TextAreaField("Description", validators=[DataRequired()])
     submit = SubmitField("Add Product")
@@ -100,8 +101,9 @@ def service():
         case 'mowerReq':
             providerId = ObjectId(data["ProviderId"])
             productId = ObjectId(request.form["productId"])
+            externalSystemSlug = request.form["externalSystemSlug"]
 
-            mowers.insert_one({"ProviderId": providerId, "ProductId": productId, "AreaIds": [], "Xpos": 0, "Ypos": 0})
+            mowers.insert_one({"ProviderId": providerId, "ProductId": productId, "ExternalSystemSlug": externalSystemSlug, "AreaIds": [], "Xpos": 0, "Ypos": 0})
             
             requests.find_one_and_update({"_id": ObjectId(id)}, {'$set': {"Completed": True}})
             return redirect(url_for("manufacturer.requesthq"))
@@ -111,7 +113,7 @@ def service():
             providerId = ObjectId(request.form["providerId"])
 
             dueDate = datetime.now() + timedelta(days=2)
-            tickets.insert_one({"AreaId": areaId, "CustomerId": customerId, "DateCreated": datetime.now(), "Content": "newArea", "Completed": False, "DueDate": dueDate, "ProviderId": providerId})
+            tickets.insert_one({"AreaId": areaId, "CustomerId": customerId, "DateCreated": datetime.now(), "Content": "newArea", "Completed": False, "DueDate": dueDate, "ProviderId": providerId, "Assigned": False})
             areas.find_one_and_update({"_id": areaId}, {"$set": {"ProviderId": providerId}})
             requests.find_one_and_update({"_id": ObjectId(id)}, {'$set': {"Completed": True}})
             return redirect(url_for("manufacturer.requesthq"))
@@ -236,7 +238,7 @@ def addproduct():
         add_description = form.description.data
 
         product.insert_one({
-           "Name": add_name,
+            "Name": add_name,
             "Spec": add_spec,
             "Description": add_description,
         })

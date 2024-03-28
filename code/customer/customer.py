@@ -94,13 +94,15 @@ def addArea():
             print(request.form, file=sys.stderr)
             serviceId = None
             grassLength = None
+            maxGrassLength = None
+            minGrassLength = None
             address = request.form["address"]
             homeX = None
             homeY = None
             customerId = accounts.find_one({"_id": ObjectId(session["user_id"])})["CustomerId"]
             status = "Unconfirmed"
             objId = ObjectId()
-            areas.insert_one({"ServiceId": serviceId, "GrassLength": grassLength, "CustomerId": customerId, "HomeX": homeX, "HomeY": homeY, "Address": address, "Status": status, "_id": objId}) 
+            areas.insert_one({"ServiceId": serviceId, "GrassLength": grassLength, "GrassMaxLength": maxGrassLength, "GrassMinLength": minGrassLength, "CustomerId": customerId, "HomeX": homeX, "HomeY": homeY, "Address": address, "Status": status, "_id": objId}) 
             session["area_id"] = str(objId)  
             return redirect(url_for("customer.configure"))
     return redirect(url_for("customer.customer"))
@@ -121,12 +123,21 @@ def editArea():
             sub = request.form["sub"]
             subId = services.find_one({"ServiceName": sub})['_id']
             grassLength = request.form["grassLength"]
+            maxGrassLength = request.form["grassMax"]
+            minGrassLength = request.form["grassMin"]
             notifTime = request.form["notifTime"]
+
+            if (grassLength > maxGrassLength or grassLength < minGrassLength or maxGrassLength < minGrassLength):
+                sub = services.find_one({"_id": currArea["ServiceId"]}) #get name of service level for current area
+                #print(area, file=sys.stderr)
+                if sub != None:
+                    sub = sub["ServiceName"] 
+                return render_template("CusConf.html", area=currArea, sub=sub, title="Customer Configure", grassLengthError = True)
 
             ### Update area, if it has not been confirmed by customer before, send off request to manufacturer
 
             if currArea["Status"] == "Unconfirmed":
-                areas.find_one_and_update({"_id": areaId}, {'$set': {"GrassLength": int(grassLength), "ServiceId": subId, "NotifTime": int(notifTime), "Status": "Pending"}})
+                areas.find_one_and_update({"_id": areaId}, {'$set': {"GrassLength": int(grassLength), "GrassMaxLength": int(maxGrassLength), "GrassMinLength": int(minGrassLength), "ServiceId": subId, "NotifTime": int(notifTime), "Status": "Pending"}})
                 
                 ### Send request to manufacturer about new area needing assigned service provider
                 
@@ -135,7 +146,7 @@ def editArea():
                 content = "Customer has requested mowing for area at address " + address + ". Please select service provider for this task."
                 requests.insert_one({"CustomerId": cusId, "Type": "newArea", "Content": content, "DateCreated": datetime.now(), "Completed": False, "AreaId": ObjectId(session["area_id"]) })
             else: 
-                areas.find_one_and_update({"_id": areaId}, {'$set': {"GrassLength": int(grassLength), "ServiceId": subId, "NotifTime": int(notifTime)}})
+                areas.find_one_and_update({"_id": areaId}, {'$set': {"GrassLength": int(grassLength), "GrassMaxLength": int(maxGrassLength), "GrassMinLength": int(minGrassLength), "ServiceId": subId, "NotifTime": int(notifTime)}})
 
     return redirect(url_for("customer.customer"))
     
@@ -309,7 +320,7 @@ def recieveData():
             providerId = mowers.find_one({"_id": mowerId})["ProviderId"] # Get default area provider
             notifId = notifs.find_one({"MowerId": mowerId, "Content": "stuck", "AreaId": areaId})["_id"]
             dueDate = datetime.now() + timedelta(days=2)
-            tickets.update_one({"NotifId": notifId}, {'$setOnInsert': {"MowerId": mowerId, "AreaId": areaId, "ProviderId": providerId, "DateCreated": datetime.now(), "Content": "stuck", "Completed": False, "DueDate": dueDate}}, upsert = True)
+            tickets.update_one({"NotifId": notifId}, {'$setOnInsert': {"MowerId": mowerId, "AreaId": areaId, "ProviderId": providerId, "DateCreated": datetime.now(), "Content": "stuck", "Completed": False, "DueDate": dueDate, "Assigned": False}}, upsert = True)
             
         case "unstuck":
             #Delete notification, update position
@@ -335,6 +346,6 @@ def recieveData():
             providerId = mowers.find_one({"_id": mowerId})["ProviderId"] # Get default area provider
             notifId = notifs.find_one({"MowerId": mowerId, "Content": "service"})["_id"]
             dueDate = datetime.now() + timedelta(days=14)
-            tickets.update_one({"NotifId": notifId}, {'$setOnInsert': {"MowerId": mowerId, "Content": "service", "ProviderId": providerId, "DateCreated": datetime.now(), "Content": "service", "Completed": False, "DueDate": dueDate}}, upsert = True)
+            tickets.update_one({"NotifId": notifId}, {'$setOnInsert': {"MowerId": mowerId, "Content": "service", "ProviderId": providerId, "DateCreated": datetime.now(), "Content": "service", "Completed": False, "DueDate": dueDate, "Assigned": False}}, upsert = True)
 
     return "", 204

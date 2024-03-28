@@ -14,13 +14,18 @@ db = client.MowerDB
 Service_Provider = db.Service_Provider
 Accounts = db.Accounts
 Customer = db.Customer
+mowers = db.Mower
+
+mowers.create_index("ExternalSystemSlug", unique = True)
 
 
 #putting serviceproviders into accounts -->
-Service_Provider_dict = [{"Name":"Ulf Olovsson", "Email": "Ulol@serviceprovider.com", "Phone": "075 555 555"},
-                         {"Name":"Bingus Dingus", "Email": "BingDing@serviceprovider.com", "Phone": "075 555 515"}]
+Service_Provider_dict = [
+    {"Name":"Ulf Olovsson", "Email": "Ulol@serviceprovider.com", "Phone": "075 555 555", "ExternalSystemSlug": "technician-1"},
+    {"Name":"Bingus Dingus", "Email": "BingDing@serviceprovider.com", "Phone": "075 555 515", "ExternalSystemSlug": "technician-2"},
+]
 
-
+Service_Provider.create_index("ExternalSystemSlug", unique = True)
 for n in Service_Provider_dict:
     Service_Provider.insert_one(n)
 

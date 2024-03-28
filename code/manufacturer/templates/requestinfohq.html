@@ -36,6 +36,10 @@
           <option value = "{{product['_id']}}">{{product["Name"]}}</option>
           {% endfor%}
         </select>
+
+        <label for="externalSystemSlug">External system slug</label><br>
+        <input id="externalSystemSlug" name="externalSystemSlug">
+
         <button name = "requestId" type = "submit" value = "{{request['_id']}}" class="button1"> Send mower
         </button>
       </form>

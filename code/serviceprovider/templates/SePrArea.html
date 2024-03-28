@@ -13,6 +13,14 @@
 <h2>Area Info</h2>  <!-- info about service_tickets -->
 
 {% for ticket in area_tickets %}
+    
+
+    {% if ticket['AssignedToMe'] == False and ticket['Assigned'] == True %}
+    <div class = areaTicketSpace style="background-color: lightgray">
+        This ticket is taken by another service provider! <br>
+    </div>
+    {% else %}
+
     <button class = areaTicketSpace type="button" data-bs-toggle="modal" data-bs-target="#serviceTicketWindow{{ ticket['_id'] }}" style="background-color: {{ ticket['colour'] }} "> <!-- WORKS, but HTML doesn'think so -->
         {% if ticket['Assigned'] %}
             You have assigned yourself, to handle this ticket! <br>
@@ -26,6 +34,8 @@
         DueDate: {{ticket['DueDate']}} <br>
         <!-- MowerId: {{ticket['MowerId']}} <br> -->
     </button>
+
+    {% endif %}
 
     {% if ticket['Assigned'] %}
         <form name = "serviceTicket" method="POST" action="{{ url_for('serviceprovider.completeServiceTicket')}}">

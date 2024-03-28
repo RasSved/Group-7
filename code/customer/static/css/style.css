@@ -248,4 +248,10 @@ ul.breadcrumbs li a:hover {
 
 }
 
+#errorWindow .modal-body {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    justify-content: space-between;
+}
+
 /*Config end */

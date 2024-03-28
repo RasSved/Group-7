@@ -16,6 +16,7 @@
 
 <!-- Hard coded sub info, can replace with info from db if time-->
 
+
 <form name = "editArea" method="POST" action="{{ url_for('customer.editArea') }}">  
 
     <label for = "sub-input" >Subscription</label> <br>
@@ -32,10 +33,22 @@
     {% if area['GrassLength'] != none %}
     <label for = "grass-input" >Grass length </label>
     <input required id = "grass-input" type="tel" pattern="[1-9]{1}" name ="grassLength" value="{{area['GrassLength']}}" title="Please enter value between 1-9 (cm)"> cm <br>
+
+    <label for = "grass-min" >Grass max length </label>
+    <input required id = "grass-input"  type="tel" pattern="[1-9]{1}" name="grassMax" value="{{area['GrassMaxLength']}}" title="Please enter value between 1-9 (cm)"> cm <br>
+
+    <label for = "grass-min" >Grass min length </label>
+    <input required id = "grass-input" type="tel" pattern="[1-9]{1}" name="grassMin" value="{{area['GrassMinLength']}}" title="Please enter value between 1-9 (cm)"> cm <br>
     {% else %}
 
     <label for = "grass-input" >Grass length </label>
     <input required id = "grass-input" type="tel" pattern="[1-9]{1}" name ="grassLength" value="3" title="Please enter value between 1-9 (cm)"> cm <br>
+
+    <label for = "grass-min" >Grass max length </label>
+    <input required id = "grass-input"  type="tel" pattern="[1-9]{1}" name="grassMax" title="Please enter value between 1-9 (cm)"> cm <br>
+
+    <label for = "grass-min" >Grass min length </label>
+    <input required id = "grass-input" type="tel" pattern="[1-9]{1}" name="grassMin" title="Please enter value between 1-9 (cm)"> cm <br>
     {% endif %}
 
     {% if area['NotifTime'] != none %}
@@ -53,6 +66,42 @@
     <button type="submit" id = "confirm-submit" class="btn footer-button">Submit</button>
 
 </form> 
+
+{% if grassLengthError %}
+<button id ="modal-error-trigger" class = areaTicketSpace type="button" data-bs-toggle="modal" data-bs-target="#modal-error" style="display: none"> </button>
+{% endif %}
+
+<div id="modal-error" class="modal fade" role="dialog">
+    <div class="modal-dialog modal-md">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1>Error</h1>
+                <button type="button" class="btn close" data-bs-dismiss="modal">&times;</button> <!-- &times is an x symbol-->  
+            </div>
+
+            <div class="modal-body">
+                Wrong format in grass lengths!
+            </div>
+
+            <div class="modal-footer">
+                <button type="button" class="submitButton"  data-bs-dismiss="modal">Close</button> 
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    window.onload=function(){
+       
+        var modalErrorTrigger = document.getElementById("modal-error-trigger");
+
+        if(modalErrorTrigger) {
+
+            document.getElementById("modal-error-trigger").click();
+        }
+        
+    };
+</script>
 
 <!-- outline of function from https://stackoverflow.com/questions/8838648/onchange-event-handler-for-radio-button-input-type-radio-doesnt-work-as-one-->
 
