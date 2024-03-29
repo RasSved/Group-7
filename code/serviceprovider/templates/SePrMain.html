@@ -77,7 +77,6 @@
 
 <div class = "areaPreview">
     {% for area in areas %}
-        {% if area['ProviderId'] == providerId %} <!-- if area['ProviderId'] == current provider -->
 
             <form name = "viewArea" method = "POST" action="{{ url_for('serviceprovider.enterArea')}}">
                 <button type = "submit" name = "areaId" value = "{{area['_id']}}">
@@ -95,8 +94,7 @@
 
                 </button>
             </form>
-
-        {% else %}
+<!-- 
             {% for ticket in tickets %}
                 {% if area['_id'] in ticket['AreaIds'] %}
 
@@ -108,8 +106,7 @@
                     </form>
 
                 {% endif %}
-            {% endfor %}
-        {% endif %}
+            {% endfor %} -->
     {% endfor %}
 </div>
 

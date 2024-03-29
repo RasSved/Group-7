@@ -5,35 +5,54 @@ client = MongoClient('localhost', 27017)
 db = client.MowerDB
 taskAssignements = db.TaskAssignments
 
-SERVICE_TICKET_KEY = "ServiceTicket"
+WORK_TASK_ID_KEY = "WorkTaskId"
 ASSIGNED_SERVICE_PROVIDER_KEY = "AssignedServiceProvider"
 
-taskAssignements.create_index(SERVICE_TICKET_KEY, unique = True)
+taskAssignements.create_index(WORK_TASK_ID_KEY, unique = True)
 
 class TaskAssignment:
-    def __init__(self, providerId: ObjectId, serviceTicketId: ObjectId):
+    def __init__(self, providerId: ObjectId, workTaskId: str):
         self.providerId = providerId
-        self.serviceTicketId = serviceTicketId
+        self.workTaskId = workTaskId
 
     def get_json_object(self) -> dict[str, any]:
         return {
-            SERVICE_TICKET_KEY: self.serviceTicketId,
+            WORK_TASK_ID_KEY: self.workTaskId,
             ASSIGNED_SERVICE_PROVIDER_KEY: self.providerId,
         }
 
-def assignment_to_ticket_exist(serviceTicketId: ObjectId) -> bool: 
-    result = taskAssignements.find_one({SERVICE_TICKET_KEY: serviceTicketId})
+def assignment_to_task_exist(workTaskId: ObjectId) -> bool: 
+    result = taskAssignements.find_one({WORK_TASK_ID_KEY: workTaskId})
     return result != None
 
-def assign_task(providerId: ObjectId, serviceTicketId: ObjectId):
-    taskAssignment = TaskAssignment(providerId=providerId, serviceTicketId=serviceTicketId)
+def assign_task(providerId: ObjectId, workTaskId: str) -> (TaskAssignment | None):
+    taskAssignment = TaskAssignment(providerId=providerId, workTaskId=workTaskId)
     taskAssignements.insert_one(taskAssignment.get_json_object())
-    return taskAssignements.find_one(taskAssignment.get_json_object())
+
+    result = taskAssignements.find_one(taskAssignment.get_json_object())
+
+    if (result != None):
+        # Insert external take work code here!
+        pass        
+
+    return result
+
+def complete_task(providerId: ObjectId, workTaskId: str) -> bool: 
+    if (is_provider_assigned(providerId=providerId, workTaskId=workTaskId) == False):
+        return False
+    
+    taskAssignment = TaskAssignment(providerId=providerId, workTaskId=workTaskId)
+    result = taskAssignements.delete_one(taskAssignment.get_json_object())
+    print(result)
+
+    # Insert external complete work code here!
+
+    return True
 
 
-def is_provider_assigned(providerId: ObjectId, serviceTicketId: ObjectId) -> bool:
-    result = taskAssignements.find_one({SERVICE_TICKET_KEY: serviceTicketId})
-    if assignment_to_ticket_exist(serviceTicketId=serviceTicketId) == False:
+def is_provider_assigned(providerId: ObjectId, workTaskId: str) -> bool:
+    result = taskAssignements.find_one({WORK_TASK_ID_KEY: workTaskId})
+    if assignment_to_task_exist(workTaskId=workTaskId) == False:
         return False
     
     if result == None:

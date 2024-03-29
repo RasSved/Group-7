@@ -113,7 +113,7 @@ def service():
             providerId = ObjectId(request.form["providerId"])
 
             dueDate = datetime.now() + timedelta(days=2)
-            tickets.insert_one({"AreaId": areaId, "CustomerId": customerId, "DateCreated": datetime.now(), "Content": "newArea", "Completed": False, "DueDate": dueDate, "ProviderId": providerId, "Assigned": False})
+            tickets.insert_one({"AreaId": areaId, "CustomerId": customerId, "DateCreated": datetime.now(), "Content": "newArea", "Completed": False, "DueDate": dueDate, "ProviderId": providerId, "WorkTaskId": "placeholder-work-id"})
             areas.find_one_and_update({"_id": areaId}, {"$set": {"ProviderId": providerId}})
             requests.find_one_and_update({"_id": ObjectId(id)}, {'$set': {"Completed": True}})
             return redirect(url_for("manufacturer.requesthq"))

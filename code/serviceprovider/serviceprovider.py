@@ -5,8 +5,10 @@ from pymongo import MongoClient
 from bson.objectid import ObjectId
 import sys
 import serviceprovider.task_assignments as task_assignments
+import serviceprovider.dtos as dtos
+import serviceprovider.work_tasks as work_tasks
 
-from datetime import datetime
+from datetime import datetime, timedelta
 
 # Setting up/connecting to database
 client = MongoClient('localhost', 27017)
@@ -22,7 +24,7 @@ requests = db.Requests
 products = db.Products
 accounts = db.Accounts
 services = db.Services
-
+service_providers = db.Service_Provider
 
 @serviceprovider_bp.route("/", methods=["GET", "POST"])
 def serviceprovider():
@@ -69,9 +71,9 @@ def serviceprovider():
 
         if ticket['Content'] == "newArea":
             ticket["desc"] = "A new area is needed to be setup!"
-        elif ticket['Content'] == "service":
+        elif ticket['Content'] == work_tasks.WorkTaskType.BLADE_CHANGE.value:
             ticket["desc"] = "You need to replace the knife on a mower!"
-        elif ticket['Content'] == "stuck":
+        elif ticket['Content'] == work_tasks.WorkTaskType.STUCK.value:
             ticket["desc"] = "A mower is stuck! Push it!"
         else:
             ticket["desc"] = "This is a placeholder for a description of the ticket!"
@@ -112,22 +114,24 @@ def area():
         curr_area = areas.find_one({"_id": ObjectId(areaId)})    # find area where id is the same as area clicked
         providerId = accounts.find_one({"_id": ObjectId(session["user_id"])})["ProviderId"]
 
-        area_mowers = list(mowers.find({"ProviderId": providerId, "AreaIds": {'$elemMatch': {"AreaId": ObjectId(session["area_id"])}}}))  # get all mowers of specific provider, update to contain object 
+        area_mowers = list(mowers.find({"AreaIds": {'$elemMatch': {"AreaId": ObjectId(session["area_id"])}}}))  # get all mowers of specific area, update to contain object 
         available_mowers = list(mowers.find({"ProviderId": providerId, "AreaIds": {'$not': {'$elemMatch': {"AreaId": ObjectId(session["area_id"])}}}})) # get all mowers that belong to provider but are not on current area
 
-        area_tickets = list( service_tickets.find( {"ProviderId": providerId, "Completed": False, "AreaId": ObjectId(areaId)} ) )
+        tickets = list( service_tickets.find( {"ProviderId": providerId, "Completed": False} ) )
+        # area_tickets = list( service_tickets.find( {"ProviderId": providerId, "Completed": False, "AreaId": ObjectId(areaId)} ) )
 
         for mower in area_mowers: # add fields, Addresses and Name to display on main page
-            for area in mower["AreaIds"]:
+            # for area in mower["AreaIds"]:
 
                 #print(areaId, file=sys.stderr)
                 
-                if str(area["AreaId"]) == str(areaId):
-                    print("AreaId", file=sys.stderr)
-                    mower_tickets = list(service_tickets.find({"MowerId": mower["_id"], "Completed": False}))
-                    for ticket in mower_tickets:
-                        if ticket not in area_tickets:
-                            area_tickets.append(ticket)
+                # if str(area["AreaId"]) == str(areaId):
+                #     print("AreaId", file=sys.stderr)
+                #     mower_tickets = list(service_tickets.find({"MowerId": mower["_id"], "Completed": False}))
+                #     for ticket in mower_tickets:
+                #         if ticket not in area_tickets:
+                #             area_tickets.append(ticket)
+
             mower["Addresses"] = []
             mower["Name"] = products.find_one({"_id": mower["ProductId"]})["Name"]
 
@@ -147,13 +151,13 @@ def area():
         # Get current time
         current_time = datetime.now()
 
-        for ticket in area_tickets:
+        for ticket in tickets:
 
             if ticket['Content'] == "newArea":
                 ticket["desc"] = "A new area is needed to be setup!"
-            elif ticket['Content'] == "service":
+            elif ticket['Content'] == work_tasks.WorkTaskType.BLADE_CHANGE.value:
                 ticket["desc"] = "You need to replace the knife on a mower!"
-            elif ticket['Content'] == "stuck":
+            elif ticket['Content'] == work_tasks.WorkTaskType.STUCK.value:
                 ticket["desc"] = "A mower is stuck! Push it!"
             else:
                 ticket["desc"] = "This is a placeholder for a description of the ticket!"
@@ -167,12 +171,12 @@ def area():
             else:
                 ticket["colour"] = 'yellow'
 
-            ticket["Assigned"] = task_assignments.assignment_to_ticket_exist(ticket['_id'])
+            ticket["Assigned"] = task_assignments.assignment_to_task_exist(ticket['WorkTaskId'])
 
-            ticket["AssignedToMe"] = task_assignments.is_provider_assigned(ticket['ProviderId'], ticket['_id'])
+            ticket["AssignedToMe"] = task_assignments.is_provider_assigned(ticket['ProviderId'], ticket['WorkTaskId'])
 
 
-        return render_template("SePrArea.html", title = "Service Provider Area", area=curr_area, area_mowers=area_mowers, available_mowers=available_mowers, area_tickets = area_tickets)
+        return render_template("SePrArea.html", title = "Service Provider Area", area=curr_area, area_mowers=area_mowers, available_mowers=available_mowers, area_tickets = tickets, providerId = providerId)
     else:
         return redirect(url_for("serviceprovider.serviceprovider"))
 
@@ -183,7 +187,12 @@ def completeServiceTicket():
     if ("ticket_id" in request.form):
 
         ticket_id = request.form["ticket_id"]
-        result = service_tickets.update_one({'_id': ObjectId(ticket_id)}, {'$set': {'Completed': True}})
+        ticket = service_tickets.find_one({'_id': ObjectId(ticket_id)})
+        result = service_tickets.update_many({'WorkTaskId': ticket['WorkTaskId']}, {'$set': {'Completed': True}})
+
+        completed = task_assignments.complete_task(ticket['ProviderId'], ticket['WorkTaskId'])
+        print(completed)
+
         #print(result, file=sys.stderr)
 
         current_ticket = service_tickets.find_one({'_id': ObjectId(ticket_id)})
@@ -216,7 +225,7 @@ def takeServiceTicket():
         ticket_id = ObjectId(request.form["ticket_id"])
         service_ticket_object = service_tickets.find_one({'_id': ObjectId(ticket_id)})
         
-        assignment = task_assignments.assign_task(providerId=service_ticket_object["ProviderId"], serviceTicketId=ticket_id)
+        assignment = task_assignments.assign_task(providerId=service_ticket_object["ProviderId"], workTaskId=service_ticket_object["WorkTaskId"])
         print(assignment)
         service_tickets.update_one({'_id': ObjectId(ticket_id)}, {'$set': {'Assignment': assignment["_id"]}})
         
@@ -386,3 +395,29 @@ def configuration():
         return render_template("SePrConf.html", area=area, service=service, title = "Customer Configurations")
     else:
         return redirect(url_for("serviceprovider.serviceprovider"))
+
+@serviceprovider_bp.route("/work-task", methods=["POST"])
+def new_work_task():
+    raw_data = request.json
+    try:
+        new_work_task = dtos.NewWorkTask(
+            work_tasks.WorkTaskType.from_str(raw_data['workTaskType']),
+            raw_data['tecnicianSystemSlug'],
+            raw_data['mowerSystemSlug'],
+            raw_data['workTaskId'],
+        )
+    except(NotImplementedError):
+        return f"the work task: {raw_data['workTaskType']}, has not been implemented", 500
+
+    provider = service_providers.find_one({'ExternalSystemSlug': new_work_task.tecnicianSystemSlug})
+
+    mower = mowers.find_one({'ExternalSystemSlug': new_work_task.mowerSystemSlug})
+
+    if (provider == None or mower == None):
+        return "", 500
+
+    print(mower)
+    dueDate = datetime.now() + timedelta(days=14)
+    service_tickets.insert_one({"MowerId": mower['_id'], "Content": new_work_task.workTaskType.value, "ProviderId": provider['_id'], "DateCreated": datetime.now(), "Completed": False, "DueDate": dueDate, "WorkTaskId": new_work_task.workTaskId})
+
+    return "", 201
