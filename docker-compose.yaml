@@ -23,7 +23,7 @@ services:
     container_name: mongodb-web-portal
     image: mongo:6.0
     ports:
-      - "27017:27017"
+      - "60000:27017"
     volumes:
       - mongodb-web-portal-data:/data/db
     healthcheck:
