@@ -1,7 +1,10 @@
+import os
 from bson import ObjectId
 from pymongo import MongoClient
 
-client = MongoClient('localhost', 27017)
+database_address = os.environ.get("DATABASE_ADDRESS", "localhost")
+database_port = os.environ.get("DATABASE_PORT", "27017")
+client = MongoClient(database_address, int(database_port))
 db = client.MowerDB
 taskAssignements = db.TaskAssignments
 

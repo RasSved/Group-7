@@ -1,3 +1,4 @@
+import os
 from flask import Flask, render_template, request, redirect, url_for, session, Blueprint
 from customer.customer import customer_bp
 from serviceprovider.serviceprovider import serviceprovider_bp
@@ -10,7 +11,9 @@ from bson.objectid import ObjectId
 import sys
 
 # Setting up/connecting to database
-client = MongoClient('localhost', 27017)
+database_address = os.environ.get("DATABASE_ADDRESS", "localhost")
+database_port = os.environ.get("DATABASE_PORT", "27017")
+client = MongoClient(database_address, int(database_port))
 db = client.MowerDB
 accounts = db.Accounts
 
@@ -69,5 +72,7 @@ def logout():
 
 #necessary to run app.py
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=80, debug=True)
+    address = os.environ.get("ADDRESS", "localhost")
+    port = os.environ.get("PORT", "5000")
+    app.run(host=address, port=int(port), debug=True)
 

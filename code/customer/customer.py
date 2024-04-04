@@ -1,3 +1,4 @@
+import os
 from flask import Flask, render_template, request, redirect, url_for, session, Blueprint
 customer_bp = Blueprint('customer', __name__, 
                         template_folder='templates',
@@ -9,7 +10,9 @@ import sys
 from datetime import datetime, timedelta
 
 # Setting up/connecting to database
-client = MongoClient('localhost', 27017)
+database_address = os.environ.get("DATABASE_ADDRESS", "localhost")
+database_port = os.environ.get("DATABASE_PORT", "27017")
+client = MongoClient(database_address, int(database_port))
 db = client.MowerDB
 
 # Single definition for table, change later

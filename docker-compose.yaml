@@ -1,0 +1,36 @@
+version: "1.0"
+
+services:
+  web-portal:
+    container_name: web-portal
+    build: 
+      context: code
+      dockerfile: ../web-portal.Dockerfile
+    ports:
+      - "80:80"
+    environment:
+      ADDRESS: 0.0.0.0
+      PORT: 80
+      DATABASE_ADDRESS: mongodb-web-portal
+      DATABASE_PORT: 27017
+    depends_on:
+      mongodb:
+        condition: service_healthy
+    volumes:
+      - ./startApp.sh:/app/startApp.sh
+
+  mongodb:
+    container_name: mongodb-web-portal
+    image: mongo:6.0
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongodb-web-portal-data:/data/db
+    healthcheck:
+      test: echo 'db.runCommand("ping").ok' | mongosh localhost:27017/test --quiet
+      interval: 10s
+      timeout: 10s
+      retries: 5
+
+volumes:
+  mongodb-web-portal-data:

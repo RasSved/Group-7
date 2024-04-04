@@ -1,13 +1,16 @@
 #run this to setup database with dummy data
 
 from itertools import count
+import os
 
 from pymongo import MongoClient
 from bson.objectid import ObjectId
 import sys
 
 # Setting up/connecting to database
-client = MongoClient('localhost', 27017)
+database_address = os.environ.get("DATABASE_ADDRESS", "localhost")
+database_port = os.environ.get("DATABASE_PORT", "27017")
+client = MongoClient(database_address, int(database_port))
 db = client.MowerDB
 
 #creating "Service_Provider" table, accounts table and customer table
@@ -15,6 +18,14 @@ Service_Provider = db.Service_Provider
 Accounts = db.Accounts
 Customer = db.Customer
 mowers = db.Mower
+
+account = Accounts.find_one()
+
+if account != None:
+    print("database is already setup")
+    exit(0)
+print("seting up database")
+
 
 mowers.create_index("ExternalSystemSlug", unique = True)
 
