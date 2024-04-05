@@ -11,6 +11,8 @@ RUN pip install werkzeug
 
 RUN pip install flask_wtf
 
+RUN pip install requests
+
 COPY . .
 
 CMD ["./startApp.sh"]
