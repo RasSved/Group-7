@@ -42,8 +42,10 @@ def assign_task(providerId: ObjectId, workTaskId: str, takeTaskUrl: str) -> (Tas
         }
         
         # sending post request and saving response as response object
-        r = requests.post(url=takeTaskUrl, data=data)
-        pass        
+        r = requests.post(url=takeTaskUrl, json=data)
+        print(r.json())
+        if r.ok == False: 
+            return None
 
     return result
 
