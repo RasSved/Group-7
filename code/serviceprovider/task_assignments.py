@@ -1,6 +1,7 @@
 import os
 from bson import ObjectId
 from pymongo import MongoClient
+import requests
 
 database_address = os.environ.get("DATABASE_ADDRESS", "localhost")
 database_port = os.environ.get("DATABASE_PORT", "27017")
@@ -28,14 +29,20 @@ def assignment_to_task_exist(workTaskId: ObjectId) -> bool:
     result = taskAssignements.find_one({WORK_TASK_ID_KEY: workTaskId})
     return result != None
 
-def assign_task(providerId: ObjectId, workTaskId: str) -> (TaskAssignment | None):
+def assign_task(providerId: ObjectId, workTaskId: str, takeTaskUrl: str) -> (TaskAssignment | None):
     taskAssignment = TaskAssignment(providerId=providerId, workTaskId=workTaskId)
     taskAssignements.insert_one(taskAssignment.get_json_object())
 
     result = taskAssignements.find_one(taskAssignment.get_json_object())
 
     if (result != None):
-        # Insert external take work code here!
+        # data to be sent to api
+        data = {
+            'workId': workTaskId,
+        }
+        
+        # sending post request and saving response as response object
+        r = requests.post(url=takeTaskUrl, data=data)
         pass        
 
     return result

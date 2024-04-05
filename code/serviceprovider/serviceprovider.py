@@ -228,7 +228,7 @@ def takeServiceTicket():
         ticket_id = ObjectId(request.form["ticket_id"])
         service_ticket_object = service_tickets.find_one({'_id': ObjectId(ticket_id)})
         
-        assignment = task_assignments.assign_task(providerId=service_ticket_object["ProviderId"], workTaskId=service_ticket_object["WorkTaskId"])
+        assignment = task_assignments.assign_task(providerId=service_ticket_object["ProviderId"], workTaskId=service_ticket_object["WorkTaskId"],  takeTaskUrl=service_ticket_object["TakeWorkUrl"])
         print(assignment)
         service_tickets.update_one({'_id': ObjectId(ticket_id)}, {'$set': {'Assignment': assignment["_id"]}})
         
@@ -404,10 +404,11 @@ def new_work_task():
     raw_data = request.json
     try:
         new_work_task = dtos.NewWorkTask(
-            work_tasks.WorkTaskType.from_str(raw_data['workTaskType']),
-            raw_data['tecnicianSystemSlug'],
-            raw_data['mowerSystemSlug'],
-            raw_data['workTaskId'],
+            workTask=work_tasks.WorkTaskType.from_str(raw_data['workTaskType']),
+            tecnicianSystemSlug=raw_data['tecnicianSystemSlug'],
+            mowerSystemSlug=raw_data['mowerSystemSlug'],
+            workTaskId=raw_data['workTaskId'],
+            takeWorkUrl=raw_data['takeWorkUrl'],
         )
     except(NotImplementedError):
         return f"the work task: {raw_data['workTaskType']}, has not been implemented", 500
@@ -421,6 +422,6 @@ def new_work_task():
 
     print(mower)
     dueDate = datetime.now() + timedelta(days=14)
-    service_tickets.insert_one({"MowerId": mower['_id'], "Content": new_work_task.workTaskType.value, "ProviderId": provider['_id'], "DateCreated": datetime.now(), "Completed": False, "DueDate": dueDate, "WorkTaskId": new_work_task.workTaskId})
+    service_tickets.insert_one({"MowerId": mower['_id'], "Content": new_work_task.workTaskType.value, "ProviderId": provider['_id'], "DateCreated": datetime.now(), "Completed": False, "DueDate": dueDate, "WorkTaskId": new_work_task.workTaskId, "TakeWorkUrl": new_work_task.takeWorkUrl})
 
     return "", 201
