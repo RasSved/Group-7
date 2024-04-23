@@ -227,8 +227,13 @@ def takeServiceTicket():
 
         ticket_id = ObjectId(request.form["ticket_id"])
         service_ticket_object = service_tickets.find_one({'_id': ObjectId(ticket_id)})
+
+        try:
+            takeWorkUrl = service_ticket_object["TakeWorkUrl"]
+        except:
+            takeWorkUrl = None
         
-        assignment = task_assignments.assign_task(providerId=service_ticket_object["ProviderId"], workTaskId=service_ticket_object["WorkTaskId"],  takeTaskUrl=service_ticket_object["TakeWorkUrl"])
+        assignment = task_assignments.assign_task(providerId=service_ticket_object["ProviderId"], workTaskId=service_ticket_object["WorkTaskId"],  takeTaskUrl=takeWorkUrl)
         print(assignment)
         service_tickets.update_one({'_id': ObjectId(ticket_id)}, {'$set': {'Assignment': assignment["_id"]}})
         

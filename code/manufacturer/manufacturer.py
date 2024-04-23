@@ -1,4 +1,5 @@
 import os
+import uuid
 from flask import Flask, render_template, request, redirect, url_for, session, Blueprint
 manufacturer_bp = Blueprint('manufacturer', __name__, 
                         template_folder='templates',
@@ -116,7 +117,7 @@ def service():
             providerId = ObjectId(request.form["providerId"])
 
             dueDate = datetime.now() + timedelta(days=2)
-            tickets.insert_one({"AreaId": areaId, "CustomerId": customerId, "DateCreated": datetime.now(), "Content": "newArea", "Completed": False, "DueDate": dueDate, "ProviderId": providerId, "WorkTaskId": "placeholder-work-id"})
+            tickets.insert_one({"AreaId": areaId, "CustomerId": customerId, "DateCreated": datetime.now(), "Content": "newArea", "Completed": False, "DueDate": dueDate, "ProviderId": providerId, "WorkTaskId": str(uuid.uuid4())})
             areas.find_one_and_update({"_id": areaId}, {"$set": {"ProviderId": providerId}})
             requests.find_one_and_update({"_id": ObjectId(id)}, {'$set': {"Completed": True}})
             return redirect(url_for("manufacturer.requesthq"))

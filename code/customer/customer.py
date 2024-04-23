@@ -282,27 +282,20 @@ def configure():
 #   Example JSON format
 #   Mower is stuck:
 #    {
-#       "MowerId": "65eb20ea27fbfb29b54e6e5b",
-#       "AreaId": "65eb205b27fbfb29b54e6e56",
+#       "ExternalSystemSlug": "65eb20ea27fbfb29b54e6e5b",
 #       "type": "stuck",
-#       "Xpos": "3.0",
-#       "Ypos": "4.1"
 #    }
 #    
 #   Mower is no longer stuck:
 #    {
-#       "MowerId": "65eb20ea27fbfb29b54e6e5b",
+#       "ExternalSystemSlug": "65eb20ea27fbfb29b54e6e5b",
 #       "type": "unstuck",
-#       "Xpos": "3.2",
-#       "Ypos": "4.1"
 #    }
 #        
 #    Mower needs knife replacement:
 #    {
-#       "MowerId": "65eb20ea27fbfb29b54e6e5b",
+#       "ExternalSystemSlug": "65eb20ea27fbfb29b54e6e5b",
 #       "type": "service",
-#       "Xpos": "4.1",
-#       "Ypos": "9.2"
 #    }
 #    
 
@@ -313,42 +306,50 @@ def recieveData():
     match data["type"]:
         case "stuck":
             #Insert "stuck" into notifications if not already exists + update mower position
-            areaId = ObjectId(data["AreaId"])
-            mowerId = ObjectId(data["MowerId"])
+            # areaId = ObjectId(data["AreaId"])
+            externalSystemSlug = data["ExternalSystemSlug"]
 
-            mowers.find_one_and_update({"_id": mowerId}, {'$set': {"Xpos": data["Xpos"], "Ypos": data["Ypos"]}})
-            notifs.update_one({"MowerId": mowerId, "Content": "stuck",}, {'$setOnInsert': {"AreaId": areaId, "Type": "alert", "Seen": False, "Date": datetime.now()}}, upsert = True)
+            mower = mowers.find_one({"ExternalSystemSlug": externalSystemSlug})
+
+            # mower = mowers.find_one_and_update({"ExternalSystemSlug": externalSystemSlug}, {'$set': {"Xpos": data["Xpos"], "Ypos": data["Ypos"]}})
+            notifs.update_one({"MowerId": mower["_id"], "Content": "stuck",}, {'$setOnInsert': {"Type": "alert", "Seen": False, "Date": datetime.now()}}, upsert = True)
             #Create service ticket to service provider
 
-            providerId = mowers.find_one({"_id": mowerId})["ProviderId"] # Get default area provider
-            notifId = notifs.find_one({"MowerId": mowerId, "Content": "stuck", "AreaId": areaId})["_id"]
-            dueDate = datetime.now() + timedelta(days=2)
-            tickets.update_one({"NotifId": notifId}, {'$setOnInsert': {"MowerId": mowerId, "AreaId": areaId, "ProviderId": providerId, "DateCreated": datetime.now(), "Content": "stuck", "Completed": False, "DueDate": dueDate, "Assigned": False}}, upsert = True)
+            # providerId = mowers.find_one({"_id": externalSystemSlug})["ProviderId"] # Get default area provider
+            # notifId = notifs.find_one({"MowerId": externalSystemSlug, "Content": "stuck", "AreaId": areaId})["_id"]
+            # dueDate = datetime.now() + timedelta(days=2)
+            
+            # tickets.update_one({"NotifId": notifId}, {'$setOnInsert': {"MowerId": externalSystemSlug, "AreaId": areaId, "ProviderId": providerId, "DateCreated": datetime.now(), "Content": "stuck", "Completed": False, "DueDate": dueDate, "Assigned": False}}, upsert = True)
             
         case "unstuck":
             #Delete notification, update position
 
-            mowerId = ObjectId(data["MowerId"])
+            externalSystemSlug = data["ExternalSystemSlug"]
 
-            mowers.find_one_and_update({"_id": mowerId}, {'$set': {"Xpos": data["Xpos"], "Ypos": data["Ypos"]}})
-            notifId = notifs.find_one({"MowerId": mowerId, "Content": "stuck"})["_id"]
+            mower = mowers.find_one({"ExternalSystemSlug": externalSystemSlug})
+
+            # mower = mowers.find_one_and_update({"_id": externalSystemSlug}, {'$set': {"Xpos": data["Xpos"], "Ypos": data["Ypos"]}})
+            notifId = notifs.find_one({"MowerId": mower["_id"], "Content": "stuck"})["_id"]
             notifs.delete_one({"_id": notifId})
 
             #Set service ticket status to complete
 
-            tickets.find_one_and_update({"NotifId": notifId}, {"$set": {"Completed": True, "NotifId": None}})
+            # tickets.find_one_and_update({"NotifId": notifId}, {"$set": {"Completed": True, "NotifId": None}})
 
         case "service":
-            mowerId = ObjectId(data["MowerId"])
+            externalSystemSlug = data["ExternalSystemSlug"]
             #Insert "service" into notifications if not already exists + update mower position
 
-            mowers.find_one_and_update({"_id": mowerId}, {'$set': {"Xpos": data["Xpos"], "Ypos": data["Ypos"]}})
-            notifs.update_one({"MowerId": mowerId, "Content": "service",}, {'$setOnInsert': {"Type": "warning", "Seen": False, "Date": datetime.now()}}, upsert = True)
+            mower = mowers.find_one({"ExternalSystemSlug": externalSystemSlug})
+
+            # mower = mowers.find_one_and_update({"ExternalSystemSlug": externalSystemSlug}, {'$set': {"Xpos": data["Xpos"], "Ypos": data["Ypos"]}})
+            notifs.update_one({"MowerId": mower["_id"], "Content": "service",}, {'$setOnInsert': {"Type": "warning", "Seen": False, "Date": datetime.now()}}, upsert = True)
             #Create service ticket to service provider
 
-            providerId = mowers.find_one({"_id": mowerId})["ProviderId"] # Get default area provider
-            notifId = notifs.find_one({"MowerId": mowerId, "Content": "service"})["_id"]
-            dueDate = datetime.now() + timedelta(days=14)
-            tickets.update_one({"NotifId": notifId}, {'$setOnInsert': {"MowerId": mowerId, "Content": "service", "ProviderId": providerId, "DateCreated": datetime.now(), "Content": "service", "Completed": False, "DueDate": dueDate, "Assigned": False}}, upsert = True)
+            # providerId = mower["ProviderId"] # Get default area provider
+            # notifId = notifs.find_one({"MowerId": mower["_id"], "Content": "service"})["_id"]
+            # dueDate = datetime.now() + timedelta(days=14)
+            
+            # tickets.update_one({"NotifId": notifId}, {'$setOnInsert': {"MowerId": externalSystemSlug, "Content": "service", "ProviderId": providerId, "DateCreated": datetime.now(), "Content": "service", "Completed": False, "DueDate": dueDate, "Assigned": False}}, upsert = True)
 
     return "", 204

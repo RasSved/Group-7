@@ -24,18 +24,22 @@ class TaskAssignment:
             WORK_TASK_ID_KEY: self.workTaskId,
             ASSIGNED_SERVICE_PROVIDER_KEY: self.providerId,
         }
+    
+class ExternalAssignTaskException(Exception):
+    "Raised when an external system does not accept the assignment of a task"
+    pass
 
 def assignment_to_task_exist(workTaskId: ObjectId) -> bool: 
     result = taskAssignements.find_one({WORK_TASK_ID_KEY: workTaskId})
     return result != None
 
-def assign_task(providerId: ObjectId, workTaskId: str, takeTaskUrl: str) -> (TaskAssignment | None):
+def assign_task(providerId: ObjectId, workTaskId: str, takeTaskUrl: str=None) -> (TaskAssignment | None):
     taskAssignment = TaskAssignment(providerId=providerId, workTaskId=workTaskId)
     taskAssignements.insert_one(taskAssignment.get_json_object())
 
     result = taskAssignements.find_one(taskAssignment.get_json_object())
 
-    if (result != None):
+    if (result != None and takeTaskUrl != None):
         # data to be sent to api
         data = {
             'workId': workTaskId,
@@ -45,7 +49,7 @@ def assign_task(providerId: ObjectId, workTaskId: str, takeTaskUrl: str) -> (Tas
         r = requests.post(url=takeTaskUrl, json=data)
         print(r.json())
         if r.ok == False: 
-            return None
+            raise ExternalAssignTaskException
 
     return result
 
