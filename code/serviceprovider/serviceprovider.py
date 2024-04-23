@@ -239,6 +239,7 @@ def takeServiceTicket():
             service_tickets.update_one({'_id': ObjectId(ticket_id)}, {'$set': {'Assignment': assignment["_id"]}})
         except:
             flash("Something went wrong when assigning you to the work task!")
+            redirect(url_for("serviceprovider.area"))
         
         return redirect(url_for("serviceprovider.area"))
     else:   # if the request contains wrong info, send the user back to serviceproviders main-page
