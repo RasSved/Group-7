@@ -307,7 +307,7 @@ def recieveData():
         case "stuck":
             #Insert "stuck" into notifications if not already exists + update mower position
             # areaId = ObjectId(data["AreaId"])
-            externalSystemSlug = data["ExternalSystemSlug"]
+            externalSystemSlug = data["externalSystemSlug"]
 
             mower = mowers.find_one({"ExternalSystemSlug": externalSystemSlug})
 
@@ -324,7 +324,7 @@ def recieveData():
         case "unstuck":
             #Delete notification, update position
 
-            externalSystemSlug = data["ExternalSystemSlug"]
+            externalSystemSlug = data["externalSystemSlug"]
 
             mower = mowers.find_one({"ExternalSystemSlug": externalSystemSlug})
 
@@ -337,7 +337,7 @@ def recieveData():
             # tickets.find_one_and_update({"NotifId": notifId}, {"$set": {"Completed": True, "NotifId": None}})
 
         case "service":
-            externalSystemSlug = data["ExternalSystemSlug"]
+            externalSystemSlug = data["externalSystemSlug"]
             #Insert "service" into notifications if not already exists + update mower position
 
             mower = mowers.find_one({"ExternalSystemSlug": externalSystemSlug})
