@@ -282,19 +282,19 @@ def configure():
 #   Example JSON format
 #   Mower is stuck:
 #    {
-#       "ExternalSystemSlug": "65eb20ea27fbfb29b54e6e5b",
+#       "externalSystemSlug": "65eb20ea27fbfb29b54e6e5b",
 #       "type": "stuck",
 #    }
 #    
 #   Mower is no longer stuck:
 #    {
-#       "ExternalSystemSlug": "65eb20ea27fbfb29b54e6e5b",
+#       "externalSystemSlug": "65eb20ea27fbfb29b54e6e5b",
 #       "type": "unstuck",
 #    }
 #        
 #    Mower needs knife replacement:
 #    {
-#       "ExternalSystemSlug": "65eb20ea27fbfb29b54e6e5b",
+#       "externalSystemSlug": "65eb20ea27fbfb29b54e6e5b",
 #       "type": "service",
 #    }
 #    
