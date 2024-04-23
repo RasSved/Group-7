@@ -47,8 +47,8 @@ def assign_task(providerId: ObjectId, workTaskId: str, takeTaskUrl: str=None) ->
         
         # sending post request and saving response as response object
         r = requests.post(url=takeTaskUrl, json=data)
-        print(r.json())
         if r.ok == False: 
+            taskAssignements.delete_one(taskAssignment.get_json_object())
             raise ExternalAssignTaskException
 
     return result

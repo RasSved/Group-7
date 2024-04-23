@@ -1,5 +1,5 @@
 import os
-from flask import Flask, render_template, request, redirect, url_for, session, Blueprint
+from flask import Flask, flash, render_template, request, redirect, url_for, session, Blueprint
 serviceprovider_bp = Blueprint('serviceprovider', __name__ , template_folder='templates', static_folder='static')
 
 from pymongo import MongoClient
@@ -233,9 +233,12 @@ def takeServiceTicket():
         except:
             takeWorkUrl = None
         
-        assignment = task_assignments.assign_task(providerId=service_ticket_object["ProviderId"], workTaskId=service_ticket_object["WorkTaskId"],  takeTaskUrl=takeWorkUrl)
-        print(assignment)
-        service_tickets.update_one({'_id': ObjectId(ticket_id)}, {'$set': {'Assignment': assignment["_id"]}})
+        try:
+            assignment = task_assignments.assign_task(providerId=service_ticket_object["ProviderId"], workTaskId=service_ticket_object["WorkTaskId"],  takeTaskUrl=takeWorkUrl)
+            print(assignment)
+            service_tickets.update_one({'_id': ObjectId(ticket_id)}, {'$set': {'Assignment': assignment["_id"]}})
+        except:
+            flash("Something went wrong when assigning you to the work task!")
         
         return redirect(url_for("serviceprovider.area"))
     else:   # if the request contains wrong info, send the user back to serviceproviders main-page
