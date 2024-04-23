@@ -18,6 +18,8 @@ services:
         condition: service_healthy
     volumes:
       - ./startApp.sh:/app/startApp.sh
+    networks:
+      - web-portal-network
 
   mongodb:
     container_name: mongodb-web-portal
@@ -31,6 +33,13 @@ services:
       interval: 10s
       timeout: 10s
       retries: 5
+    networks:
+      - web-portal-network
+
+networks:
+  web-portal-network:
+    name: as-a-service-framework_default
+    external: true
 
 volumes:
   mongodb-web-portal-data:
