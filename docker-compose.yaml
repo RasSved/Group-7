@@ -38,7 +38,7 @@ services:
 
 networks:
   web-portal-network:
-    name: as-a-service-framework_default
+    name: as-a-service-framework-network
     external: true
 
 volumes:

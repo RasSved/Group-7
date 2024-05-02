@@ -18,7 +18,14 @@ MongoDB
 * **Docker 24.0**, Other versions should also work.
 
 ### Start
-Run,
+The [as-a-service-framework](https://github.com/MrDweller/as-a-service-framework) must be started first. 
+If this not done, this command must be executed instead,
+
+```
+docker network create -d bridge as-a-service-framework-network
+```
+
+Then start the web portal by executing,
 ``` 
 docker-compose up -d --build
 ```
