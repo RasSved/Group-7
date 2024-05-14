@@ -80,6 +80,8 @@ def serviceprovider():
             ticket["desc"] = "You need to replace the knife on a mower!"
         elif ticket['Content'] == work_tasks.WorkTaskType.STUCK.value:
             ticket["desc"] = "A mower is stuck! Push it!"
+        elif ticket['Content'] == work_tasks.WorkTaskType.REPLACE_BATTERY.value:
+            ticket["desc"] = "You need to replace the battery on a mower!"
         else:
             ticket["desc"] = "This is a placeholder for a description of the ticket!"
 
@@ -164,6 +166,8 @@ def area():
                 ticket["desc"] = "You need to replace the knife on a mower!"
             elif ticket['Content'] == work_tasks.WorkTaskType.STUCK.value:
                 ticket["desc"] = "A mower is stuck! Push it!"
+            elif ticket['Content'] == work_tasks.WorkTaskType.REPLACE_BATTERY.value:
+                ticket["desc"] = "You need to replace the battery on a mower!"
             else:
                 ticket["desc"] = "This is a placeholder for a description of the ticket!"
 
