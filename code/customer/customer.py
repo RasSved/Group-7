@@ -362,22 +362,18 @@ def recieveData():
     print(request.json, file=sys.stderr)
     match data["type"]:
         case "stuck":
-            #Insert "stuck" into notifications if not already exists + update mower position
-            # areaId = ObjectId(data["AreaId"])
             externalSystemSlug = data["externalSystemSlug"]
 
             mower = mowers.find_one({"ExternalSystemSlug": externalSystemSlug})
 
-            # mower = mowers.find_one_and_update({"ExternalSystemSlug": externalSystemSlug}, {'$set': {"Xpos": data["Xpos"], "Ypos": data["Ypos"]}})
             notifs.update_one({"MowerId": mower["_id"], "Content": "stuck",}, {'$setOnInsert': {"Type": "alert", "Seen": False, "Date": datetime.now()}}, upsert = True)
-            #Create service ticket to service provider
+        
+        case "trapped":
+            externalSystemSlug = data["externalSystemSlug"]
 
-            # providerId = mowers.find_one({"_id": externalSystemSlug})["ProviderId"] # Get default area provider
-            # notifId = notifs.find_one({"MowerId": externalSystemSlug, "Content": "stuck", "AreaId": areaId})["_id"]
-            # dueDate = datetime.now() + timedelta(days=2)
-            
-            # tickets.update_one({"NotifId": notifId}, {'$setOnInsert': {"MowerId": externalSystemSlug, "AreaId": areaId, "ProviderId": providerId, "DateCreated": datetime.now(), "Content": "stuck", "Completed": False, "DueDate": dueDate, "Assigned": False}}, upsert = True)
-            
+            mower = mowers.find_one({"ExternalSystemSlug": externalSystemSlug})
+
+            notifs.update_one({"MowerId": mower["_id"], "Content": "stuck",}, {'$setOnInsert': {"Type": "alert", "Seen": False, "Date": datetime.now()}}, upsert = True)
         case "unstuck":
             #Delete notification, update position
 
@@ -395,18 +391,16 @@ def recieveData():
 
         case "service":
             externalSystemSlug = data["externalSystemSlug"]
-            #Insert "service" into notifications if not already exists + update mower position
-
             mower = mowers.find_one({"ExternalSystemSlug": externalSystemSlug})
 
-            # mower = mowers.find_one_and_update({"ExternalSystemSlug": externalSystemSlug}, {'$set': {"Xpos": data["Xpos"], "Ypos": data["Ypos"]}})
             notifs.update_one({"MowerId": mower["_id"], "Content": "service",}, {'$setOnInsert': {"Type": "warning", "Seen": False, "Date": datetime.now()}}, upsert = True)
-            #Create service ticket to service provider
 
-            # providerId = mower["ProviderId"] # Get default area provider
-            # notifId = notifs.find_one({"MowerId": mower["_id"], "Content": "service"})["_id"]
-            # dueDate = datetime.now() + timedelta(days=14)
-            
-            # tickets.update_one({"NotifId": notifId}, {'$setOnInsert': {"MowerId": externalSystemSlug, "Content": "service", "ProviderId": providerId, "DateCreated": datetime.now(), "Content": "service", "Completed": False, "DueDate": dueDate, "Assigned": False}}, upsert = True)
+        case "replace-battery":
+            externalSystemSlug = data["externalSystemSlug"]
+            mower = mowers.find_one({"ExternalSystemSlug": externalSystemSlug})
+
+            notifs.update_one({"MowerId": mower["_id"], "Content": "service",}, {'$setOnInsert': {"Type": "warning", "Seen": False, "Date": datetime.now()}}, upsert = True)
+
+        
 
     return "", 204
