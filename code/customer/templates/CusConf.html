@@ -20,13 +20,13 @@
 <form name = "editArea" method="POST" action="{{ url_for('customer.editArea') }}">  
 
     <label for = "sub-input" >Subscription</label> <br>
-    <input required type = "radio" name = "sub" for="sub-input" value = "basic"> <label for="basic" >Basic</label>
+    <input required type = "radio" name = "sub" for="sub-input" value = "standard"> <label for="standard" >Standard</label>
     <div class="sub-display"><img src= "{{url_for('.static', filename = 'images/info.png')}}" alt="no img"></div> <div class = "sub-info">Free Pushes: 10 <br> Inspections per year: 2 <br> Maximum grass variation: 2 cm <br> Service priority: Low </div>
     <br>
     <input type = "radio" name = "sub" for="sub-input" value = "gold"> <label for="gold">Gold</label> 
     <div class="sub-display"><img src= "{{url_for('.static', filename = 'images/info.png')}}" alt="no img"></div> <div class = "sub-info">Free Pushes: 20 <br> Inspections per year: 4 <br> Maximum grass variation: 1 cm <br> Service priority: Medium </div>
     <br>
-    <input type = "radio" name = "sub" for="sub-input" value = "supreme"> <label for="supreme">Supreme</label>
+    <input type = "radio" name = "sub" for="sub-input" value = "platinum"> <label for="platinum">Platinum</label>
     <div class="sub-display"><img src= "{{url_for('.static', filename = 'images/info.png')}}" alt="no img"></div> <div class = "sub-info">Free Pushes: 30 <br> Inspections per year: 6 <br> Maximum grass variation: 1 cm <br> Service priority: High </div>
     <br>
     <br>
@@ -63,9 +63,16 @@
 
     {% endif %}
 
-    <button type="submit" id = "confirm-submit" class="btn footer-button">Submit</button>
+    <button type="submit" name="action" id = "confirm-submit" class="btn footer-button" value="submit">Submit</button>
+    <button type="submit" name="action" id = "confirm-submit" class="btn footer-button" value="evaluate">Evaluate</button>
 
 </form> 
+
+{% if evaluatedCost != none %}
+<p>
+    The evaluated monthly cost for this service is {{evaluatedCost}} SEK</p>
+{% endif %}
+
 
 {% if grassLengthError %}
 <button id ="modal-error-trigger" class = areaTicketSpace type="button" data-bs-toggle="modal" data-bs-target="#modal-error" style="display: none"> </button>

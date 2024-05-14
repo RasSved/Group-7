@@ -67,6 +67,6 @@ Accounts.insert_one({"CustomerId":None, "ProviderId":None, "Email":"manufacturer
 
 #creating and inserting services
 Services = db.Services
-Services.insert_one({"ServiceName": "basic", "FreePushes": 10, "InspectionsPerYear": 2, "MaxVariation": 2, "InterventionPriority": "low"})
+Services.insert_one({"ServiceName": "standard", "FreePushes": 10, "InspectionsPerYear": 2, "MaxVariation": 2, "InterventionPriority": "low"})
 Services.insert_one({"ServiceName": "gold", "FreePushes": 20, "InspectionsPerYear": 4, "MaxVariation": 1, "InterventionPriority": "medium"})
-Services.insert_one({"ServiceName": "supreme", "FreePushes": 30, "InspectionsPerYear": 6, "MaxVariation": 1, "InterventionPriority": "high"})
+Services.insert_one({"ServiceName": "platinum", "FreePushes": 30, "InspectionsPerYear": 6, "MaxVariation": 1, "InterventionPriority": "high"})

@@ -8,12 +8,20 @@ from pymongo import MongoClient
 from bson.objectid import ObjectId
 import sys
 from datetime import datetime, timedelta
+import requests as rqs
 
 # Setting up/connecting to database
 database_address = os.environ.get("DATABASE_ADDRESS", "localhost")
 database_port = os.environ.get("DATABASE_PORT", "27017")
+
 client = MongoClient(database_address, int(database_port))
 db = client.MowerDB
+
+# Variables for connecting to Fabric API
+eval_url = os.environ.get("EVALUATE_URL", "localhost:5001/sla/evaluate")
+contractAPI_address = os.environ.get("CONTRACTAPI_ADDRESS", "localhost")
+contractAPI_port = os.environ.get("CONTRACTAPI_PORT", "5001")
+
 
 # Single definition for table, change later
 areas = db.Areas
@@ -139,17 +147,66 @@ def editArea():
 
             ### Update area, if it has not been confirmed by customer before, send off request to manufacturer
 
-            if currArea["Status"] == "Unconfirmed":
-                areas.find_one_and_update({"_id": areaId}, {'$set': {"GrassLength": int(grassLength), "GrassMaxLength": int(maxGrassLength), "GrassMinLength": int(minGrassLength), "ServiceId": subId, "NotifTime": int(notifTime), "Status": "Pending"}})
+            if request.form["action"] == "submit":
+
+                if currArea["Status"] == "Unconfirmed":
+                    print("Unconfirmed")
+                    cusId = accounts.find_one({"_id": ObjectId(session["user_id"])})["CustomerId"] 
+                    data = {
+                        'ServiceLevel': sub,
+                        'TargetGrassLength': int(grassLength),
+                        'MaxGrassLength': int(maxGrassLength),
+                        'MinGrassLength': int(minGrassLength),
+                    }
+                    r = rqs.post(url=contractAPI_address + ":" + contractAPI_port + "/" + str(cusId) + "/sla", json=data)
+                    if r.ok == False: 
+                        print("EOF Error")
+                        raise EOFError
+                    slaID = r.content.decode()
+                    newSlaID = slaID.replace('"', '')
+                   
+                    
+                    areas.find_one_and_update({"_id": areaId}, {'$set': {"slaId": newSlaID, "GrassLength": int(grassLength), "GrassMaxLength": int(maxGrassLength), "GrassMinLength": int(minGrassLength), "ServiceId": subId, "NotifTime": int(notifTime), "Status": "Pending"}})
+                    
+                    ### Send request to manufacturer about new area needing assigned service provider
+                    
+                    address = areas.find_one({"_id": ObjectId(session["area_id"])})["Address"]
+                    content = "Customer has requested mowing for area at address " + address + ". Please select service provider for this task."
+                    requests.insert_one({"CustomerId": cusId, "Type": "newArea", "Content": content, "DateCreated": datetime.now(), "Completed": False, "AreaId": ObjectId(session["area_id"]) })
+                else: 
+                    print("Confirmed")
+                    cusId = accounts.find_one({"_id": ObjectId(session["user_id"])})["CustomerId"]
+                    data = {
+                        'ServiceLevel': sub,
+                        'TargetGrassLength': int(grassLength),
+                        'MaxGrassLength': int(maxGrassLength),
+                        'MinGrassLength': int(minGrassLength),
+                    }
+                    print("slaId:"+currArea["slaId"])
+                    r = rqs.put(url=contractAPI_address + ":" + contractAPI_port + "/" + str(cusId)+ "/sla/" + currArea["slaId"], json=data)
+                    if r.ok == False: 
+                        print("EOF Error")
+                        raise EOFError
+                    areas.find_one_and_update({"_id": areaId}, {'$set': {"GrassLength": int(grassLength), "GrassMaxLength": int(maxGrassLength), "GrassMinLength": int(minGrassLength), "ServiceId": subId, "NotifTime": int(notifTime)}})
+            
+            elif request.form["action"] == "evaluate":
+                data = {
+                    'ServiceLevel': sub,
+                    'TargetGrassLength': int(grassLength),
+                    'MaxGrassLength': int(maxGrassLength),
+                    'MinGrassLength': int(minGrassLength),
+                }
+                r = rqs.post(url=eval_url, json=data)
+                if r.ok == False: 
+                    raise EOFError
                 
-                ### Send request to manufacturer about new area needing assigned service provider
-                
-                cusId = accounts.find_one({"_id": ObjectId(session["user_id"])})["CustomerId"] 
-                address = areas.find_one({"_id": ObjectId(session["area_id"])})["Address"]
-                content = "Customer has requested mowing for area at address " + address + ". Please select service provider for this task."
-                requests.insert_one({"CustomerId": cusId, "Type": "newArea", "Content": content, "DateCreated": datetime.now(), "Completed": False, "AreaId": ObjectId(session["area_id"]) })
-            else: 
-                areas.find_one_and_update({"_id": areaId}, {'$set': {"GrassLength": int(grassLength), "GrassMaxLength": int(maxGrassLength), "GrassMinLength": int(minGrassLength), "ServiceId": subId, "NotifTime": int(notifTime)}})
+                if currArea == None:
+                    currArea = {}
+                currArea["GrassLength"] = grassLength
+                currArea["GrassMaxLength"] = maxGrassLength
+                currArea["GrassMinLength"] = minGrassLength
+                currArea["NotifTime"] = notifTime
+                return render_template("CusConf.html", area=currArea, sub=sub, title="Customer Configure", evaluatedCost=r.content.decode("utf-8"))
 
     return redirect(url_for("customer.customer"))
     

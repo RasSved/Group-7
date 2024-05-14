@@ -29,6 +29,8 @@ accounts = db.Accounts
 services = db.Services
 service_providers = db.Service_Provider
 
+
+
 @serviceprovider_bp.route("/", methods=["GET", "POST"])
 def serviceprovider():
     # Verifies that logged in user is a serviceprovider
@@ -434,3 +436,37 @@ def new_work_task():
     service_tickets.insert_one({"MowerId": mower['_id'], "Content": new_work_task.workTaskType.value, "ProviderId": provider['_id'], "DateCreated": datetime.now(), "Completed": False, "DueDate": dueDate, "WorkTaskId": new_work_task.workTaskId, "TakeWorkUrl": new_work_task.takeWorkUrl})
 
     return "", 201
+
+@serviceprovider_bp.route("/service-level", methods=["GET"])
+def get_service_level():
+    raw_data = request.json
+    try:
+        
+            product_id=(raw_data['productId'])
+           
+        
+    except(EOFError):
+        return f"error reading request body", 500
+
+    mower = mowers.find_one({'ExternalSystemSlug': product_id})
+
+    print(mower)
+
+    area = areas.find_one({'_id': mower['AreaIds'][0]['AreaId']})
+
+    print(area)
+
+    service = services.find_one({'_id': area['ServiceId']})
+
+    print(service)
+
+    service_level = service['ServiceName']
+
+    
+
+    if (mower == None or area == None or service == None):
+        return "", 500
+
+    print(service_level)
+
+    return service_level, 200
