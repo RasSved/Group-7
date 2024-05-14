@@ -32,7 +32,10 @@ tickets = db.Service_Tickets
 requests = db.Requests
 accounts = db.Accounts
 
-notifContent = {"service": "Your machine needs knife replacement, your service provider has been notified, no action required from you."}
+notifContent = {
+    "service": "Your machine needs knife replacement, your service provider has been notified, no action required from you.",
+    "replace-battery": "Your machine needs battery replacement, your service provider has been notified, no action required from you."
+}
 
 
 
@@ -55,7 +58,6 @@ def customer():
     if role != "customer":
         return redirect("/logout")
     
-    notifContent = {"service": "Your machine needs knife replacement, your service provider has been notified, no action required from you."}
     notifStrings = {}
     customerId = accounts.find_one({"_id": ObjectId(session["user_id"])})["CustomerId"]
     cusAreas = areas.find({"CustomerId": customerId})   # get entire collection
@@ -399,8 +401,8 @@ def recieveData():
             externalSystemSlug = data["externalSystemSlug"]
             mower = mowers.find_one({"ExternalSystemSlug": externalSystemSlug})
 
-            notifs.update_one({"MowerId": mower["_id"], "Content": "service",}, {'$setOnInsert': {"Type": "warning", "Seen": False, "Date": datetime.now()}}, upsert = True)
+            notifs.update_one({"MowerId": mower["_id"], "Content": "replace-battery",}, {'$setOnInsert': {"Type": "warning", "Seen": False, "Date": datetime.now()}}, upsert = True)
 
-        
+
 
     return "", 204
