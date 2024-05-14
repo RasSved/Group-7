@@ -441,18 +441,10 @@ def new_work_task():
 
     return "", 201
 
-@serviceprovider_bp.route("/service-level", methods=["GET"])
-def get_service_level():
-    raw_data = request.json
-    try:
-        
-            product_id=(raw_data['productId'])
-           
-        
-    except(EOFError):
-        return f"error reading request body", 500
-
-    mower = mowers.find_one({'ExternalSystemSlug': product_id})
+@serviceprovider_bp.route("<productId>/service-level", methods=["GET"])
+def get_service_level(productId):
+    
+    mower = mowers.find_one({'ExternalSystemSlug': productId})
 
     print(mower)
 
